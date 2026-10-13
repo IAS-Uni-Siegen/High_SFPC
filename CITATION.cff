@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use or refer to this material, please cite it as below."
+authors:
+- family-names: "Sah"
+  given-names: "Bikash"
+  orcid: "https://orcid.org/0000-0002-0307-6727"
+title: "High Switching Frequency Power Converters"
+date-released: 2026-10-13
+url: "https://github.com/IAS-Uni-Siegen/HSFPC_course"
+license: CC-BY-4.0
+preferred-citation:
+  type: generic
+  authors:
+  - family-names: "Sah"
+    given-names: "Bikash"
+    orcid: "https://orcid.org/0000-0002-0307-6727"
+  title: "High Switching Frequency Power Converters"
+  year: 2026
+  url: "https://github.com/IAS-Uni-Siegen/HSFPC_course"

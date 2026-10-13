@@ -1,0 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Capacitive coupling of the switch-node edge into the gate (Exercise 03, Task 5)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			\draw (3.2,1.6) node[nigfete](Q){};
+			\draw (Q.D) -- ++(0,0.6) coordinate (d0) -- ++(0,0.6) node[above]{$v_\mathrm{DS}$, rising with $\mathrm{d}v/\mathrm{d}t$};
+			\draw (Q.S) -- ++(0,-0.6) coordinate (s0) -- ++(0,-0.4) coordinate (gnd) node[ground]{};
+			\draw (Q.G) -- ++(-1.0,0) coordinate (g0);
+			\draw (g0) to[C, l_=$C_\mathrm{GD}$, *-] (g0 |- d0) -- (d0);
+			\draw (g0) to[C, l=$C_\mathrm{GS}$] (g0 |- s0) -- (s0);
+			\draw (g0) to[R, l=$R_\mathrm{G,off}$] ++(-2.4,0) coordinate (dv) to[sV, l_=0\,V] (dv |- gnd) -- (gnd);
+		\end{circuitikz}
+	\end{center}
+	\caption{Low-side switch, held off by the driver at 0\,V through $R_\mathrm{G,off}$, while the switch node rises.}
+	\label{fig:ex03_gate}
+\end{figure}

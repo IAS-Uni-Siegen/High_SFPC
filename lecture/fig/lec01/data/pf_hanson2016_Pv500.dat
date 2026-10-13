@@ -1,0 +1,13 @@
+# Performance factor PF = B_pk * f at Pv = 500 mW/cm^3 (B in mT, f in MHz, PF in mT*MHz)
+# Computed from the Steinmetz parameters (Pv = k*B^beta, Pv in mW/cm^3, B in mT) measured by
+# A. J. Hanson et al., IEEE Trans. Power Electron., vol. 31, no. 11, pp. 7909-7925, 2016, Table II.
+# Materials: Fair-Rite 67 (mu_r=40), Fair-Rite 61 (mu_r=125), Ferroxcube 4F1 (mu_r=80), National Magnetics M3 (mu_r=20).
+# nan = not measured at that frequency.
+f_MHz FR67 FR61 F4F1 M3
+2 65.6 45.9 47.0 nan
+5 99.8 70.9 73.8 104.2
+7 115.4 80.6 nan 116.5
+10 139.2 90.1 96.3 131.3
+13 137.8 89.1 103.6 139.8
+16 139.2 88.2 103.5 128.9
+20 136.5 nan 84.0 119.8

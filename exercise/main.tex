@@ -1,0 +1,32 @@
+% !TeX root = main.tex
+
+%% add [solution]
+\documentclass[solution]{../course_template/exerciseClass}
+% \documentclass[]{../course_template/exerciseClass}
+\title{\normalsize High Switching Frequency Power Converters} % \normalsize: in \large the course name runs into the logo
+
+% author shown in the header and in the PDF metadata (template default is the IAS head)
+\renewcommand{\CCauthor}{Dr Bikash Sah}
+\hypersetup{pdfauthor={Dr Bikash Sah}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%Exercise Include Only%%%
+%\includeonly{tex/exercise01}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	\include{tex/exercise01} % Frequency scaling: passives, EMI filter, skin depth, Qoss*V*f
+	\include{tex/exercise02} % Datasheet-based loss calculation, hard switching versus ZVS
+	\include{tex/exercise03} % Loop inductance, overshoot, ringing, snubber
+	%\include{tex/exercise04} % Gate-loop damping, CSI, bootstrap
+	%\include{tex/exercise05} % Probe bandwidth, deskew, efficiency uncertainty
+	%\include{tex/exercise06} % Performance factor, optimum flux density, iGSE
+	%\include{tex/exercise07} % Dowell, leakage inductance, winding capacitance
+	%\include{tex/exercise08} % ZVS timing and energy, TCM, DAB
+	%\include{tex/exercise09} % FHA and LLC gain
+	%\include{tex/exercise10} % Class E, L-match, wireless power link
+	%\include{tex/exercise11} % Charge vectors, SSL and FSL
+	%\include{tex/exercise12} % Transfer functions, compensator, loop delay
+	%\include{tex/exercise13} % Spectrum envelope, LISN, EMI filter, thermal network
+	%\include{tex/exercise14} % Mock oral exam
+\end{document}

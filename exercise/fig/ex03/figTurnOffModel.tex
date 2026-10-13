@@ -1,0 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Turn-off model with loop inductance (Exercise 03, Task 3)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			\draw (0,0) to[V, l=$V_\mathrm{DC}$] (0,3) to[L, l=$L_\mathrm{loop}$, i>^=$i_L$] (3,3) -- (5,3);
+			\draw (3,3) to[I, l_=$i_\mathrm{ch}(t)$] (3,0);
+			\draw (5,3) to[C, l=$C$] (5,0);
+			\draw (0,0) -- (5,0);
+			\draw (3,3) node[circ]{} (3,0) node[circ]{} (5,3) node[circ]{};
+			\draw (5,3) node[anchor=south]{A};
+		\end{circuitikz}
+	\end{center}
+	\caption{Turn-off of the high-side switch after the low-side switch has taken over the load current (shown as a short circuit): channel current $i_\mathrm{ch}(t)$, capacitance $C$ across the switch and loop inductance $L_\mathrm{loop}$; $v_\mathrm{DS}=v_\mathrm{A}$.}
+	\label{fig:ex03_turnoff}
+\end{figure}

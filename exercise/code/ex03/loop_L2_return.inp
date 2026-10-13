@@ -1,0 +1,79 @@
+* HSFPC Tutorial 3: power loop of a GaN half-bridge, return on the first inner layer (L2)
+* Forward copper on L1: 4 mm wide, 10 mm long, 35 um thick; solid plane on L2, 0.1 mm below;
+* four vias (0.3 mm, modelled as squares with the same perimeter) at each end.
+* Run: fasthenry loop_L2_return.inp   -> loop impedance in Zc.mat; L = Im(Z)/(2*pi*f)
+* To move the return plane (e.g. to L4, 1.5 mm below), change z = 0.135 of all L1 nodes and via top nodes
+* (0.135 mm = 0.1 mm dielectric + 35 um copper) to 1.535.
+.units mm
+* conductivity of copper in 1/(Ohm*mm)
+.default sigma=5.8e4
+
+* --- plane on L2 (z = 0), 0.5 mm mesh ---
+G1 x1=-6.0 y1=-8.0 z1=0 x2=16.0 y2=-8.0 z2=0 x3=16.0 y3=8.0 z3=0 thick=0.035 seg1=44 seg2=32 nhinc=1
++ Npf0 (9.7000,-1.5000,0)
++ Npf1 (9.7000,-0.5000,0)
++ Npf2 (9.7000,0.5000,0)
++ Npf3 (9.7000,1.5000,0)
++ Npr0 (-1.5000,-1.5000,0)
++ Npr1 (-1.5000,-0.5000,0)
++ Npr2 (-1.5000,0.5000,0)
++ Npr3 (-1.5000,1.5000,0)
+
+* --- forward copper on L1, from the capacitor (x = 0) to the switches (x = 10 mm) ---
+Ns0 x=0 y=0 z=0.1350
+Ns1 x=10.0 y=0 z=0.1350
+Efwd Ns0 Ns1 w=4.0 h=0.035 nwinc=15 nhinc=1 rw=2.0
+
+* --- return pad of the capacitor on L1 (1 mm gap), 1 mm long ---
+Nr0 x=-1.0 y=0 z=0.1350
+Nr1 x=-2.0 y=0 z=0.1350
+Epad Nr0 Nr1 w=4.0 h=0.035 nwinc=7 nhinc=1
+
+* --- vias from L1 to the plane: at the switches (x = 9.7 mm) and at the capacitor pad (x = -1.5 mm) ---
+Nvt0 x=9.7000 y=-1.5000 z=0.1350
+Nvb0 x=9.7000 y=-1.5000 z=0.0175
+Evia0 Nvt0 Nvb0 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nvt1 x=9.7000 y=-0.5000 z=0.1350
+Nvb1 x=9.7000 y=-0.5000 z=0.0175
+Evia1 Nvt1 Nvb1 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nvt2 x=9.7000 y=0.5000 z=0.1350
+Nvb2 x=9.7000 y=0.5000 z=0.0175
+Evia2 Nvt2 Nvb2 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nvt3 x=9.7000 y=1.5000 z=0.1350
+Nvb3 x=9.7000 y=1.5000 z=0.0175
+Evia3 Nvt3 Nvb3 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nwt0 x=-1.5 y=-1.5000 z=0.1350
+Nwb0 x=-1.5 y=-1.5000 z=0.0175
+Ewia0 Nwt0 Nwb0 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nwt1 x=-1.5 y=-0.5000 z=0.1350
+Nwb1 x=-1.5 y=-0.5000 z=0.0175
+Ewia1 Nwt1 Nwb1 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nwt2 x=-1.5 y=0.5000 z=0.1350
+Nwb2 x=-1.5 y=0.5000 z=0.0175
+Ewia2 Nwt2 Nwb2 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+Nwt3 x=-1.5 y=1.5000 z=0.1350
+Nwb3 x=-1.5 y=1.5000 z=0.0175
+Ewia3 Nwt3 Nwb3 w=0.2356 h=0.2356 nwinc=3 nhinc=3
+
+* --- connections ---
+.equiv Nvb0 Npf0
+.equiv Nvt0 Ns1
+.equiv Nwb0 Npr0
+.equiv Nwt0 Nr1
+.equiv Nvb1 Npf1
+.equiv Nvt1 Ns1
+.equiv Nwb1 Npr1
+.equiv Nwt1 Nr1
+.equiv Nvb2 Npf2
+.equiv Nvt2 Ns1
+.equiv Nwb2 Npr2
+.equiv Nwt2 Nr1
+.equiv Nvb3 Npf3
+.equiv Nvt3 Ns1
+.equiv Nwb3 Npr3
+.equiv Nwt3 Nr1
+
+* --- port across the capacitor position: forward copper start and capacitor return pad ---
+.external Ns0 Nr0
+.freq fmin=1e6 fmax=1e8 ndec=1
+.end

@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Synchronous buck converter (Exercise 01, Task 1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			% transistors
+			\draw (2.5,2.6) node[nigfete,rotate=90](S1){} (3.8,1.2) node[nigfete](S2){};
+			\draw (S1) node[anchor=south, yshift=0.3cm]{$S_1$};
+			\draw (S2) node[anchor=west]{$S_2$};
+			% input source and high-side switch
+			\draw (0,0) to[V, l=$V_\mathrm{in}$] (0,2.6) -- (S1.D);
+			\draw (S1.S) -- (3.8,2.6) coordinate (sw);
+			% low-side switch from switch node to ground
+			\draw (sw) to[short, *-] (S2.D);
+			\draw (S2.S) -- (3.8,0);
+			% inductor, capacitor, load
+			\draw (sw) to[L, l=$L$, i>^=$i_L$] (6.3,2.6) to[short, -*] (6.8,2.6) coordinate (out) -- (8.4,2.6) to[R, l=$R$] (8.4,0) -- (0,0);
+			\draw (out) to[C, l_=$C$] (6.8,0) node[circ]{};
+			\draw (3.8,0) node[circ]{};
+			\draw (9.3,2.6) to[open, v^=$V_\mathrm{o}$] (9.3,0);
+		\end{circuitikz}
+	\end{center}
+	\caption{Synchronous buck converter.}
+	\label{fig:ex01_buck}
+\end{figure}

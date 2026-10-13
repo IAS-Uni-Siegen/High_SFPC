@@ -1,0 +1,49 @@
+ new \documentclass{../course_template/lectureClass}
+
+\title[High switching frequency power converters]{High Switching Frequency Power Converters}
+\author{Dr Bikash Sah}
+\date{}
+\hypersetup{pdfauthor={Dr Bikash Sah}} % PDF metadata (template default is the IAS head)
+
+\makeglossaries
+
+%\includeonly{tex/Lecture01} % build only the specified file
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Cover slide %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Outline / table of content %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Content}
+	\tableofcontents[hideallsubsections]
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Lecture sections %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{tex/Lecture01} % Why high switching frequency? Scaling laws and the V-I-P-f map
+\include{tex/Lecture02} % The HF switching cell: loss inventory and device selection
+\include{tex/Lecture03} % Parasitics and PCB layout of the HF commutation cell
+%\include{tex/Lecture04} % Gate drivers for fast-switching devices
+%\include{tex/Lecture05} % Measurement and characterisation at high frequency
+%\include{tex/Lecture06} % HF magnetics I: materials, core loss and the performance factor
+%\include{tex/Lecture07} % HF magnetics II: windings, planar and integrated magnetics
+%\include{tex/Lecture08} % Soft switching without resonance
+%\include{tex/Lecture09} % Resonant converters I: SRC, PRC, LLC and CLLC
+%\include{tex/Lecture10} % Resonant converters II: VHF inverters, rectifiers, matching networks
+%\include{tex/Lecture11} % Case studies and teardown session
+%\include{tex/Lecture12} % Switched-capacitor and hybrid converters
+%\include{tex/Lecture13} % Modelling and control of high-frequency converters
+%\include{tex/Lecture14} % EMI, thermal design and integration
+%\include{tex/Lecture15} % Synthesis, design showcase and exam preparation
+%\include{tex/dict} % English-German dictionary
+\end{document}

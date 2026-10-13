@@ -1,0 +1,255 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Losses of the switching cell}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Output capacitance of a 650\,V GaN HEMT}
+
+The output capacitance of a 650\,V GaN HEMT is approximated by
+\begin{equation*}
+	C_\mathrm{oss}(v) = C_\mathrm{lo} + C_\mathrm{hi}\,e^{-v/V_\mathrm{k}}
+\end{equation*}
+with $C_\mathrm{lo}=\SI{50}{\pico\farad}$, $C_\mathrm{hi}=\SI{434}{\pico\farad}$ and $V_\mathrm{k}=\SI{83}{\volt}$ (illustrative values, not a specific device).
+
+\subtask{Derive $Q_\mathrm{oss}(V)$ and $E_\mathrm{oss}(V)$ analytically and evaluate them at $V=\SI{400}{\volt}$.}
+
+\begin{solutionblock}
+	\begin{equation}
+		Q_\mathrm{oss}(V) = \int_0^V C_\mathrm{oss}(v)\,\mathrm{d}v = C_\mathrm{lo}V + C_\mathrm{hi}V_\mathrm{k}\left(1-e^{-V/V_\mathrm{k}}\right)
+	\end{equation}
+	\begin{equation}
+		E_\mathrm{oss}(V) = \int_0^V v\,C_\mathrm{oss}(v)\,\mathrm{d}v = \tfrac{1}{2}C_\mathrm{lo}V^2 + C_\mathrm{hi}V_\mathrm{k}^2\left[1-e^{-V/V_\mathrm{k}}\left(1+\frac{V}{V_\mathrm{k}}\right)\right]
+	\end{equation}
+	At $\SI{400}{\volt}$: $Q_\mathrm{oss}=\SI{55.7}{\nano\coulomb}$ and $E_\mathrm{oss}=\SI{6.85}{\micro\joule}$.
+\end{solutionblock}
+
+\subtask{Calculate the small-signal capacitance $C_\mathrm{oss}(\SI{400}{\volt})$, the time-related capacitance $C_\mathrm{o(tr)}$ and the energy-related capacitance $C_\mathrm{o(er)}$ for $V=\SI{400}{\volt}$.}
+
+\begin{solutionblock}
+	\begin{equation}
+		C_\mathrm{oss}(\SI{400}{\volt}) = \SI{53.5}{\pico\farad},\qquad
+		C_\mathrm{o(tr)} = \frac{Q_\mathrm{oss}}{V} = \SI{139}{\pico\farad},\qquad
+		C_\mathrm{o(er)} = \frac{2E_\mathrm{oss}}{V^2} = \SI{85.6}{\pico\farad}.
+	\end{equation}
+\end{solutionblock}
+
+\subtask{A hard-switched half-bridge with two of these devices operates at $V_\mathrm{DC}=\SI{400}{\volt}$ and $f_\mathrm{sw}=\SI{500}{\kilo\hertz}$. Calculate the capacitive turn-on loss. Compare it with estimates based on $E_\mathrm{oss}f_\mathrm{sw}$ and on $\frac{1}{2}C_\mathrm{oss}(\SI{400}{\volt})V_\mathrm{DC}^2f_\mathrm{sw}$.}
+
+\begin{solutionblock}
+	The correct loss is (Tutorial 1, Task 1.4.1)
+	\begin{equation}
+		P = Q_\mathrm{oss}V_\mathrm{DC}f_\mathrm{sw} = \SI{55.7}{\nano\coulomb}\cdot\SI{400}{\volt}\cdot\SI{500}{\kilo\hertz} = \SI{11.1}{\watt}.
+	\end{equation}
+	The estimate with $E_\mathrm{oss}$ gives $\SI{3.4}{\watt}$, the one with the small-signal capacitance only $\SI{2.1}{\watt}$. Both are far too optimistic.
+\end{solutionblock}
+
+\subtask{Show that $Q_\mathrm{oss}(V)\,V\geq 2E_\mathrm{oss}(V)$ for any output capacitance that does not increase with voltage.}
+
+\begin{solutionblock}
+	\begin{equation}
+		Q_\mathrm{oss}V-2E_\mathrm{oss} = \int_0^V (V-2v)\,C_\mathrm{oss}(v)\,\mathrm{d}v.
+	\end{equation}
+	For $v<V/2$ the weight $V-2v$ is positive and $C_\mathrm{oss}(v)\geq C_\mathrm{oss}(V/2)$; for $v>V/2$ the weight is negative and $C_\mathrm{oss}(v)\leq C_\mathrm{oss}(V/2)$. In both ranges $(V-2v)\,C_\mathrm{oss}(v)\geq (V-2v)\,C_\mathrm{oss}(V/2)$, hence
+	\begin{equation}
+		Q_\mathrm{oss}V-2E_\mathrm{oss} \geq C_\mathrm{oss}(V/2)\int_0^V (V-2v)\,\mathrm{d}v = 0.
+	\end{equation}
+	Equality holds only for a constant capacitance.
+\end{solutionblock}
+
+\subtask{The half-bridge is operated with zero-voltage switching. The current during the switch-node transition is $\SI{3}{\ampere}$. Calculate the minimum dead time.}
+
+\begin{solutionblock}
+	The current discharges one output capacitance and charges the other one, i.e.\ it moves the charge $2Q_\mathrm{oss}$:
+	\begin{equation}
+		t_\mathrm{d,min} = \frac{2Q_\mathrm{oss}}{I} = \frac{2\cdot\SI{55.7}{\nano\coulomb}}{\SI{3}{\ampere}} = \SI{37}{\nano\second}.
+	\end{equation}
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Loss budget of a hard-switched buck converter}
+
+A synchronous buck converter as in \autoref{fig:ex01_buck} converts $V_\mathrm{in}=\SI{48}{\volt}$ to $V_\mathrm{o}=\SI{12}{\volt}$ at $I_\mathrm{o}=\SI{10}{\ampere}$ and $f_\mathrm{sw}=\SI{1}{\mega\hertz}$. Assume that the inductor current is constant at $\SI{10}{\ampere}$ during the switching transitions and that the junction temperature is $\SI{100}{\celsius}$. Two device options are given in \autoref{table:ex02_devices}; the values are illustrative.
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{lll}
+		\toprule
+		Parameter                                              & GaN HEMT                       & Si MOSFET                       \\
+		\midrule
+		$R_\mathrm{DS(on)}$ at $\SI{25}{\celsius}$             & $\SI{5}{\milli\ohm}$           & $\SI{5}{\milli\ohm}$            \\
+		Factor for $R_\mathrm{DS(on)}$ at $\SI{100}{\celsius}$ & 1.5                            & 1.6                             \\
+		$Q_\mathrm{oss}$ at $\SI{48}{\volt}$                   & $\SI{25}{\nano\coulomb}$       & $\SI{60}{\nano\coulomb}$        \\
+		$t_\mathrm{r}+t_\mathrm{f}$ (overlap, high-side switch) & $\SI{4}{\nano\second}$        & $\SI{15}{\nano\second}$         \\
+		$Q_\mathrm{rr}$                                        & 0                              & $\SI{60}{\nano\coulomb}$        \\
+		$Q_\mathrm{G}$ at $V_\mathrm{dr}$                      & $\SI{7}{\nano\coulomb}$ at $\SI{5}{\volt}$ & $\SI{35}{\nano\coulomb}$ at $\SI{10}{\volt}$ \\
+		$V_\mathrm{SD}$ during the dead time                   & $\SI{1.8}{\volt}$              & $\SI{0.9}{\volt}$               \\
+		Dead time $t_\mathrm{d}$ (each)                        & $\SI{5}{\nano\second}$         & $\SI{20}{\nano\second}$         \\
+		\bottomrule
+	\end{tabular}
+	\caption{Illustrative device data.}
+	\label{table:ex02_devices}
+\end{table}
+
+\subtask{Which switch turns on hard and which one with zero voltage? Explain with the direction of the inductor current.}
+
+\begin{solutionblock}
+	The inductor current flows out of the switch node. When the high-side switch turns off, this current discharges the switch node by itself; the low-side switch then turns on at zero voltage after the dead time. When the low-side switch turns off, the current continues in its reverse path, and the high-side switch has to pull the switch node up against the current: it turns on hard. All switching losses except the dead-time conduction of the low-side device therefore occur in the high-side switch.
+\end{solutionblock}
+
+\subtask{Calculate all loss terms and the efficiency for both device options.}
+
+\begin{solutionblock}
+	Conduction loss of both switches together (one of them always conducts): $P_\mathrm{cond}=I_\mathrm{o}^2R_\mathrm{DS(on)}(\SI{100}{\celsius})$. The other terms follow \autoref{stable:ex02_budget}; the gate term covers both switches and the dead-time term both dead times per period.
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{lrr}
+			\toprule
+			Loss term                                                   & GaN (W) & Si (W) \\
+			\midrule
+			conduction, $I_\mathrm{o}^2R_\mathrm{DS(on)}$                & 0.75    & 0.80   \\
+			capacitive, $Q_\mathrm{oss}V_\mathrm{in}f_\mathrm{sw}$       & 1.20    & 2.88   \\
+			overlap, $\frac{1}{2}V_\mathrm{in}I_\mathrm{o}(t_\mathrm{r}+t_\mathrm{f})f_\mathrm{sw}$ & 0.96 & 3.60 \\
+			reverse recovery, $Q_\mathrm{rr}V_\mathrm{in}f_\mathrm{sw}$  & 0       & 2.88   \\
+			dead time, $2V_\mathrm{SD}I_\mathrm{o}t_\mathrm{d}f_\mathrm{sw}$ & 0.18 & 0.36   \\
+			gate, $2Q_\mathrm{G}V_\mathrm{dr}f_\mathrm{sw}$              & 0.07    & 0.70   \\
+			\midrule
+			total                                                        & 3.16    & 11.22  \\
+			efficiency at $P_\mathrm{o}=\SI{120}{\watt}$                 & 97.4\,\% & 91.4\,\% \\
+			\bottomrule
+		\end{tabular}
+		\caption{Loss budget at 1\,MHz.}
+		\label{stable:ex02_budget}
+	\end{solutiontable}
+\end{solutionblock}
+
+\subtask{Up to which switching frequency could the GaN design run before its loss reaches the loss of the Si design at $\SI{1}{\mega\hertz}$?}
+
+\begin{solutionblock}
+	The GaN switching energy per period is $(3.16-0.75)\,\si{\watt}/\SI{1}{\mega\hertz}=\SI{2.41}{\micro\joule}$. With the conduction loss of $\SI{0.75}{\watt}$:
+	\begin{equation}
+		f_\mathrm{sw} = \frac{\SI{11.22}{\watt}-\SI{0.75}{\watt}}{\SI{2.41}{\micro\joule}} = \SI{4.3}{\mega\hertz}.
+	\end{equation}
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Turn-off with output capacitance}
+
+A switch turns off a constant load current $I$. Its channel current falls linearly from $I$ to zero within $t_\mathrm{f}$. The difference between $I$ and the channel current charges the total switch-node capacitance $C$ (assumed linear), starting from $v_\mathrm{DS}=0$.
+
+\subtask{Derive $v_\mathrm{DS}(t)$ and the turn-off energy $E_\mathrm{off}=\int_0^{t_\mathrm{f}}v_\mathrm{DS}\,i_\mathrm{ch}\,\mathrm{d}t$. Under which condition is the result valid?}
+
+\begin{solutionblock}
+	With $i_\mathrm{ch}=I(1-t/t_\mathrm{f})$ the capacitor current is $i_C=I\,t/t_\mathrm{f}$ and
+	\begin{equation}
+		v_\mathrm{DS}(t) = \frac{1}{C}\int_0^t i_C\,\mathrm{d}\tau = \frac{I\,t^2}{2C\,t_\mathrm{f}}.
+	\end{equation}
+	\begin{equation}
+		E_\mathrm{off} = \int_0^{t_\mathrm{f}} \frac{I\,t^2}{2C\,t_\mathrm{f}}\,I\left(1-\frac{t}{t_\mathrm{f}}\right)\mathrm{d}t
+		= \frac{I^2}{2C\,t_\mathrm{f}}\left(\frac{t_\mathrm{f}^3}{3}-\frac{t_\mathrm{f}^3}{4}\right) = \frac{I^2t_\mathrm{f}^2}{24\,C}.
+	\end{equation}
+	The voltage must not reach $V_\mathrm{DC}$ before the channel current is zero: $I\,t_\mathrm{f}/(2C)<V_\mathrm{DC}$.
+\end{solutionblock}
+
+\subtask{Evaluate $E_\mathrm{off}$ for $I=\SI{10}{\ampere}$, $t_\mathrm{f}=\SI{2}{\nano\second}$, $C=\SI{400}{\pico\farad}$ and $V_\mathrm{DC}=\SI{48}{\volt}$. Compare with the linear estimate $\frac{1}{2}V_\mathrm{DC}I\,t_\mathrm{f}$.}
+
+\begin{solutionblock}
+	\begin{equation}
+		E_\mathrm{off} = \frac{(\SI{10}{\ampere})^2(\SI{2}{\nano\second})^2}{24\cdot\SI{400}{\pico\farad}} = \SI{41.7}{\nano\joule},
+	\end{equation}
+	compared with $\frac{1}{2}\cdot\SI{48}{\volt}\cdot\SI{10}{\ampere}\cdot\SI{2}{\nano\second}=\SI{480}{\nano\joule}$. The voltage at $t_\mathrm{f}$ is only $\SI{25}{\volt}$, so the condition is fulfilled.
+\end{solutionblock}
+
+\subtask{Which capacitance makes the voltage reach $V_\mathrm{DC}$ exactly at $t_\mathrm{f}$? What happens for smaller capacitances?}
+
+\begin{solutionblock}
+	$C=I\,t_\mathrm{f}/(2V_\mathrm{DC})=\SI{208}{\pico\farad}$, giving $E_\mathrm{off}=\SI{80}{\nano\joule}$. For a smaller capacitance the voltage is clamped at $V_\mathrm{DC}$ while the channel still carries current, and the loss approaches the hard-switching value. Additional capacitance therefore reduces the turn-off loss, but it increases the loss of a hard turn-on and the time of a ZVS transition.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Optimum die size}
+
+A transistor family is scaled with the relative die area $a$: $R_\mathrm{DS(on)}=R_1/a$ and all charges, and therefore the switching energy per period, scale as $E_\mathrm{sw}=E_1\,a$. Use $I_\mathrm{rms}=\SI{10}{\ampere}$, $R_1=\SI{5}{\milli\ohm}$ and $E_1=\SI{2.41}{\micro\joule}$ (GaN design of Task 2.2 at $\SI{25}{\celsius}$).
+
+\subtask{Derive the optimum die area $a_\mathrm{opt}$ and the minimum loss $P_\mathrm{min}$ as functions of $f_\mathrm{sw}$. Show that conduction and switching loss are equal at the optimum.}
+
+\begin{solutionblock}
+	\begin{equation}
+		P(a) = \frac{I_\mathrm{rms}^2R_1}{a} + E_1\,a\,f_\mathrm{sw},\qquad
+		\frac{\mathrm{d}P}{\mathrm{d}a} = -\frac{I_\mathrm{rms}^2R_1}{a^2} + E_1f_\mathrm{sw} = 0
+	\end{equation}
+	\begin{equation}
+		a_\mathrm{opt} = I_\mathrm{rms}\sqrt{\frac{R_1}{E_1f_\mathrm{sw}}},\qquad
+		P_\mathrm{min} = 2I_\mathrm{rms}\sqrt{R_1E_1f_\mathrm{sw}}.
+	\end{equation}
+	At $a_\mathrm{opt}$ both terms equal $I_\mathrm{rms}\sqrt{R_1E_1f_\mathrm{sw}}$.
+\end{solutionblock}
+
+\subtask{Evaluate $a_\mathrm{opt}$ and $P_\mathrm{min}$ for $\SI{250}{\kilo\hertz}$, $\SI{1}{\mega\hertz}$ and $\SI{4}{\mega\hertz}$.}
+
+\begin{solutionblock}
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{lccc}
+			\toprule
+			$f_\mathrm{sw}$     & $\SI{250}{\kilo\hertz}$ & $\SI{1}{\mega\hertz}$ & $\SI{4}{\mega\hertz}$ \\
+			\midrule
+			$a_\mathrm{opt}$    & 0.91                    & 0.46                  & 0.23                  \\
+			$P_\mathrm{min}$    & $\SI{1.10}{\watt}$      & $\SI{2.20}{\watt}$    & $\SI{4.39}{\watt}$    \\
+			\bottomrule
+		\end{tabular}
+		\caption{Optimum die size and minimum loss.}
+		\label{stable:ex02_die}
+	\end{solutiontable}
+	Four times the frequency doubles the minimum loss and halves the optimum die area.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Output capacitance losses under soft switching}
+
+For a 650\,V GaN HEMT (GaN Systems GS66504B) the energy dissipated per cycle in the output capacitance was fitted for sinusoidal voltages between 5 and 35\,MHz as
+\begin{equation*}
+	E_\mathrm{diss} = k\,f^{\alpha}\,V_\mathrm{pp}^{\beta},\qquad k=2.84\cdot10^{-10},\ \alpha=0.6,\ \beta=1.70,
+\end{equation*}
+with $E_\mathrm{diss}$ in $\si{\micro\joule}$, $f$ in Hz and the peak-to-peak voltage $V_\mathrm{pp}$ in V (Zulauf et al., IEEE TPEL, 2018).
+
+\subtask{Calculate $E_\mathrm{diss}$ and the power loss at $\SI{10}{\mega\hertz}$ and $\SI{400}{\volt}$, and at $\SI{30}{\mega\hertz}$ and $\SI{650}{\volt}$.}
+
+\begin{solutionblock}
+	\begin{equation}
+		E_\mathrm{diss}(\SI{10}{\mega\hertz},\SI{400}{\volt}) = 2.84\cdot10^{-10}\cdot(10^7)^{0.6}\cdot400^{1.70}\,\si{\micro\joule} = \SI{0.119}{\micro\joule}\ \Rightarrow\ P=\SI{1.19}{\watt}
+	\end{equation}
+	\begin{equation}
+		E_\mathrm{diss}(\SI{30}{\mega\hertz},\SI{650}{\volt}) = \SI{0.527}{\micro\joule}\ \Rightarrow\ P=\SI{15.8}{\watt}
+	\end{equation}
+\end{solutionblock}
+
+\subtask{By which factors do the energy per cycle and the power loss rise when the frequency is tripled at constant voltage?}
+
+\begin{solutionblock}
+	$E_\mathrm{diss}$ rises by $3^{0.6}=1.93$ and the power by $3^{1.6}=5.8$. The loss per cycle is not constant, so a fixed fraction of $E_\mathrm{oss}$ per cycle is not a valid model.
+\end{solutionblock}
+
+\subtask{In a $\SI{10}{\mega\hertz}$ resonant converter, a designer replaces the transistor by one of the same family with half the on-resistance. Why can the efficiency drop?}
+
+\begin{solutionblock}
+	Within a device family the $C_\mathrm{oss}$ loss scales with the stored energy $E_\mathrm{oss}$, i.e.\ with the die area. The larger device doubles the $C_\mathrm{oss}$ loss and its larger capacitance must be absorbed by the resonant network, which can raise the circulating current. When the $C_\mathrm{oss}$ loss is already comparable to the conduction loss, the total loss rises. Zulauf et al.\ observed this in 10\,MHz, 200\,W converters even with an unchanged circulating current.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx02\_task.ipynb} builds a small loss engine for these calculations.

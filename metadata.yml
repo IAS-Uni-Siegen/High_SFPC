@@ -1,0 +1,38 @@
+'@context': https://schema.org/
+creativeWorkStatus: Published
+type: LearningResource
+name: High switching frequency power converters
+description: >-
+  Course materials on power converters switching in the MHz range: scaling laws, the HF commutation cell, gate drive, measurement, HF magnetics, soft-switching, resonant, VHF and switched-capacitor converters, control, EMI and thermal design. Includes lecture and exercise materials incl. release of source files using LaTeX, Python and Inkscape.
+license: https://creativecommons.org/licenses/by/4.0/deed.de
+id: https://github.com/IAS-Uni-Siegen/HSFPC_course
+creator:
+  - givenName: Bikash
+    familyName: Sah
+    id: https://orcid.org/0000-0002-0307-6727
+    type: Person
+    affiliation:
+      name: Universität Siegen
+      id: https://ror.org/02azyry73
+      type: Organization
+keywords:
+  - Leistungselektronik
+  - Hochfrequenz
+  - Resonanzwandler
+  - Magnetische Bauelemente
+  - Energietechnik
+  - Elektrotechnik
+inLanguage:
+  - en
+about:
+  - https://w3id.org/kim/hochschulfaechersystematik/n048
+  - https://w3id.org/kim/hochschulfaechersystematik/n316
+  - https://w3id.org/kim/hochschulfaechersystematik/n8
+learningResourceType:
+  - https://w3id.org/kim/hcrt/drill_and_practice
+  - https://w3id.org/kim/hcrt/simulation
+  - https://w3id.org/kim/hcrt/slide
+  - https://w3id.org/kim/hcrt/worksheet
+educationalLevel:
+  - https://w3id.org/kim/educationalLevel/level_A
+datePublished: '2026-10-13'

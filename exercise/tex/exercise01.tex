@@ -1,0 +1,255 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Frequency scaling of power converters}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Passive components of a buck converter versus switching frequency}
+
+The synchronous buck converter in \autoref{fig:ex01_buck} operates in continuous conduction mode with the data in \autoref{table:ex01_buck}. All components are ideal.
+
+\input{fig/ex01/figBuckConverter}
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{ll}
+		\toprule
+		Input voltage $V_\mathrm{in}$                       & $\SI{24}{\volt}$                       \\
+		Output voltage $V_\mathrm{o}$                       & $\SI{5}{\volt}$                        \\
+		Output current $I_\mathrm{o}$                       & $\SI{6}{\ampere}$                      \\
+		Peak-to-peak inductor current ripple $\Delta I_L$   & $\SI{40}{\percent}$ of $I_\mathrm{o}$  \\
+		Peak-to-peak output voltage ripple $\Delta V_\mathrm{o}$ & $\SI{25}{\milli\volt}$            \\
+		\bottomrule
+	\end{tabular}
+	\caption{Specification of the buck converter.}
+	\label{table:ex01_buck}
+\end{table}
+
+\subtask{Calculate the duty cycle $D$, the inductance $L$ and the capacitance $C$ for $f_\mathrm{sw}=\SI{200}{\kilo\hertz}$, $\SI{2}{\mega\hertz}$ and $\SI{20}{\mega\hertz}$.}
+
+\begin{solutionblock}
+	The duty cycle in continuous conduction mode is
+	\begin{equation}
+		D = \frac{V_\mathrm{o}}{V_\mathrm{in}} = \frac{\SI{5}{\volt}}{\SI{24}{\volt}} = 0.208.
+	\end{equation}
+	With $\Delta I_L = 0.4\cdot\SI{6}{\ampere} = \SI{2.4}{\ampere}$ the required inductance and capacitance are
+	\begin{equation}
+		L = \frac{V_\mathrm{o}(1-D)}{f_\mathrm{sw}\,\Delta I_L}, \qquad C = \frac{\Delta I_L}{8 f_\mathrm{sw}\,\Delta V_\mathrm{o}}.
+	\end{equation}
+	The results are listed in \autoref{stable:ex01_LC}. Both $L$ and $C$ scale with $1/f_\mathrm{sw}$.
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{lccc}
+			\toprule
+			$f_\mathrm{sw}$ & $\SI{200}{\kilo\hertz}$  & $\SI{2}{\mega\hertz}$   & $\SI{20}{\mega\hertz}$  \\
+			\midrule
+			$L$             & $\SI{8.25}{\micro\henry}$ & $\SI{825}{\nano\henry}$ & $\SI{82.5}{\nano\henry}$ \\
+			$C$             & $\SI{60}{\micro\farad}$   & $\SI{6}{\micro\farad}$  & $\SI{0.6}{\micro\farad}$ \\
+			\bottomrule
+		\end{tabular}
+		\caption{Inductance and capacitance versus switching frequency.}
+		\label{stable:ex01_LC}
+	\end{solutiontable}
+\end{solutionblock}
+
+\subtask{Calculate the peak energy stored in the inductor and compare it with the energy $W=P_\mathrm{o}/f_\mathrm{sw}$ delivered to the load in one switching period. What do you conclude?}
+
+\begin{solutionblock}
+	The peak inductor current is $\hat{i}_L = I_\mathrm{o}+\Delta I_L/2 = \SI{7.2}{\ampere}$ and the output power is $P_\mathrm{o}=\SI{30}{\watt}$.
+	\begin{equation}
+		E_L = \tfrac{1}{2} L \hat{i}_L^2 = \SI{214}{\micro\joule},\ \SI{21.4}{\micro\joule},\ \SI{2.14}{\micro\joule}
+		\qquad
+		W = \frac{P_\mathrm{o}}{f_\mathrm{sw}} = \SI{150}{\micro\joule},\ \SI{15}{\micro\joule},\ \SI{1.5}{\micro\joule}
+	\end{equation}
+	for $\SI{200}{\kilo\hertz}$, $\SI{2}{\mega\hertz}$ and $\SI{20}{\mega\hertz}$. The ratio
+	\begin{equation}
+		\frac{E_L}{W} = \frac{(1-D)\,\hat{i}_L^2}{2\,\Delta I_L\,I_\mathrm{o}} = 1.43
+	\end{equation}
+	does not depend on $f_\mathrm{sw}$. The inductor always stores about 1.4 times the energy processed per period, and this energy falls with $1/f_\mathrm{sw}$. A smaller stored energy allows a smaller magnetic component only if the flux density and the current density can be kept, which is the subject of the next subtask.
+\end{solutionblock}
+
+\subtask{Give three reasons why the inductor at $\SI{20}{\mega\hertz}$ is not 100 times smaller than the one at $\SI{200}{\kilo\hertz}$.}
+
+\begin{solutionblock}
+	\begin{itemize}
+		\item The winding still carries $\SI{6}{\ampere}$ DC. The conductor cross-section is set by the current, not by $f_\mathrm{sw}$.
+		\item Core loss density rises with $f^{\alpha}$ ($\alpha\approx1.4$--$2$ for ferrites). The peak AC flux density must therefore fall with frequency, so the core cannot shrink in proportion to $L$.
+		\item The skin depth falls from $\SI{148}{\micro\meter}$ at $\SI{200}{\kilo\hertz}$ to $\SI{15}{\micro\meter}$ at $\SI{20}{\mega\hertz}$. The AC resistance of the winding rises, and proximity effect in multilayer windings makes it worse.
+		\item Terminations, clearances and the minimum practical size of cores and bobbins do not scale.
+	\end{itemize}
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Corner frequency of an input EMI filter}
+
+A converter needs an input filter that attenuates the fundamental switching component by $A=\SI{60}{\decibel}$. Use an ideal second-order LC low-pass filter whose attenuation rises with $\SI{40}{\decibel}$ per decade above its corner frequency $f_\mathrm{c}$.
+
+\subtask{Derive $f_\mathrm{c}$ as a function of $f_\mathrm{sw}$ and $A$. Calculate $f_\mathrm{c}$ and the product $LC$ for $f_\mathrm{sw}=\SI{200}{\kilo\hertz}$ and $f_\mathrm{sw}=\SI{2}{\mega\hertz}$.}
+
+\begin{solutionblock}
+	From $A = 40\log_{10}\left(f_\mathrm{sw}/f_\mathrm{c}\right)$ follows
+	\begin{equation}
+		f_\mathrm{c} = \frac{f_\mathrm{sw}}{10^{A/40}} = \frac{f_\mathrm{sw}}{31.6}, \qquad LC = \frac{1}{\left(2\pi f_\mathrm{c}\right)^2}.
+	\end{equation}
+	For $\SI{200}{\kilo\hertz}$: $f_\mathrm{c}=\SI{6.32}{\kilo\hertz}$ and $LC=\SI{6.33 \cdot 10^{-10}}{\square\second}$, e.g.\ $\SI{10}{\micro\henry}$ with $\SI{63.3}{\micro\farad}$.\\
+	For $\SI{2}{\mega\hertz}$: $f_\mathrm{c}=\SI{63.2}{\kilo\hertz}$ and $LC=\SI{6.33 \cdot 10^{-12}}{\square\second}$, e.g.\ $\SI{1}{\micro\henry}$ with $\SI{6.33}{\micro\farad}$.\\
+	Ten times the switching frequency allows a 100 times smaller $LC$ product.
+\end{solutionblock}
+
+\subtask{Many flyback adapters switch at about $\SI{65}{\kilo\hertz}$. Explain this choice with respect to the conducted-emission band from $\SI{150}{\kilo\hertz}$ to $\SI{30}{\mega\hertz}$.}
+
+\begin{solutionblock}
+	The fundamental at $\SI{65}{\kilo\hertz}$ and the second harmonic at $\SI{130}{\kilo\hertz}$ lie below $\SI{150}{\kilo\hertz}$ and are not regulated. The first harmonic inside the band is the third one at $\SI{195}{\kilo\hertz}$. It is smaller than the fundamental, and the filter has to provide its attenuation at a higher frequency. Both relax the filter.
+\end{solutionblock}
+
+\subtask{Why does the filter at $\SI{2}{\mega\hertz}$ not become 100 times smaller in practice?}
+
+\begin{solutionblock}
+	The ideal $-\SI{40}{\decibel}$ per decade holds only up to the self-resonance of the filter components. The winding capacitance of the inductor and the ESL of the capacitor limit the attenuation at high frequency, and the regulated band extends to $\SI{30}{\mega\hertz}$. In addition, the components must still carry the input current and withstand the input voltage, and common-mode noise from $C_\mathrm{p}\,\mathrm{d}v/\mathrm{d}t$ needs its own filter stage.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Skin depth and winding design}
+
+Use the resistivity of copper $\rho_{20}=\SI{1.72 \cdot 10^{-8}}{\ohm\meter}$ at $\SI{20}{\celsius}$, its temperature coefficient $\alpha_\mathrm{Cu}=\SI{3.93 \cdot 10^{-3}}{\per\kelvin}$ and $\mu_0=4\pi\cdot\SI{10^{-7}}{\henry\per\meter}$.
+
+\subtask{Calculate the skin depth $\delta=\sqrt{\rho/(\pi f \mu_0)}$ of copper at $\SI{20}{\celsius}$ and at $\SI{100}{\celsius}$ for $\SI{100}{\kilo\hertz}$, $\SI{1}{\mega\hertz}$, $\SI{6.78}{\mega\hertz}$, $\SI{13.56}{\mega\hertz}$ and $\SI{30}{\mega\hertz}$.}
+
+\begin{solutionblock}
+	At $\SI{100}{\celsius}$ the resistivity is $\rho_{100}=\rho_{20}\,(1+\alpha_\mathrm{Cu}\cdot\SI{80}{\kelvin})=1.31\,\rho_{20}$, so $\delta$ is $\sqrt{1.31}=1.15$ times larger. The results are listed in \autoref{stable:ex01_skin}.
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{lccccc}
+			\toprule
+			$f$                               & $\SI{100}{\kilo\hertz}$ & $\SI{1}{\mega\hertz}$ & $\SI{6.78}{\mega\hertz}$ & $\SI{13.56}{\mega\hertz}$ & $\SI{30}{\mega\hertz}$ \\
+			\midrule
+			$\delta$ at $\SI{20}{\celsius}$   & $\SI{209}{\micro\meter}$ & $\SI{66.0}{\micro\meter}$ & $\SI{25.3}{\micro\meter}$ & $\SI{17.9}{\micro\meter}$ & $\SI{12.1}{\micro\meter}$ \\
+			$\delta$ at $\SI{100}{\celsius}$  & $\SI{239}{\micro\meter}$ & $\SI{75.7}{\micro\meter}$ & $\SI{29.1}{\micro\meter}$ & $\SI{20.6}{\micro\meter}$ & $\SI{13.8}{\micro\meter}$ \\
+			\bottomrule
+		\end{tabular}
+		\caption{Skin depth of copper.}
+		\label{stable:ex01_skin}
+	\end{solutiontable}
+\end{solutionblock}
+
+\subtask{A round copper wire with a diameter of $\SI{1}{\milli\meter}$ carries a $\SI{1}{\mega\hertz}$ current. Estimate $R_\mathrm{ac}/R_\mathrm{dc}$ by assuming that the current flows uniformly in a layer of thickness $\delta$ below the surface. Compare with the exact value of 4.05.}
+
+\begin{solutionblock}
+	With the radius $r=\SI{0.5}{\milli\meter}$ and $\delta\ll r$, the conducting area is about $2\pi r\delta$ instead of $\pi r^2$:
+	\begin{equation}
+		\frac{R_\mathrm{ac}}{R_\mathrm{dc}} \approx \frac{\pi r^2}{2\pi r\delta} = \frac{r}{2\delta} = \frac{\SI{500}{\micro\meter}}{2\cdot\SI{66.0}{\micro\meter}} = 3.79.
+	\end{equation}
+	This is $\SI{6}{\percent}$ below the exact value from the Bessel-function solution. The asymptotic expansion of the exact solution adds $1/4$, giving $r/(2\delta)+1/4=4.04$.
+\end{solutionblock}
+
+\subtask{A single-layer foil winding carries a $\SI{6.78}{\mega\hertz}$ current. The magnetic field is on one side of the foil only. Its AC resistance per unit width and length is
+	\begin{equation*}
+		R'_\mathrm{ac} = \frac{\rho}{\delta}\,g(\Delta), \qquad g(\Delta)=\frac{\sinh 2\Delta + \sin 2\Delta}{\cosh 2\Delta - \cos 2\Delta}, \qquad \Delta = \frac{h}{\delta}
+	\end{equation*}
+	with the foil thickness $h$. Show that $R'_\mathrm{ac}$ is minimal for $h=\frac{\pi}{2}\delta$. Compare $h=\SI{35}{\micro\meter}$ (1\,oz) with $h=\SI{70}{\micro\meter}$ (2\,oz) at $\SI{20}{\celsius}$.}
+
+\begin{solutionblock}
+	With $x=2\Delta$ and the identities $\cosh^2 x-\sinh^2 x=1$ and $\cos^2 x+\sin^2 x=1$ the derivative becomes
+	\begin{equation}
+		\frac{\mathrm{d}g}{\mathrm{d}x} = \frac{(\cosh x+\cos x)(\cosh x-\cos x)-(\sinh x+\sin x)^2}{(\cosh x-\cos x)^2} = \frac{-2\sinh x\,\sin x}{(\cosh x-\cos x)^2}.
+	\end{equation}
+	It is negative for $0<x<\pi$ and positive for $\pi<x<2\pi$, so the minimum is at $x=\pi$, i.e.\ $h=\frac{\pi}{2}\delta$ with $g=0.917$. Thicker foil does not help: $g\rightarrow 1$ for $h\gg\delta$.\\
+	At $\SI{6.78}{\mega\hertz}$, $\delta=\SI{25.3}{\micro\meter}$ and the optimum is $h=\SI{39.8}{\micro\meter}$.
+	\begin{itemize}
+		\item 1\,oz: $\Delta=1.38$, $g=0.930$, only $\SI{1.4}{\percent}$ above the optimum.
+		\item 2\,oz: $\Delta=2.76$, $g=1.000$, i.e.\ $\SI{7.5}{\percent}$ more AC resistance than 1\,oz.
+	\end{itemize}
+	The thinner copper is the better choice. The extra copper of the 2\,oz foil carries almost no current.
+\end{solutionblock}
+
+\subtask{By how much does the AC resistance of the 1\,oz foil rise from $\SI{20}{\celsius}$ to $\SI{100}{\celsius}$? Compare with the DC resistance.}
+
+\begin{solutionblock}
+	The DC resistance rises with $\rho$, i.e.\ by $\SI{31}{\percent}$. The AC resistance is proportional to $\rho/\delta\cdot g(\Delta)\propto\sqrt{\rho}\,g(\Delta)$. At $\SI{100}{\celsius}$, $\delta=\SI{29.1}{\micro\meter}$, $\Delta=1.20$ and $g=0.974$:
+	\begin{equation}
+		\frac{R'_\mathrm{ac,100}}{R'_\mathrm{ac,20}} = \sqrt{1.31}\cdot\frac{0.974}{0.930} = 1.20.
+	\end{equation}
+	The AC resistance rises by only $\SI{20}{\percent}$, because the larger skin depth uses more of the copper.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Capacitive switching loss and the limit of hard switching}
+
+In the half-bridge of \autoref{fig:ex01_halfbridge}, $S_1$ turns on while it blocks the full voltage $V_\mathrm{DC}$ (hard turn-on). Both switches are identical. Their output charge $Q_\mathrm{oss}(V_\mathrm{DC})=\int_0^{V_\mathrm{DC}}C_\mathrm{oss}(v)\,\mathrm{d}v$ is given in \autoref{table:ex01_cases}. The values are illustrative and do not describe a specific device.
+
+\input{fig/ex01/figHalfBridgeHardTurnOn}
+
+\begin{table}[ht]
+	\centering
+	\begin{tabular}{llll}
+		\toprule
+		Application                         & $V_\mathrm{DC}$          & $Q_\mathrm{oss}(V_\mathrm{DC})$ & $P_\mathrm{o}$          \\
+		\midrule
+		A: $\SI{650}{\volt}$ GaN, PFC or DC-DC  & $\SI{400}{\volt}$    & $\SI{56}{\nano\coulomb}$        & $\SI{1.5}{\kilo\watt}$  \\
+		B: $\SI{100}{\volt}$ GaN, bus converter & $\SI{48}{\volt}$     & $\SI{25}{\nano\coulomb}$        & $\SI{500}{\watt}$       \\
+		C: $\SI{30}{\volt}$ GaN, point of load  & $\SI{12}{\volt}$     & $\SI{5}{\nano\coulomb}$         & $\SI{50}{\watt}$        \\
+		\bottomrule
+	\end{tabular}
+	\caption{Three applications with hard-switched half-bridges.}
+	\label{table:ex01_cases}
+\end{table}
+
+\subtask{Show that the energy dissipated at each hard turn-on is $E=Q_\mathrm{oss}V_\mathrm{DC}$, independent of the shape of $C_\mathrm{oss}(v)$. Neglect the $V$--$I$ overlap.}
+
+\begin{solutionblock}
+	Before the turn-on, $C_\mathrm{oss,1}$ is charged to $V_\mathrm{DC}$ and stores $E_\mathrm{oss}(V_\mathrm{DC})$, while $C_\mathrm{oss,2}$ is discharged.
+	\begin{itemize}
+		\item The channel of $S_1$ discharges $C_\mathrm{oss,1}$. Its stored energy $E_\mathrm{oss}$ is dissipated in $S_1$.
+		\item The channel of $S_1$ also carries the current that charges $C_\mathrm{oss,2}$ to $V_\mathrm{DC}$. The DC link delivers the charge $Q_\mathrm{oss}$ and the energy $Q_\mathrm{oss}V_\mathrm{DC}$. Of this, $E_\mathrm{oss}$ remains stored in $C_\mathrm{oss,2}$, and $Q_\mathrm{oss}V_\mathrm{DC}-E_\mathrm{oss}$ is dissipated in $S_1$.
+	\end{itemize}
+	In total
+	\begin{equation}
+		E = E_\mathrm{oss} + \left(Q_\mathrm{oss}V_\mathrm{DC}-E_\mathrm{oss}\right) = Q_\mathrm{oss}V_\mathrm{DC}.
+	\end{equation}
+	Only the charge $Q_\mathrm{oss}(V_\mathrm{DC})$ appears, not the shape of $C_\mathrm{oss}(v)$.
+\end{solutionblock}
+
+\subtask{Calculate $E$ and the capacitive switching loss $P=E f_\mathrm{sw}$ at $\SI{100}{\kilo\hertz}$ and $\SI{1}{\mega\hertz}$ for applications A, B and C. At which $f_\mathrm{sw}$ does $P$ reach $\SI{1}{\percent}$ of $P_\mathrm{o}$?}
+
+\begin{solutionblock}
+	The results are listed in \autoref{stable:ex01_qoss}, with $f_{1\%}=0.01\,P_\mathrm{o}/(Q_\mathrm{oss}V_\mathrm{DC})$.
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{lcccc}
+			\toprule
+			Application & $E=Q_\mathrm{oss}V_\mathrm{DC}$ & $P$ at $\SI{100}{\kilo\hertz}$ & $P$ at $\SI{1}{\mega\hertz}$ & $f_{1\%}$ \\
+			\midrule
+			A & $\SI{22.4}{\micro\joule}$ & $\SI{2.24}{\watt}$  & $\SI{22.4}{\watt}$ & $\SI{670}{\kilo\hertz}$ \\
+			B & $\SI{1.2}{\micro\joule}$  & $\SI{0.12}{\watt}$  & $\SI{1.2}{\watt}$  & $\SI{4.2}{\mega\hertz}$ \\
+			C & $\SI{60}{\nano\joule}$    & $\SI{6}{\milli\watt}$ & $\SI{60}{\milli\watt}$ & $\SI{8.3}{\mega\hertz}$ \\
+			\bottomrule
+		\end{tabular}
+		\caption{Capacitive switching loss of the three applications.}
+		\label{stable:ex01_qoss}
+	\end{solutiontable}
+	At $\SI{400}{\volt}$ hard switching ends below $\SI{1}{\mega\hertz}$, while low-voltage converters can be hard-switched into the MHz range. Above these frequencies the capacitive energy must be recovered by zero-voltage switching (L8--L10).
+\end{solutionblock}
+
+\subtask{The datasheet of the device in application A gives $C_\mathrm{oss}=\SI{50}{\pico\farad}$ at $\SI{400}{\volt}$. Calculate $\frac{1}{2}C_\mathrm{oss}V_\mathrm{DC}^2$ and compare it with $Q_\mathrm{oss}V_\mathrm{DC}$. Explain the difference.}
+
+\begin{solutionblock}
+	\begin{equation}
+		\tfrac{1}{2}C_\mathrm{oss}V_\mathrm{DC}^2 = \tfrac{1}{2}\cdot\SI{50}{\pico\farad}\cdot(\SI{400}{\volt})^2 = \SI{4}{\micro\joule} \ll Q_\mathrm{oss}V_\mathrm{DC} = \SI{22.4}{\micro\joule}.
+	\end{equation}
+	$C_\mathrm{oss}$ is strongly nonlinear and much larger at low voltage, so most of $Q_\mathrm{oss}$ is stored at low voltage. The small-signal value at $\SI{400}{\volt}$ therefore underestimates the charge. Moreover, $\frac{1}{2}CV^2$ is a stored energy, while the loss of a hard turn-on is $Q_\mathrm{oss}V_\mathrm{DC}$. Use $Q_\mathrm{oss}$ or the charge-equivalent capacitance $C_\mathrm{o(tr)}=Q_\mathrm{oss}/V_\mathrm{DC}$ for this calculation (L2).
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx01\_task.ipynb} extends Tasks 1.1 to 1.4 to frequency sweeps.

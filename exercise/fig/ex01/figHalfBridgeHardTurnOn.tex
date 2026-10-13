@@ -1,0 +1,26 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Half-bridge with output capacitances (Exercise 01, Task 4)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			% transistors
+			\draw (3,3.75) node[nigfete](S1){} (3,1.25) node[nigfete](S2){};
+			\draw (S1) node[anchor=east, xshift=-0.9cm]{$S_1$};
+			\draw (S2) node[anchor=east, xshift=-0.9cm]{$S_2$};
+			% DC link
+			\draw (0,0) to[V, l=$V_\mathrm{DC}$] (0,5) -- (3,5) -- (S1.D);
+			\draw (S1.S) -- (S2.D);
+			\draw (S2.S) -- (3,0) -- (0,0);
+			% output capacitances in parallel to the switches
+			\draw (3,5) -- (4.3,5) to[C, l=$C_\mathrm{oss,1}$] (4.3,2.5);
+			\draw (3,2.5) to[short, *-*] (4.3,2.5) to[C, l=$C_\mathrm{oss,2}$] (4.3,0) -- (3,0);
+			% load current
+			\draw (4.3,2.5) to[short, i=$I_\mathrm{L}$, -o] (6.0,2.5);
+			\draw (3,5) node[circ]{} (3,0) node[circ]{};
+		\end{circuitikz}
+	\end{center}
+	\caption{Half-bridge with the output capacitances of both switches. Before $S_1$ turns on, the load current flows through $S_2$ in reverse direction.}
+	\label{fig:ex01_halfbridge}
+\end{figure}
