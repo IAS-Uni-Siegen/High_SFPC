@@ -20,10 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Ubuntu's TeX Live is outdated and lacks the colorblind package
       - name: Install LaTeX
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-full
+        uses: TeX-Live/setup-texlive-action@v3
+        with:
+          packages: scheme-full
 
       - name: Build lecture
         working-directory: lecture
