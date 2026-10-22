@@ -1,0 +1,24 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gate loop with split driver outputs (Exercise 04, Task 1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			% driver supply capacitor and output stage
+			\draw (0,0) to[C, l=$C_\mathrm{VDD}$] (0,4) -- (1.5,4);
+			\draw (1.5,4) to[R, l=$R_\mathrm{up}$] (1.5,2.7) to[nos] (1.5,2.0) coordinate (oh);
+			\draw (1.5,1.3) coordinate (ol) to[nos] (1.5,0.6) to[R, l=$R_\mathrm{dn}$] (1.5,-0.7) -- (1.5,-0.9) coordinate (k);
+			\draw (oh) -- (2.2,2.0) to[R, l=$R_\mathrm{G,ext}$] (4.2,2.0) -- (4.6,2.0) coordinate (a);
+			\draw (ol) -- (4.6,1.3) coordinate (b);
+			\draw (a) -- (b);
+			% gate loop inductance, internal gate resistance and input capacitance
+			\draw (4.6,1.65) node[circ]{} to[L, l=$L_\mathrm{G}$] (6.6,1.65) to[R, l=$R_\mathrm{G,int}$] (8.4,1.65) to[C, l=$C_\mathrm{iss}$] (8.4,-0.9) -- (k) -- (0,-0.9) -- (0,0);
+			\draw[densely dashed, gray] (1.0,-1.05) rectangle (2.05,4.25);
+			\node[font=\small, anchor=south] at (1.5,4.25) {driver};
+			\node[font=\small, anchor=north] at (5.0,-1.0) {Kelvin source};
+		\end{circuitikz}
+	\end{center}
+	\caption{Gate loop of the transistor with a split-output driver. At turn-on the current flows from $C_\mathrm{VDD}$ through $R_\mathrm{up}$ and $R_\mathrm{G,ext}$; at turn-off through $R_\mathrm{dn}$.}
+	\label{fig:ex04_gateloop}
+\end{figure}

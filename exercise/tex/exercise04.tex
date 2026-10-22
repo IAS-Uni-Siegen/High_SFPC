@@ -1,0 +1,227 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Gate drive: damping, common-source inductance and bootstrap}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Damping of the gate loop}
+
+The high-side switch of a $\SI{48}{\volt}$ GaN half-bridge is an EPC2045: $C_\mathrm{iss}=\SI{737}{\pico\farad}$ (at $v_\mathrm{GS}=\SI{0}{\volt}$, $v_\mathrm{DS}=\SI{50}{\volt}$), $Q_\mathrm{G}=\SI{5.9}{\nano\coulomb}$ at $\SI{5}{\volt}$, $Q_\mathrm{GD}=\SI{0.8}{\nano\coulomb}$ at $\SI{50}{\volt}$, $R_\mathrm{G,int}=\SI{0.6}{\ohm}$, gate voltage limits $+\SI{6}{\volt}$ and $-\SI{4}{\volt}$, threshold voltage $V_\mathrm{th}=\SI{1.4}{\volt}$. The driver supplies $V_\mathrm{dr}=\SI{5}{\volt}$; its output stage has a pull-up resistance $R_\mathrm{up}=\SI{2.1}{\ohm}$ and a pull-down resistance $R_\mathrm{dn}=\SI{0.6}{\ohm}$ at separate pins (\autoref{fig:ex04_gateloop}). The inductance of the gate loop is $L_\mathrm{G,on}=\SI{2.0}{\nano\henry}$ at turn-on (through $C_\mathrm{VDD}$) and $L_\mathrm{G,off}=\SI{1.2}{\nano\henry}$ at turn-off.
+
+\input{fig/ex04/figGateLoop}
+
+\subtask{Calculate the external gate resistance $R_\mathrm{G,ext}$ that gives critical damping of the turn-on loop. Which value of the gate capacitance gives the conservative result: $C_\mathrm{iss}$ from the datasheet table or $Q_\mathrm{G}/V_\mathrm{dr}$?}
+
+\begin{solutionblock}
+	\begin{equation}
+		R_\mathrm{crit}=2\sqrt{\frac{L_\mathrm{G,on}}{C_\mathrm{iss}}}=2\sqrt{\frac{\SI{2.0}{\nano\henry}}{\SI{737}{\pico\farad}}}=\SI{3.29}{\ohm},\qquad
+		R_\mathrm{G,ext}\geq R_\mathrm{crit}-R_\mathrm{up}-R_\mathrm{G,int}=\SI{0.59}{\ohm}.
+	\end{equation}
+	Chosen: $R_\mathrm{G,ext}=\SI{0.68}{\ohm}$ (E12), i.e.\ $R_\mathrm{G,on}=\SI{3.38}{\ohm}$ and $\zeta=1.03$. (Without $R_\mathrm{G,ext}$, $\zeta=0.82$ and the overshoot is only 1\,\%; critical damping is a conservative criterion.)\\
+	With $C=Q_\mathrm{G}/V_\mathrm{dr}=\SI{1.18}{\nano\farad}$ the critical resistance is only $\SI{2.60}{\ohm}$ and no external resistor would be needed. The gate capacitance of a GaN transistor rises with $v_\mathrm{GS}$. The smaller value, $C_\mathrm{iss}$ at $v_\mathrm{GS}=\SI{0}{\volt}$, gives the larger $R_\mathrm{crit}$ and is therefore the conservative choice.
+\end{solutionblock}
+
+\subtask{Check the turn-off loop without an external resistor in the off path. How far does the gate voltage undershoot, and does it ring back above $V_\mathrm{th}$?}
+
+\begin{solutionblock}
+	$R=R_\mathrm{dn}+R_\mathrm{G,int}=\SI{1.2}{\ohm}$:
+	\begin{equation}
+		\zeta=\frac{R}{2}\sqrt{\frac{C_\mathrm{iss}}{L_\mathrm{G,off}}}=0.47,\qquad
+		\mathrm{OS}=e^{-\pi\zeta/\sqrt{1-\zeta^2}}=0.188.
+	\end{equation}
+	From $\SI{5}{\volt}$ the gate undershoots to $-5\cdot0.188=\SI{-0.94}{\volt}$ (limit $\SI{-4}{\volt}$) and rings back to $+5\cdot0.188^2=\SI{0.18}{\volt}$, well below $V_\mathrm{th}$. No external turn-off resistor is needed; the transistor can be turned off fast.
+\end{solutionblock}
+
+\subtask{Estimate the duration of the Miller plateau at turn-on and the average $\mathrm{d}v/\mathrm{d}t$ of the switch node ($V_\mathrm{pl}\approx\SI{2.5}{\volt}$). Compare with the CMTI of $\SI{50}{\volt\per\nano\second}$ of a driver such as the LMG1205. Which $R_\mathrm{G,ext}$ limits the average edge to $\SI{25}{\volt\per\nano\second}$?}
+
+\begin{solutionblock}
+	\begin{equation}
+		t_\mathrm{vf}\approx\frac{R_\mathrm{G,on}Q_\mathrm{GD}}{V_\mathrm{dr}-V_\mathrm{pl}}=\frac{\SI{3.38}{\ohm}\cdot\SI{0.8}{\nano\coulomb}}{\SI{2.5}{\volt}}=\SI{1.08}{\nano\second},\qquad
+		\frac{\mathrm{d}v}{\mathrm{d}t}\approx\frac{\SI{48}{\volt}}{\SI{1.08}{\nano\second}}=\SI{44}{\volt\per\nano\second}.
+	\end{equation}
+	The peak $\mathrm{d}v/\mathrm{d}t$ is higher than the average, so a CMTI of $\SI{50}{\volt\per\nano\second}$ leaves no margin. For $\SI{25}{\volt\per\nano\second}$: $t_\mathrm{vf}=\SI{1.92}{\nano\second}$, $R_\mathrm{G,on}=t_\mathrm{vf}(V_\mathrm{dr}-V_\mathrm{pl})/Q_\mathrm{GD}=\SI{6.0}{\ohm}$, i.e.\ $R_\mathrm{G,ext}=\SI{3.3}{\ohm}$. The loop is then over-damped ($\zeta=1.8$) and the turn-on overlap becomes longer. The alternative is a driver with a higher CMTI (LMG1210: $\SI{300}{\volt\per\nano\second}$).
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Common-source inductance and turn-on loss}
+
+The transistor of Task 4.1 turns on hard at $V_\mathrm{DC}=\SI{48}{\volt}$ and $I_\mathrm{L}=\SI{10}{\ampere}$ with $R_\mathrm{G}=\SI{3.38}{\ohm}$. During the current rise the drain current follows $i_\mathrm{D}\approx g_\mathrm{m}(v_\mathrm{GS}-V_\mathrm{th})$ with $g_\mathrm{m}=\SI{9.1}{\siemens}$ ($\SI{10}{\ampere}$ at $V_\mathrm{pl}=\SI{2.5}{\volt}$), and the gate current charges $C_\mathrm{iss}$. The source inductance $L_\mathrm{CS}$ is common to the power loop and the gate loop.
+
+\subtask{Show that during the current rise
+\begin{equation*}
+	V_\mathrm{dr}-v_\mathrm{GS}=\left(R_\mathrm{G}C_\mathrm{iss}+L_\mathrm{CS}\,g_\mathrm{m}\right)\frac{\mathrm{d}v_\mathrm{GS}}{\mathrm{d}t}
+\end{equation*}
+and derive the current-rise time $t_\mathrm{ir}$ from $V_\mathrm{th}$ to $V_\mathrm{pl}$.}
+
+\begin{solutionblock}
+	The gate loop gives $v_\mathrm{GS}=V_\mathrm{dr}-R_\mathrm{G}i_\mathrm{G}-L_\mathrm{CS}\,\mathrm{d}i_\mathrm{D}/\mathrm{d}t$. With $i_\mathrm{G}=C_\mathrm{iss}\,\mathrm{d}v_\mathrm{GS}/\mathrm{d}t$ and $\mathrm{d}i_\mathrm{D}/\mathrm{d}t=g_\mathrm{m}\,\mathrm{d}v_\mathrm{GS}/\mathrm{d}t$ the equation follows. It is a first-order equation with the time constant $\tau=R_\mathrm{G}C_\mathrm{iss}+L_\mathrm{CS}g_\mathrm{m}$:
+	\begin{equation}
+		v_\mathrm{GS}(t)=V_\mathrm{dr}-(V_\mathrm{dr}-V_\mathrm{th})\,e^{-t/\tau},\qquad
+		t_\mathrm{ir}=\tau\ln\frac{V_\mathrm{dr}-V_\mathrm{th}}{V_\mathrm{dr}-V_\mathrm{pl}}=0.365\,\tau.
+	\end{equation}
+	The common-source inductance acts like an additional gate resistance $L_\mathrm{CS}g_\mathrm{m}/C_\mathrm{iss}$.
+\end{solutionblock}
+
+\subtask{Calculate $t_\mathrm{ir}$ and the overlap energy $E_\mathrm{ir}=\frac12V_\mathrm{DC}I_\mathrm{L}t_\mathrm{ir}$ for $L_\mathrm{CS}=0$ (Kelvin source), $\SI{0.3}{\nano\henry}$ and $\SI{1}{\nano\henry}$. What does this mean at $f_\mathrm{sw}=\SI{2}{\mega\hertz}$?}
+
+\begin{solutionblock}
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			$L_\mathrm{CS}$ & $L_\mathrm{CS}g_\mathrm{m}/C_\mathrm{iss}$ & $\tau$ & $t_\mathrm{ir}$ & $E_\mathrm{ir}$ & $P$ at $\SI{2}{\mega\hertz}$ \\
+			\hline
+			$0$                     & $\SI{0}{\ohm}$    & $\SI{2.49}{\nano\second}$ & $\SI{0.91}{\nano\second}$ & $\SI{0.22}{\micro\joule}$ & $\SI{0.44}{\watt}$ \\
+			$\SI{0.3}{\nano\henry}$ & $\SI{3.7}{\ohm}$  & $\SI{5.22}{\nano\second}$ & $\SI{1.90}{\nano\second}$ & $\SI{0.46}{\micro\joule}$ & $\SI{0.91}{\watt}$ \\
+			$\SI{1}{\nano\henry}$   & $\SI{12.3}{\ohm}$ & $\SI{11.6}{\nano\second}$ & $\SI{4.22}{\nano\second}$ & $\SI{1.01}{\micro\joule}$ & $\SI{2.03}{\watt}$ \\
+			\hline
+		\end{tabular}
+		\caption{Current rise with common-source inductance}
+	\end{solutiontable}
+	One nanohenry of common-source inductance multiplies the current-rise loss by 4.6. For comparison, the capacitive loss of a hard turn-on is $Q_\mathrm{oss}V_\mathrm{DC}=\SI{1.2}{\micro\joule}$. With a Kelvin source the gate loop no longer contains $L_\mathrm{CS}$. (The drop $L_\mathrm{loop}\,\mathrm{d}i/\mathrm{d}t$ across the power loop, which lowers $v_\mathrm{DS}$ during the current rise, is neglected.)
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{False turn-on by the current transfer}
+
+During the dead time the low-side transistor conducts $I_\mathrm{L}=\SI{10}{\ampere}$ in reverse. Then the high-side transistor turns on and takes over the current within $t_\mathrm{p}=\SI{1}{\nano\second}$. The gate loop of the low-side transistor (\autoref{fig:ex04_csi}) has $L_\mathrm{G}=\SI{2}{\nano\henry}$, $C_\mathrm{GS}=\SI{600}{\pico\farad}$ and the resistance $R_\mathrm{off}$; it returns to ground below the common-source inductance $L_\mathrm{CS}=\SI{0.5}{\nano\henry}$. The driver holds its output at $\SI{0}{\volt}$.
+
+\input{fig/ex04/figCSI}
+
+\subtask{Write down the differential equation of $v_\mathrm{GS}$ of the low-side transistor. Calculate its source term during the current transfer.}
+
+\begin{solutionblock}
+	\begin{equation}
+		L_\mathrm{G}C_\mathrm{GS}\ddot{v}_\mathrm{GS}+R_\mathrm{off}C_\mathrm{GS}\dot{v}_\mathrm{GS}+v_\mathrm{GS}=-L_\mathrm{CS}\frac{\mathrm{d}i_\mathrm{D}}{\mathrm{d}t}.
+	\end{equation}
+	The drain current of the low-side transistor rises from $\SI{-10}{\ampere}$ to $0$ within $\SI{1}{\nano\second}$: $\mathrm{d}i_\mathrm{D}/\mathrm{d}t=\SI{10}{\ampere\per\nano\second}$, and the source term is a pulse of $\SI{-5}{\volt}$ for $\SI{1}{\nano\second}$.
+\end{solutionblock}
+
+\subtask{Neglect the damping ($R_\mathrm{off}=0$). Show that after the pulse the gate voltage oscillates with the amplitude $2L_\mathrm{CS}\frac{\mathrm{d}i_\mathrm{D}}{\mathrm{d}t}\left|\sin\frac{\omega_0t_\mathrm{p}}{2}\right|$ and evaluate it. What happens?}
+
+\begin{solutionblock}
+	The step response of the undamped loop is $1-\cos\omega_0t$, with $\omega_0=1/\sqrt{L_\mathrm{G}C_\mathrm{GS}}=\SI{9.13 \cdot 10^{8}}{\per\second}$ ($f_0=\SI{145}{\mega\hertz}$). The pulse is the difference of two steps; for $t>t_\mathrm{p}$, with $V_\mathrm{s}=L_\mathrm{CS}\,\mathrm{d}i_\mathrm{D}/\mathrm{d}t$:
+	\begin{equation}
+		v_\mathrm{GS}=-V_\mathrm{s}\left[\cos\omega_0(t-t_\mathrm{p})-\cos\omega_0t\right]=-2V_\mathrm{s}\sin\frac{\omega_0t_\mathrm{p}}{2}\,\sin\omega_0\!\left(t-\frac{t_\mathrm{p}}{2}\right).
+	\end{equation}
+	Amplitude: $2\cdot\SI{5}{\volt}\cdot\sin(0.456)=\SI{4.4}{\volt}$. The gate swings to $+\SI{4.4}{\volt}$, far above $V_\mathrm{th}$: the low-side transistor turns on while the high-side transistor is on (shoot-through). The negative peak exceeds the $\SI{-4}{\volt}$ limit.
+\end{solutionblock}
+
+\subtask{The notebook gives a maximum gate voltage of $\SI{1.61}{\volt}$ for $R_\mathrm{off}=\SI{0.8}{\ohm}$ and $\SI{0.11}{\volt}$ for $\SI{2.5}{\ohm}$. Which $R_\mathrm{off}$ keeps the peak below $V_\mathrm{th}/2=\SI{0.7}{\volt}$? Discuss the side effects and the better remedy.}
+
+\begin{solutionblock}
+	About $R_\mathrm{off}\geq\SI{1.45}{\ohm}$ ($\zeta\geq0.4$). A larger off-path resistance slows the turn-off and raises the voltage that $C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$ induces during the following voltage transition (for the EPC2045 with a Miller ratio below 1 this is not critical). The better remedy is a Kelvin-source connection: the gate loop then returns at the source pad and contains only the small inductance shared inside the package, so the pulse almost disappears.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Bootstrap supply}
+
+The high-side driver of a $\SI{48}{\volt}\rightarrow\SI{12}{\volt}$ GaN buck converter ($D=0.25$, $f_\mathrm{sw}=1$--$\SI{3}{\mega\hertz}$, dead times of $\SI{5}{\nano\second}$) is supplied by the bootstrap circuit in \autoref{fig:ex04_boot}: $V_\mathrm{DD}=\SI{5}{\volt}$, forward voltage of the charging path $V_\mathrm{F}=\SI{0.5}{\volt}$, $R_\mathrm{boot}=\SI{2}{\ohm}$. Per period the high-side driver draws $Q_\mathrm{tot}=\SI{8}{\nano\coulomb}$ (gate and driver). During reverse conduction the low-side transistor has $V_\mathrm{SD}=\SI{2.5}{\volt}$.
+
+\input{fig/ex04/figBootstrap}
+
+\subtask{Choose $C_\mathrm{boot}$ for a droop of at most $\SI{0.1}{\volt}$ per period. What else must be considered when the capacitor is selected?}
+
+\begin{solutionblock}
+	$C_\mathrm{boot}\geq Q_\mathrm{tot}/\Delta V=\SI{80}{\nano\farad}$, chosen $\SI{100}{\nano\farad}$ (droop $\SI{80}{\milli\volt}$). A ceramic capacitor of class X7R loses part of its capacitance under DC bias: the value at $\SI{5}{\volt}$ counts. It must be placed directly at the HB and HS pins of the driver, because it delivers the gate current peaks.
+\end{solutionblock}
+
+\subtask{ZVS operation (brief B1): the low-side transistor conducts in reverse only in the dead time after the high-side turn-off, and then conducts for at least $\SI{240}{\nano\second}$ per period ($\SI{3}{\mega\hertz}$). Show that $C_\mathrm{boot}$ is recharged to about $V_\mathrm{DD}-V_\mathrm{F}$.}
+
+\begin{solutionblock}
+	The charging time constant is $R_\mathrm{boot}C_\mathrm{boot}=\SI{200}{\nano\second}$. In the dead time the switch node is at $-V_\mathrm{SD}$ and the capacitor is charged towards $V_\mathrm{DD}-V_\mathrm{F}+V_\mathrm{SD}=\SI{7}{\volt}$; in $\SI{5}{\nano\second}$ this adds at most $(\SI{7}{\volt}-\SI{4.5}{\volt})/\SI{2}{\ohm}\cdot\SI{5}{\nano\second}=\SI{6.25}{\nano\coulomb}$ or $\SI{62.5}{\milli\volt}$, less than the $\SI{80}{\milli\volt}$ the high-side on-time removes. The remaining deficit is supplied during the low-side on-time, in which the deficit decays to $e^{-1.2}=0.30$. The voltage at the high-side turn-on settles at $\SI{4.49}{\volt}\approx V_\mathrm{DD}-V_\mathrm{F}$ (notebook).
+\end{solutionblock}
+
+\subtask{Hard switching with positive inductor current: the low-side transistor conducts in reverse in both dead times. The diode cannot discharge $C_\mathrm{boot}$. Derive the steady-state $v_\mathrm{boot}$ from the charge balance and compare it with the gate limits.}
+
+\begin{solutionblock}
+	If $v_\mathrm{boot}>V_\mathrm{DD}-V_\mathrm{F}$, the capacitor is charged only in the two dead times ($R_\mathrm{boot}C_\mathrm{boot}\gg t_\mathrm{d}$, nearly constant current), and the high-side driver removes $Q_\mathrm{tot}$:
+	\begin{equation}
+		2t_\mathrm{d}\,\frac{V_\mathrm{DD}-V_\mathrm{F}+V_\mathrm{SD}-v_\mathrm{boot}}{R_\mathrm{boot}}=Q_\mathrm{tot}
+		\ \Rightarrow\ v_\mathrm{boot}=V_\mathrm{DD}-V_\mathrm{F}+V_\mathrm{SD}-\frac{Q_\mathrm{tot}R_\mathrm{boot}}{2t_\mathrm{d}}=\SI{7}{\volt}-\SI{1.6}{\volt}=\SI{5.4}{\volt}.
+	\end{equation}
+	The result is above $V_\mathrm{DD}-V_\mathrm{F}$, so the assumption holds; it does not depend on $f_\mathrm{sw}$. The notebook gives $\SI{5.44}{\volt}$, reached within about 20 periods. The gate stays below the absolute maximum of $\SI{6}{\volt}$ but above the recommended $\SI{5.25}{\volt}$. The over-charge vanishes only for $t_\mathrm{d}\leq Q_\mathrm{tot}R_\mathrm{boot}/(2V_\mathrm{SD})=\SI{3.2}{\nano\second}$; a transistor with a smaller gate charge or a charging path with a lower resistance makes it worse.
+\end{solutionblock}
+
+\subtask{At start-up or in a light-load mode the controller does not turn on the low-side transistor. The inductor current then flows through it in reverse for $\SI{200}{\nano\second}$ per period at $\SI{1}{\mega\hertz}$. Estimate $v_\mathrm{boot}$ and name remedies.}
+
+\begin{solutionblock}
+	In every period the capacitor is charged towards $\SI{7}{\volt}$ for one time constant, and the high-side on-time removes $\SI{80}{\milli\volt}$. Steady state: $d=(d+\SI{80}{\milli\volt})\,e^{-1}$, i.e.\ $d=\SI{47}{\milli\volt}$ and $v_\mathrm{boot}\approx\SI{6.95}{\volt}$ at the beginning of the high-side on-time. This exceeds the $\SI{6}{\volt}$ limit of the gate.\\
+	Remedies: a clamp (Zener diode, or the internal bootstrap clamp of drivers such as the LMG1205), a Schottky diode across the low-side transistor (lower $V_\mathrm{SD}$, but extra capacitance at the switch node), short reverse-conduction times, or a synchronous bootstrap switch that conducts only while the low-side transistor is on (Lidow et al., Tab.\ 3.2).
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Gate-drive power at 13.56\,MHz}
+
+A $\SI{13.56}{\mega\hertz}$ class-E converter for $\SI{10}{\watt}$ uses a GaN transistor with $Q_\mathrm{G}=\SI{1.5}{\nano\coulomb}$ at $\SI{5}{\volt}$, $V_\mathrm{th}=\SI{1.4}{\volt}$ and the gate limits $+\SI{6}{\volt}$ and $-\SI{4}{\volt}$. The total resistance in the gate loop (internal and driver) is $R_\mathrm{G}=\SI{1}{\ohm}$.
+
+\subtask{Calculate the power of a conventional (hard-switching) gate driver and compare it with the output power. Repeat for a transistor with $Q_\mathrm{G}=\SI{7}{\nano\coulomb}$.}
+
+\begin{solutionblock}
+	$P_\mathrm{G}=Q_\mathrm{G}V_\mathrm{dr}f_\mathrm{sw}=\SI{1.5}{\nano\coulomb}\cdot\SI{5}{\volt}\cdot\SI{13.56}{\mega\hertz}=\SI{0.10}{\watt}$, i.e.\ 1\,\% of the output power. With $\SI{7}{\nano\coulomb}$: $\SI{0.47}{\watt}$ or 4.7\,\%. At VHF the die size is also limited by the gate power.
+\end{solutionblock}
+
+\subtask{In a resonant gate driver an inductor resonates with $C_\mathrm{eq}=Q_\mathrm{G}/V_\mathrm{dr}$. Calculate its inductance, its series resistance for a quality factor $Q_\mathrm{L}=50$, and the gate-drive loss for a sinusoidal gate voltage of $\SI{5}{\volt}$ peak-to-peak.}
+
+\begin{solutionblock}
+	$C_\mathrm{eq}=\SI{300}{\pico\farad}$, $L=1/(\omega^2C_\mathrm{eq})=\SI{459}{\nano\henry}$, $X_L=\SI{39.1}{\ohm}$, $R_L=X_L/Q_\mathrm{L}=\SI{0.78}{\ohm}$. Gate current amplitude $\hat{\imath}=\omega C_\mathrm{eq}\cdot\SI{2.5}{\volt}=\SI{63.9}{\milli\ampere}$:
+	\begin{equation}
+		P_\mathrm{res}=\tfrac12\hat{\imath}^2(R_\mathrm{G}+R_L)=\SI{3.6}{\milli\watt},
+	\end{equation}
+	3.6\,\% of the hard-switching value, in agreement with $\frac{\pi^2}{2}f_\mathrm{sw}(R_\mathrm{G}+R_L)C_\mathrm{eq}=0.036$.
+\end{solutionblock}
+
+\subtask{For a duty cycle of $0.5$ the gate voltage is $v_\mathrm{GS}=V_\mathrm{th}+V_\mathrm{a}\sin\omega t$. Which amplitude do the gate limits allow? For $V_\mathrm{a}=\SI{4.2}{\volt}$, during which fraction of the period is the transistor fully enhanced ($v_\mathrm{GS}>\SI{4}{\volt}$)? What follows?}
+
+\begin{solutionblock}
+	$V_\mathrm{a}\leq\min(\SI{6}{\volt}-V_\mathrm{th},V_\mathrm{th}+\SI{4}{\volt})=\SI{4.6}{\volt}$. With $V_\mathrm{a}=\SI{4.2}{\volt}$ the gate swings between $\SI{-2.8}{\volt}$ and $\SI{5.6}{\volt}$, and
+	\begin{equation}
+		\frac{t(v_\mathrm{GS}>\SI{4}{\volt})}{T}=\frac12-\frac1\pi\arcsin\frac{\SI{4}{\volt}-V_\mathrm{th}}{V_\mathrm{a}}=0.29.
+	\end{equation}
+	The transistor conducts for half of the period but is fully enhanced only for 29\,\% of it. The conduction loss is higher than with a rectangular gate voltage; the saving in gate power must be weighed against it.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 6 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Gate drive of your project brief (homework)}
+
+Prepare the gate-drive part of your design package (D3) for the brief of your team.
+
+\subtask{Set up the timing budget: switching period at the highest frequency, shortest on-time, transition time $2Q_\mathrm{oss}/I$ over the load range, dead time and dead-time strategy.}
+
+\begin{solutionblock}
+	The budget must show for the worst operating point that the shortest on-time is longer than the minimum pulse width of the driver plus the transition, and that the dead time covers the transition plus the delay mismatch of the driver channels. If the transition time varies strongly with load, a fixed dead time causes reverse conduction at high load or incomplete ZVS at light load; then an adaptive, predictive or stored dead time is needed.
+\end{solutionblock}
+
+\subtask{Select a driver and the floating supply. Check minimum pulse width, delay matching, CMTI against the expected peak $\mathrm{d}v/\mathrm{d}t$, the bootstrap recharge and over-charge (or the coupling capacitance of an isolated supply) and the gate power per switch at the highest frequency.}
+
+\begin{solutionblock}
+	Check list:
+	\begin{itemize}
+		\item Drive voltage and UVLO fit the transistor; gate overshoot below the absolute maximum in the worst case.
+		\item Split outputs; $R_\mathrm{G,on}$ from damping and $\mathrm{d}v/\mathrm{d}t$, small $R_\mathrm{G,off}$.
+		\item Minimum CMTI of driver or isolator above the peak $\mathrm{d}v/\mathrm{d}t$ of the switch node.
+		\item Bootstrap: $C_\mathrm{boot}$ at DC bias, recharge at maximum duty cycle, over-charge during long reverse conduction.
+		\item Gate power $Q_\mathrm{G}V_\mathrm{dr}f_\mathrm{sw}$ per switch and its dissipation in the driver.
+	\end{itemize}
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx04\_task.ipynb} computes and simulates the gate loop, the current rise with common-source inductance, the gate spike of the off-state switch, the bootstrap voltage and the resonant gate drive of Tasks 4.1 to 4.5.

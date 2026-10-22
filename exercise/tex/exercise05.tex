@@ -1,0 +1,218 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Measurement at high frequency}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Bandwidth of the measurement chain}
+
+The switch-node voltage of a GaN half-bridge rises from 0 to $\SI{48}{\volt}$ in $t_\mathrm{r}=\SI{1.2}{\nano\second}$ (10--90\,\%) and then rings at $\SI{300}{\mega\hertz}$ with an amplitude of $\SI{35}{\volt}$. It is measured with a $\SI{500}{\mega\hertz}$ oscilloscope and a $\SI{500}{\mega\hertz}$ passive probe. Assume a Gaussian response for both: $t_\mathrm{r}=0.35/f_\mathrm{BW}$ and $|H(f)|=\exp\left(-\frac{\ln2}{2}(f/f_\mathrm{BW})^2\right)$.
+
+\subtask{Which rise time does the oscilloscope show?}
+
+\begin{solutionblock}
+	$t_\mathrm{r,scope}=t_\mathrm{r,probe}=0.35/\SI{500}{\mega\hertz}=\SI{0.7}{\nano\second}$:
+	\begin{equation}
+		t_\mathrm{r,meas}=\sqrt{1.2^2+0.7^2+0.7^2}\,\si{\nano\second}=\SI{1.56}{\nano\second},
+	\end{equation}
+	30\,\% too slow.
+\end{solutionblock}
+
+\subtask{Which ringing amplitude does the oscilloscope show?}
+
+\begin{solutionblock}
+	Each stage passes $|H(\SI{300}{\mega\hertz})|=\exp(-0.347\cdot0.6^2)=0.883$, both together $0.779$: the scope shows $\SI{27}{\volt}$ instead of $\SI{35}{\volt}$. Two Gaussian stages of $\SI{500}{\mega\hertz}$ form a system of $500/\sqrt{2}=\SI{354}{\mega\hertz}$.
+\end{solutionblock}
+
+\subtask{Which bandwidth per stage keeps the error of the ringing amplitude below 10\,\%?}
+
+\begin{solutionblock}
+	Each stage must pass $\sqrt{0.9}=0.949$ at $\SI{300}{\mega\hertz}$:
+	\begin{equation}
+		f_\mathrm{BW}\geq\frac{\SI{300}{\mega\hertz}}{\sqrt{-2\ln0.949/\ln2}}=\SI{770}{\mega\hertz},
+	\end{equation}
+	in practice a $\SI{1}{\giga\hertz}$ probe and scope.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Ground lead of a passive probe}
+
+The probe has an input capacitance $C_\mathrm{p}=\SI{4}{\pico\farad}$ and a series resistance $R_\mathrm{p}=\SI{10}{\ohm}$ at its tip (\autoref{fig:ex05_probe}). Its ground lead has about $\SI{1}{\nano\henry}$ per mm.
+
+\input{fig/ex05/figProbeModel}
+
+\subtask{Calculate the resonance frequency and the quality factor of the probe circuit for ground leads of 160\,mm, 50\,mm and 5\,mm (spring tip).}
+
+\begin{solutionblock}
+	$f_\mathrm{p}=1/(2\pi\sqrt{L_\mathrm{g}C_\mathrm{p}})$ and $Q=\sqrt{L_\mathrm{g}/C_\mathrm{p}}/R_\mathrm{p}$:
+	\begin{solutiontable}[ht]
+		\centering
+		\begin{tabular}{|c|c|c|}
+			\hline
+			$L_\mathrm{g}$            & $f_\mathrm{p}$                   & $Q$  \\
+			\hline
+			$\SI{160}{\nano\henry}$   & $\SI{199}{\mega\hertz}$          & 20   \\
+			$\SI{50}{\nano\henry}$    & $\SI{356}{\mega\hertz}$          & 11   \\
+			$\SI{5}{\nano\henry}$     & $\SI{1.13}{\giga\hertz}$         & 3.5  \\
+			\hline
+		\end{tabular}
+		\caption{Resonance of the probe circuit}
+	\end{solutiontable}
+	With the long leads the resonance lies within the spectrum of a ns edge and is weakly damped: each edge makes it ring.
+\end{solutionblock}
+
+\subtask{The resonance could be damped by a resistor in series with the tip. Which resistance gives critical damping with the 50\,mm lead, and what does it do to the bandwidth?}
+
+\begin{solutionblock}
+	$R=2\sqrt{L_\mathrm{g}/C_\mathrm{p}}=\SI{224}{\ohm}$. Together with $C_\mathrm{p}$ it forms a low-pass with $1/(2\pi RC_\mathrm{p})=\SI{178}{\mega\hertz}$ and a rise time of $2.2RC_\mathrm{p}=\SI{2.0}{\nano\second}$, slower than the edge to be measured. Only a short ground connection keeps the bandwidth.
+\end{solutionblock}
+
+\subtask{Why must a measured ringing frequency be compared with $1/(2\pi\sqrt{L_\mathrm{loop}C})$? Give a practical test.}
+
+\begin{solutionblock}
+	The probe resonance (200--360\,MHz) lies in the same range as the ringing of a GaN power loop and can be mistaken for it. Test: change the ground connection (spring tip, coaxial test point). A real ring keeps its frequency; an artefact moves with the probing.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Current measurement with a shunt}
+
+A $\SI{10}{\milli\ohm}$ shunt made of SMD resistors sits in the source of the low-side transistor. The effective inductance of its sense loop is $L_\mathrm{s}=\SI{0.2}{\nano\henry}$.
+
+\subtask{Calculate the corner frequency of the shunt and the error voltage during a current rise of $\SI{10}{\ampere}$ in $\SI{1}{\nano\second}$.}
+
+\begin{solutionblock}
+	$\tau=L_\mathrm{s}/R=\SI{20}{\nano\second}$, $f_\mathrm{c}=R/(2\pi L_\mathrm{s})=\SI{8}{\mega\hertz}$. During the edge $L_\mathrm{s}\,\mathrm{d}i/\mathrm{d}t=\SI{0.2}{\nano\henry}\cdot\SI{10}{\ampere\per\nano\second}=\SI{2}{\volt}$, while $Ri=\SI{0.1}{\volt}$ at $\SI{10}{\ampere}$: the reading shows a spike of $\SI{200}{\ampere}$.
+\end{solutionblock}
+
+\subtask{An RC low-pass between shunt and oscilloscope compensates the zero. Choose $R_\mathrm{f}$ for $C_\mathrm{f}=\SI{100}{\pico\farad}$. What limits the compensation?}
+
+\begin{solutionblock}
+	$R_\mathrm{f}C_\mathrm{f}=L_\mathrm{s}/R$, i.e.\ $R_\mathrm{f}=\SI{200}{\ohm}$ (for a high-impedance scope input; with a $\SI{50}{\ohm}$ input the divider must be included). $L_\mathrm{s}$ must be known and constant; it is measured with a fast current step or with an impedance analyser. If $R_\mathrm{f}C_\mathrm{f}$ is too short, a current step is shown too large by $\tau/(R_\mathrm{f}C_\mathrm{f})$; if it is too long, too small. Either error settles with $R_\mathrm{f}C_\mathrm{f}$ and looks like a real current tail. The parasitics of the filter itself limit the bandwidth.
+\end{solutionblock}
+
+\subtask{A coaxial shunt with an insertion inductance of $\SI{6.5}{\nano\henry}$ replaces the SMD shunt in a power loop with $L_\mathrm{loop}=\SI{1}{\nano\henry}$ and $C=\SI{280}{\pico\farad}$ across the switch. Compare the ring frequency and the overshoot bound $IZ_0$ at $\SI{10}{\ampere}$ with and without the coaxial shunt.}
+
+\begin{solutionblock}
+	Without: $f_\mathrm{r}=\SI{301}{\mega\hertz}$, $Z_0=\SI{1.89}{\ohm}$, $IZ_0=\SI{18.9}{\volt}$. With: $L=\SI{7.5}{\nano\henry}$, $f_\mathrm{r}=\SI{110}{\mega\hertz}$, $Z_0=\SI{5.18}{\ohm}$, $IZ_0=\SI{51.8}{\volt}$. The measurement changes exactly the quantities that it is meant to measure; current sensing must be part of the layout (L3).
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Deskew of double-pulse data (notebook)}
+
+The file \texttt{dpt\_turn\_on.csv} (folder \texttt{code/ex05}) contains a synthetic turn-on of a low-side GaN transistor at $\SI{48}{\volt}$ and $\SI{10}{\ampere}$: time in ns, $v_\mathrm{DS}$ in V and $i_\mathrm{D}$ in A, sampled every $\SI{50}{\pico\second}$, with noise. The current channel has not been deskewed.
+
+\subtask{Plot $v_\mathrm{DS}$ and $i_\mathrm{D}$. Which features show that the channels are not aligned?}
+
+\begin{solutionblock}
+	The dip of $v_\mathrm{DS}$ caused by $L_\mathrm{loop}\,\mathrm{d}i/\mathrm{d}t$ starts at $t=0$, but the current starts to rise only about $\SI{1.5}{\nano\second}$ later. The current peak, which charges the output capacitance of the complementary transistor, appears when $v_\mathrm{DS}$ has already fallen.
+\end{solutionblock}
+
+\subtask{During the current rise $v_\mathrm{DS}=V_0-L_\mathrm{loop}\,\mathrm{d}i_\mathrm{D}/\mathrm{d}t$. Integration gives $\int(V_0-v_\mathrm{DS})\,\mathrm{d}t=L_\mathrm{loop}\,\Delta i_\mathrm{D}$. Use this relation to determine the skew and $L_\mathrm{loop}$ by a least-squares fit. Why is the integral better than the derivative of the current?}
+
+\begin{solutionblock}
+	Shifting the current by $\tau$ and fitting the integrated voltage dip with $a+L_\mathrm{loop}\,i_\mathrm{D}(t+\tau)$ gives the smallest residual for $\tau=\SI{1.45}{\nano\second}$ and $L_\mathrm{loop}=\SI{0.85}{\nano\henry}$ (the data were generated with $\SI{1.5}{\nano\second}$ and $\SI{0.8}{\nano\henry}$). The derivative of a noisy, sampled current is dominated by noise; the integral of the voltage averages the noise.
+\end{solutionblock}
+
+\subtask{Calculate $E_\mathrm{on}$ from the raw and from the deskewed data. How sensitive is the result to the remaining skew?}
+
+\begin{solutionblock}
+	Raw: $\SI{0.09}{\micro\joule}$. Deskewed: $\SI{1.02}{\micro\joule}$ (correct value of the data: $\SI{1.10}{\micro\joule}$). Each $\SI{50}{\pico\second}$ of remaining skew changes $E_\mathrm{on}$ by about $\SI{0.09}{\micro\joule}$ (8\,\%), because the current reaches $\SI{45}{\ampere}$ while the voltage falls. The result is only as good as the time alignment.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Efficiency and loss}
+
+A $\SI{48}{\volt}\rightarrow\SI{12}{\volt}$ converter delivers $\SI{100}{\watt}$ at an efficiency of 97.5\,\%. Input and output power are measured with an accuracy of $\pm(0.05\,\%$ of reading $+\,0.05\,\%$ of range$)$ each; the range is $\SI{150}{\watt}$.
+
+\subtask{Calculate the loss and its worst-case and RSS uncertainty.}
+
+\begin{solutionblock}
+	$P_\mathrm{in}=\SI{102.56}{\watt}$, $P_\mathrm{loss}=\SI{2.56}{\watt}$. $\Delta P_\mathrm{in}=\SI{0.051}{\watt}+\SI{0.075}{\watt}=\SI{0.126}{\watt}$, $\Delta P_\mathrm{out}=\SI{0.125}{\watt}$.\\
+	Worst case: $\pm\SI{0.251}{\watt}$, i.e.\ $\pm9.8\,\%$ of the loss; RSS: $\pm\SI{0.178}{\watt}$, i.e.\ $\pm6.9\,\%$.
+\end{solutionblock}
+
+\subtask{What is the uncertainty of the efficiency itself? Why is the loss the better quantity to report?}
+
+\begin{solutionblock}
+	$\Delta\eta\approx\eta\left(\Delta P_\mathrm{out}/P_\mathrm{out}+\Delta P_\mathrm{in}/P_\mathrm{in}\right)=\pm0.24$ percentage points. This looks small, but the loss, which decides temperature and design, is uncertain by $\pm10\,\%$.
+\end{solutionblock}
+
+\subtask{How can the uncertainty of the loss be reduced?}
+
+\begin{solutionblock}
+	A smaller range ($\SI{110}{\watt}$: $\pm8.2\,\%$), an instrument with a better specification, or a direct measurement of the loss: a calorimeter with $\pm2\,\%$ of the loss gives $\pm\SI{0.05}{\watt}$. Loss measurements of single components (thermal) help to find where the loss arises.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 6 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Core loss at 10\,MHz}
+
+An inductor with $L=\SI{1}{\micro\henry}$ and a core volume of $\SI{0.1}{\centi\metre\cubed}$ is measured with the resonant $Q$ method (\autoref{fig:ex05_resq}) at $\SI{10}{\mega\hertz}$: the amplitudes are $\hat{v}_\mathrm{in}=\SI{0.2}{\volt}$ and $\hat{v}_\mathrm{out}=\SI{30}{\volt}$. The capacitor has $R_\mathrm{C}=\SI{0.01}{\ohm}$; the copper resistance, determined with an air-core coil of the same winding, is $R_\mathrm{cu}=\SI{0.15}{\ohm}$.
+
+\input{fig/ex05/figResonantQ}
+
+\subtask{Calculate $Q$, $R_\mathrm{core}$, the peak current and the core loss density.}
+
+\begin{solutionblock}
+	$Q=\hat{v}_\mathrm{out}/\hat{v}_\mathrm{in}=150$, $\omega L=\SI{62.8}{\ohm}$:
+	\begin{equation}
+		R_\mathrm{core}=\frac{\omega L\,\hat{v}_\mathrm{in}}{\hat{v}_\mathrm{out}}-R_\mathrm{C}-R_\mathrm{cu}=\SI{0.419}{\ohm}-\SI{0.01}{\ohm}-\SI{0.15}{\ohm}=\SI{0.259}{\ohm}.
+	\end{equation}
+	$C=1/(\omega^2L)=\SI{253}{\pico\farad}$, $\hat{\imath}=\hat{v}_\mathrm{out}\,\omega C=\SI{0.477}{\ampere}$, $P_\mathrm{core}=\frac12\hat{\imath}^2R_\mathrm{core}=\SI{29.5}{\milli\watt}$, i.e.\ $\SI{295}{\milli\watt\per\centi\metre\cubed}$.
+\end{solutionblock}
+
+\subtask{The same core is measured with the two-winding method. Estimate the error caused by $\SI{100}{\pico\second}$ of skew between voltage and current. Which skew would be acceptable for 10\,\% error?}
+
+\begin{solutionblock}
+	The two-winding method measures the core only: $Q_\mathrm{core}=\omega L/R_\mathrm{core}=243$. $\SI{100}{\pico\second}$ at $\SI{10}{\mega\hertz}$ is $0.36^\circ=\SI{6.3}{\milli\radian}$:
+	\begin{equation}
+		\frac{\Delta P}{P}\approx Q_\mathrm{core}\,\Delta\varphi=1.5,
+	\end{equation}
+	an error of 150\,\%. For 10\,\% the skew must stay below $0.1/(Q_\mathrm{core}\cdot2\pi f)=\SI{6.6}{\pico\second}$, which is impractical. Resonant methods avoid the phase measurement.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 7 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Test plan of your project brief (homework)}
+
+Prepare the test plan of your design package (D7).
+
+\subtask{List the waveforms and quantities that verify your design (e.g.\ switch node and ZVS, gate voltages, inductor or tank current, output ripple, efficiency, temperatures). Choose a probe or sensor and a test point for each.}
+
+\begin{solutionblock}
+	A good plan names for each quantity the instrument, the probe or sensor, the test point on the PCB and the expected waveform with numbers from the design (e.g.\ ring frequency, $\mathrm{d}v/\mathrm{d}t$, peak current). High-side gate voltages need an isolated probe or must be omitted; drain currents need a shunt planned into the layout.
+\end{solutionblock}
+
+\subtask{Estimate for each measurement the required bandwidth, the expected error, and how you will recognise artefacts.}
+
+\begin{solutionblock}
+	Check list:
+	\begin{itemize}
+		\item Bandwidth from the fastest edge: four times faster than the edge for 3\,\% rise-time error.
+		\item Probe resonance above the spectrum of the edge: spring tip or coaxial test point.
+		\item Deskew procedure and a physical marker for each pair of channels used for power or energy.
+		\item Loss from efficiency only with an uncertainty estimate; at high efficiency a thermal cross-check.
+	\end{itemize}
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx05\_task.ipynb} evaluates the measurement chain, simulates the probe ground lead and the shunt, deskews the double-pulse data of Task 5.4 and computes the uncertainties of Tasks 5.5 and 5.6.

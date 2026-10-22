@@ -1,0 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Resonant Q measurement of core loss (Exercise 05, Task 6)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			\draw (0,0) node[ground]{} to[sV, l=RF source] (0,3) node[circ]{} node[above]{$v_\mathrm{in}$} -- (1.2,3) to[L, l=$L$] (3.2,3) to[R, l=$R_\mathrm{cu}+R_\mathrm{core}$] (5.6,3) -- (6.4,3);
+			\draw (6.4,3) to[C, l=$C$] (6.4,1.5) to[R, l=$R_\mathrm{C}$] (6.4,0) -- (0,0);
+			\draw (7.6,3) node[circ]{} node[right]{$v_\mathrm{out}$} -- (6.4,3);
+			\draw[densely dashed, gray] (1.0,2.3) rectangle (5.8,3.8);
+			\node[anchor=south] at (3.4,3.8) {inductor under test};
+		\end{circuitikz}
+	\end{center}
+	\caption{Resonant $Q$ method: series tank driven at its resonant frequency. Only the amplitudes of $v_\mathrm{in}$ and $v_\mathrm{out}$ (both to ground) are measured.}
+	\label{fig:ex05_resq}
+\end{figure}

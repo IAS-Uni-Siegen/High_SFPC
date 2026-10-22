@@ -1,0 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Off-state switch with common-source inductance (Exercise 04, Task 3)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			\draw (4,5.6) node[above] {$V_\mathrm{DC}$} -- (4,5.2) node[nigfete, anchor=D] (QH) {};
+			\draw (QH.S) -- ++(0,-0.4) coordinate (sw);
+			\draw (sw) node[nigfete, anchor=D] (QL) {};
+			\draw (sw) node[circ]{} -- ++(1.8,0) to[short, i<=$I_\mathrm{L}$] ++(1.0,0) node[right] {to $L_\mathrm{o}$};
+			\draw (QL.S) to[L, l=$L_\mathrm{CS}$] ++(0,-1.6) coordinate (gnd) node[ground] {};
+			\draw (QH.G) -- ++(-0.4,0) node[left] {HS driver};
+			% low-side gate loop returns below L_CS
+			\draw (QL.G) -- ++(-0.3,0) to[L, l_=$L_\mathrm{G}$] ++(-1.8,0) coordinate (r1) to[R, l_=$R_\mathrm{off}$] ++(0,-1.6) coordinate (r2) -- (r2 |- gnd) -- (gnd);
+			\draw (QL.S) ++(0.8,0.5) node[right] {$C_\mathrm{GS}$ inside};
+		\end{circuitikz}
+	\end{center}
+	\caption{The low-side transistor is off and conducts the load current in reverse during the dead time. Its gate loop ($L_\mathrm{G}$, $R_\mathrm{off}$, $C_\mathrm{GS}$) returns to ground below the common-source inductance $L_\mathrm{CS}$.}
+	\label{fig:ex04_csi}
+\end{figure}

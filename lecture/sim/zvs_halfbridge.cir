@@ -1,0 +1,53 @@
+* Lecture 8 demonstration: hard-switched versus ZVS turn-on of a GaN half-bridge (ngspice)
+* Run:  ngspice -b zvs_halfbridge.cir
+* Output: zvs_caseA.txt (ZVS) and zvs_caseB.txt (hard switching): time, v(sw), i(LL), i(VMHS) (high-side switch current)
+* The measured turn-on energy of the high-side switch is printed for both cases.
+* Each switch is a gate-controlled conductance that rises linearly from 0 to 200 S (5 mOhm) while
+* the gate voltage ramps from 0 to 5 V in 1 ns. The diode across each switch models
+* its output capacitance Coss(v) = CJO/sqrt(1+v/VJ), which gives Qoss(48 V) = 10 nC,
+* and its reverse conduction. The 200 nH inductor ends at Vx = 0 V and starts with I0
+* (positive: the current flows into the switch node).
+* Case A: I0 = +3 A -> the node swings to 48 V during the 12 ns dead time: ZVS turn-on of the high side.
+* Case B: I0 = -3 A -> the low-side diode holds the node at 0 V: hard turn-on of the high side.
+
+.param VDC=48 TD=12n I0=3
+.model DCOSS D(IS=1e-12 N=2.5 RS=10m CJO=625p VJ=2 M=0.5 FC=0.5 TT=0)
+.options method=gear reltol=1e-4 abstol=1e-9 vntol=1e-5
+
+VDC  vdc 0 {VDC}
+* gate signals with 1 ns edges: low side off at 10 ns, high side on after the dead time
+VGL  gl 0 PWL(0 5 10n 5 11n 0)
+VGH  gh 0 PWL(0 0 {10n+TD} 0 {11n+TD} 5)
+* commutation cell with 0.5 nH loop inductance and a local bus capacitor
+LLOOP vdc vdc2 0.5n
+CBUS  vdc2 0 1u IC=48
+VMHS vdc2 hsd 0
+BHS  hsd sw I=V(hsd,sw)*(1e-7+200*max(0,min(1,V(gh)/5)))
+DHS  sw vdc2 DCOSS
+BLS  sw 0 I=V(sw)*(1e-7+200*max(0,min(1,V(gl)/5)))
+DLS  0 sw DCOSS
+* load inductor with initial current
+LL   vx sw 200n IC={I0}
+VX   vx 0 0
+.ic v(sw)=0 v(vdc2)=48
+
+.control
+set noaskquit
+set wr_singlescale
+set wr_vecnames
+alterparam I0=3
+reset
+tran 0.02n 40n 0 0.02n uic
+wrdata zvs_caseA.txt v(sw) i(ll) i(vmhs)
+let p_hs = (v(vdc2)-v(sw))*i(vmhs)
+meas tran E_on_zvs integ p_hs from=20n to=30n
+alterparam I0=-3
+reset
+tran 0.02n 40n 0 0.02n uic
+wrdata zvs_caseB.txt v(sw) i(ll) i(vmhs)
+let p_hs = (v(vdc2)-v(sw))*i(vmhs)
+meas tran E_on_hard integ p_hs from=20n to=30n
+meas tran i_hs_peak max i(vmhs) from=20n to=30n
+quit
+.endc
+.end

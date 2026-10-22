@@ -1,0 +1,9 @@
+# Fair-Rite 67: Pv at B = 10 mT (sinusoidal) from Hanson et al. 2016, Table II; Pv in mW/cm^3.
+f_MHz Pv
+2 27.5
+5 109.4
+7 168.0
+10 251.3
+13 440.4
+16 664.5
+20 1070.1

@@ -1,0 +1,24 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Half-bridge during the dead time (Exercise 08, Tasks 1 and 2)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.9, transform shape]
+			\draw (0,0) to[V, l=$V_\mathrm{DC}$] (0,4) -- (2,4);
+			\draw (2,4) to[C, l_=$C_\mathrm{oss}$] (2,2) to[C, l_=$C_\mathrm{oss}$] (2,0);
+			\draw (2,4) -- (3.4,4) node[nigfete, anchor=D] (HS) {};
+			\draw (0,0) -- (3.4,0) node[nigfete, anchor=S] (LS) {};
+			\draw (HS.S) -- (LS.D);
+			\draw (2,2) -- (3.4,2) node[circ]{};
+			\draw (3.4,2) to[short, i=$i_L$] (4.8,2) to[L, l=$L$] (6.6,2);
+			\draw (3.4,0) -- (6.6,0) to[V, l_=$V_x$] (6.6,2);
+			\draw (1,0) node[ground]{};
+			\node[anchor=south east, inner sep=1pt] at (3.35,2.05) {$v_\mathrm{sw}$};
+			\node[anchor=west] at (3.9,3.45) {high side};
+			\node[anchor=west] at (3.9,0.55) {low side};
+		\end{circuitikz}
+	\end{center}
+	\caption{Half-bridge during the dead time: both transistors are off, the inductor current charges the switch node. Each $C_\mathrm{oss}$ depends on the drain-source voltage of its own transistor.}
+	\label{fig:ex08_hb}
+\end{figure}

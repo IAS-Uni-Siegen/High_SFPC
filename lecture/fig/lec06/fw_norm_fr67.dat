@@ -1,0 +1,10 @@
+# Fair-Rite 67: F_w = B*f^w at Pv = 500 mW/cm^3, normalised to 2 MHz (w = 1, 3/4, 1/2).
+# B from the Steinmetz fits of Hanson et al., IEEE TPEL 31(11), 2016, Table II.
+f_MHz F1 F34 F12
+2 1.000 1.000 1.000
+5 1.521 1.209 0.962
+7 1.759 1.286 0.940
+10 2.122 1.419 0.949
+13 2.100 1.315 0.824
+16 2.121 1.261 0.750
+20 2.080 1.169 0.658

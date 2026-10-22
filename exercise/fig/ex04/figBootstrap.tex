@@ -1,0 +1,24 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bootstrap supply of the high-side driver (Exercise 04, Task 4)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}
+			\draw (7.6,5.6) node[above] {$V_\mathrm{DC}=\SI{48}{\volt}$} -- (7.6,5.2) node[nigfete, anchor=D] (QH) {};
+			\draw (QH.S) -- ++(0,-0.4) coordinate (sw);
+			\draw (sw) node[nigfete, anchor=D] (QL) {};
+			\draw (QL.S) -- ++(0,-0.3) node[ground] {};
+			\draw (sw) node[circ]{} -- ++(1.2,0) node[right] {$v_\mathrm{sw}$};
+			\node[draw, minimum width=1.6cm, minimum height=1.9cm, anchor=east, align=center] (drv) at ($(QH.G)+(-1.9,0.35)$) {HS\\driver};
+			\draw (drv.east |- QH.G) to[R, l=$R_\mathrm{G}$] (QH.G);
+			\draw (drv.south) node[above, font=\scriptsize] {HS} -- (drv.south |- sw) -- (sw);
+			\draw (drv.north) node[below, font=\scriptsize] {HB} -- ++(0,0.6) coordinate (hb) -- ++(-3.0,0) coordinate (c1);
+			\draw (c1) to[C, l_=$C_\mathrm{boot}$, v^>=$v_\mathrm{boot}$] (c1 |- sw) -- (drv.south |- sw);
+			\draw ($(c1)+(-4.4,0)$) node[left] {$V_\mathrm{DD}=\SI{5}{\volt}$} to[R, l=$R_\mathrm{boot}$] ++(2.0,0) to[D, l=$D_\mathrm{boot}$] (c1);
+			\draw (QL.G) -- ++(-0.4,0) node[left] {LS driver};
+		\end{circuitikz}
+	\end{center}
+	\caption{Bootstrap supply of the high-side driver. $R_\mathrm{boot}$ models the resistance of the charging path.}
+	\label{fig:ex04_boot}
+\end{figure}
