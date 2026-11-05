@@ -49,20 +49,20 @@
 					\draw (pg) node[circ]{};
 					% loop markers
 					\draw[densely dashed, rounded corners=4pt, -{Latex[length=2mm]}] (2.2,-1.35) -- (0.6,-1.35) -- (0.6,2.85) -- (2.2,2.85);
-					\node[align=center, font=\small] at (1.55,0.7) {power\\loop};
+					\node[align=center, font=\footnotesize] at (1.55,0.7) {power\\loop};
 				\end{circuitikz}
 				\caption{Half-bridge with the inductances of the power loop; low-side gate loop: $R_\mathrm{G}$, driver, $L_\mathrm{CS}$}
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
-				\item \textbf{Power loop}: $C_\mathrm{in}$, high-side and low-side switch. Its current changes by $I_\mathrm{L}$ at every transition. $L_\mathrm{loop}=L_\mathrm{C}+L_\mathrm{D}+L_\mathrm{CS}+\ldots$ (packages, pads, vias, planes).
-				\item \textbf{Gate loop}: driver, gate, source and back.
-				\item \textbf{Common-source inductance} $L_\mathrm{CS}$: the part shared by both loops (L2).
+				\item \textbf{Power loop}: input capacitor $C_\mathrm{in}$, high-side and low-side switch. At every transition its current changes by $I_\mathrm{L}$ within nanoseconds. $L_\mathrm{loop}=L_\mathrm{C}+L_\mathrm{D}+L_\mathrm{CS}+\ldots$ (capacitor, packages, pads, vias, planes).
+				\item \textbf{Gate loop}: driver, gate, $C_\mathrm{GS}$, source and back; it carries the gate charging current.
+				\item \textbf{Common-source inductance} $L_\mathrm{CS}$: the source path shared by both loops. The power current induces a voltage in it against the gate drive (L2).
 			\end{itemize}
-			Order of importance for the layout: $L_\mathrm{CS}$, then the power loop, then the gate loop.\\[0.4em]
-			At high frequency the loop is closed by small ceramic capacitors next to the switches, not by the bulk capacitor.
+			Layout priority: $L_\mathrm{CS}$ (slows every transition), then the power loop (overshoot, ringing), then the gate loop (gate ringing).\\[0.4em]
+			At high frequency the power loop closes through the small ceramic capacitors next to the switches.
 		\end{column}
 	\end{columns}
 	\blfootnote{Source: Lidow et al., GaN Transistors for Efficient Power Conversion, 3rd ed., 2019, Sec. 4.1--4.2.}
@@ -124,7 +124,7 @@
 		\begin{column}{0.44\textwidth}
 			\begin{figure}
 				\centering
-				\begin{tikzpicture}[font=\scriptsize]
+				\begin{tikzpicture}[font=\scriptsize, scale=0.85]
 					% (a) conductors far apart
 					\foreach \r in {0.3,0.5,0.72} {\draw[gray] (0,0) circle (\r); \draw[gray] (2.0,0) circle (\r);}
 					\filldraw[fill=white] (0,0) circle (0.14); \fill (0,0) circle (0.04);
@@ -139,26 +139,26 @@
 					\node[anchor=north] at (4.3,-0.25) {$-I$};
 					\node at (4.3,-1.1) {(b) close together};
 				\end{tikzpicture}
-				\caption{Go and return conductor in cross-section; (b): the field is confined to the gap}
+				\caption{Go and return conductor in cross-section (dot: current out of the page, cross: into it). (a) The field fills a large volume; (b) it stays in the gap}
 			\end{figure}
 			\begin{block}{Key message}
-				Forward and return current as close together as possible; wide and short paths.
+				Forward and return current close together, in wide and short paths.
 			\end{block}
 		\end{column}
 		\begin{column}{0.53\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
 				\item Inductance belongs to a closed loop: $L_\mathrm{loop}=\Phi/I$, the flux through the loop per ampere.
 				\item The stored energy is in the field:
 				      \begin{equation*}
 					      \tfrac12 L_\mathrm{loop}I^2=\int\frac{B^2}{2\mu_0}\,\mathrm{d}V
 				      \end{equation*}
-				      Less volume with field, less inductance.
-				\item \textbf{Partial inductance} assigns shares to segments. For a go and return conductor
+				      Less volume with field: less energy per ampere, less inductance.
+				\item \textbf{Partial inductance} assigns a share of $L_\mathrm{loop}$ to each segment. For a go and return conductor with partial self-inductances $L_\mathrm{p1}$, $L_\mathrm{p2}$ and mutual partial inductance $M_\mathrm{p12}$
 				      \begin{equation*}
 					      L_\mathrm{loop}=L_\mathrm{p1}+L_\mathrm{p2}-2M_\mathrm{p12}
 				      \end{equation*}
-				      Close conductors with opposite currents have a large $M_\mathrm{p12}$, which cancels most of the self terms.
+				      Close conductors with opposite currents have a large $M_\mathrm{p12}$: it cancels most of the self terms.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -195,14 +195,14 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			Two planes of width $w$ and length $l$, spacing $h\ll w$; the field is confined to the gap:
 			\begin{equation*}
 				L\approx\mu_0\frac{h\,l}{w}=1.26\,\frac{\mathrm{nH}}{\mathrm{mm}}\cdot\frac{h\,l}{w}
 			\end{equation*}
 			\begin{itemize}
-				\item $h=0.1$\,mm: 0.25\,nH, as the solver.
-				\item $h=1.6$\,mm: formula 4.0\,nH, solver 2.5\,nH; at $w/h\approx3$ the field spreads beyond the edges.
+				\item $h=0.1$\,mm (return on the adjacent layer): formula and field solver both give 0.25\,nH.
+				\item $h=1.6$\,mm (return on the bottom layer): formula 4.0\,nH, solver 2.5\,nH. With $w/h\approx3$ the field is no longer confined to the gap but spreads beyond the edges, and the formula overestimates.
 			\end{itemize}
 			\begin{block}{Key message}
 				Return on the adjacent layer: ten times less inductance than across a 1.6\,mm board.
@@ -242,7 +242,7 @@
 			\small
 			\begin{tabular}{|l|r|}
 				\hline
-				\multicolumn{2}{|l|}{\textbf{Loop, 1.6\,mm vias, 1\,mm pitch}} \\
+				\multicolumn{2}{|l|}{\textbf{Loop of via pairs, 1.6\,mm long, 1\,mm apart}} \\
 				\hline
 				1 via pair                         & 1.06\,nH \\
 				2 pairs, interleaved               & 0.49\,nH \\
@@ -250,7 +250,7 @@
 				\hline
 			\end{tabular}\\[0.6em]
 			\raggedright
-			Interleaved forward and return vias act in parallel and cancel each other's field (FastHenry, 100\,MHz).
+			One pair is one via for the forward and one for the return current. Interleaved pairs act in parallel, and neighbouring vias with opposite currents cancel each other's field (FastHenry, 100\,MHz).
 		\end{column}
 	\end{columns}
 	\blfootnote{Source: Ott, 2009, Eq.\ (E-14), after Grover, 1946. The often quoted $5.08\,h\,[\ln(4h/d)+1]$\,nH ($h,d$ in inch) gives 1.3\,nH for the via, 1.8 times the solver value.}
@@ -390,12 +390,12 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.51\textwidth}
-			\small
-			Inductance in series with a decoupling capacitor: the body (ESL in the datasheet, measured on the vendor's fixture), pads, traces and vias, and current spreading in the planes. The body is usually the smallest part.
+			\footnotesize
+			The inductance in series with a decoupling capacitor has four parts: the body (the ESL of the datasheet, measured on the vendor's fixture), the pads and traces, the vias, and the current spreading in the planes. The body is usually the smallest part. To reduce the rest:
 			\begin{itemize}
-				\item vias at or in the pads, return plane on the adjacent layer
-				\item several small capacitors in parallel, each with its own vias
-				\item reverse geometry (terminals on the long side, e.g.\ 0306 instead of 0603): 50--80\,\% lower ESL according to manufacturers
+				\item Place the vias at or in the pads and the return plane on the adjacent layer: the current loop through the capacitor stays small.
+				\item Use several small capacitors in parallel, each with its own vias: their inductances act in parallel.
+				\item Use reverse-geometry parts (terminals on the long side, e.g.\ 0306 instead of 0603): a shorter, wider current path with 50--80\,\% lower ESL according to manufacturers.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -422,8 +422,8 @@
 		\end{tabular}
 	\end{table}
 	\begin{itemize}
-		\item Extract at the ringing frequency (100\,MHz to 1\,GHz): the current flows on the facing copper surfaces.
-		\item Device models contain no layout inductance. Add it in SPICE together with a resistance that represents the damping at $f_\mathrm{r}$ (skin effect, capacitor ESR).
+		\item Extract the inductance at the ringing frequency (100\,MHz to 1\,GHz), not at DC: there the current flows only on the facing copper surfaces, and the inductance is lower than at DC.
+		\item Device models contain no layout inductance. Add it in SPICE, together with a resistance that represents the damping at $f_\mathrm{r}$ (skin effect, capacitor ESR); otherwise the simulated ringing decays too slowly.
 	\end{itemize}
 	\blfootnote{Sources: Kamon, Tsuk, White, IEEE Trans.\ MTT, vol.\ 42, no.\ 9, 1994 (FastHenry); Lidow et al., 2019, Sec.\ 5.2.}
 \end{frame}
@@ -456,15 +456,15 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			Every transition excites the series resonance of $L_\mathrm{loop}$ with the capacitance across the switch that is off:
 			\begin{equation*}
 				f_\mathrm{r}=\frac{1}{2\pi\sqrt{L_\mathrm{loop}C}},\quad Z_0=\sqrt{\frac{L_\mathrm{loop}}{C}}
 			\end{equation*}
 			with $C=C_\mathrm{oss}(V_\mathrm{DC})+C_\mathrm{par}$ (small-signal value, plus layout and probe).
 			\begin{itemize}
-				\item 1\,nH and 250\,pF: $f_\mathrm{r}=318$\,MHz, $Z_0=2\,\Omega$
-				\item Measured, EPC2022 half-bridge at 48\,V: 438\,MHz with $C\approx710$\,pF, i.e.\ $L_\mathrm{loop}\approx0.2$\,nH
+				\item Example: $L_\mathrm{loop}=1$\,nH and $C=250$\,pF ring at $f_\mathrm{r}=318$\,MHz, with $Z_0=2\,\Omega$.
+				\item Measured on an EPC2022 half-bridge at 48\,V: 438\,MHz with $C\approx710$\,pF, which corresponds to $L_\mathrm{loop}\approx0.2$\,nH.
 			\end{itemize}
 			The ring appears as a peak in the EMI spectrum; measuring it needs a bandwidth above $f_\mathrm{r}$ (L5).
 		\end{column}
@@ -496,16 +496,16 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.49\textwidth}
-			\small
+			\footnotesize
 			\textbf{Turn-on} of the other switch charges $C$ through $L_\mathrm{loop}$:
 			\begin{itemize}
-				\item step: up to $2V_\mathrm{DC}$, i.e.\ 100\,\% overshoot
-				\item edges slower than $1/f_\mathrm{r}$ excite little ringing
+				\item An ideal voltage step charges $C$ to up to $2V_\mathrm{DC}$: 100\,\% overshoot.
+				\item An edge that lasts longer than one ringing period $1/f_\mathrm{r}$ excites little ringing (figure).
 			\end{itemize}
-			\textbf{Turn-off} with current $I$: the loop current must stop.
+			\textbf{Turn-off} with current $I$: the current in $L_\mathrm{loop}$ must stop, and its energy $\frac12L_\mathrm{loop}I^2$ charges $C$.
 			\begin{itemize}
-				\item slow current fall $t_\mathrm{f}\gg1/f_\mathrm{r}$: $\Delta V\approx L_\mathrm{loop}I/t_\mathrm{f}$
-				\item any speed (lossless bound): $\Delta V\leq I\,Z_0$
+				\item If the current falls slowly ($t_\mathrm{f}\gg1/f_\mathrm{r}$): overshoot $\Delta V\approx L_\mathrm{loop}I/t_\mathrm{f}$.
+				\item For any fall time the energy limits the overshoot to $\Delta V\leq I\,Z_0$ (lossless bound).
 			\end{itemize}
 			Measured on a 12\,V GaN buck: 100\,\% overshoot with $L_\mathrm{loop}=1.6$\,nH, 25\,\% with 0.4\,nH. For a fixed rating, overshoot limits the usable input voltage.
 		\end{column}
@@ -593,13 +593,13 @@
 			\small
 			The switch-node edge drives $i=C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$ into the gate loop:
 			\begin{itemize}
-				\item edge slow compared with $R_\mathrm{G,off}C_\mathrm{iss}$: $\Delta v_\mathrm{GS}\approx R_\mathrm{G,off}C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$
-				\item voltage step (upper bound): $\Delta v_\mathrm{GS}=V_\mathrm{DC}\,C_\mathrm{GD}/(C_\mathrm{GD}+C_\mathrm{GS})$
+				\item Slow edge (compared with $R_\mathrm{G,off}C_\mathrm{iss}$): the current flows through the off path, $\Delta v_\mathrm{GS}\approx R_\mathrm{G,off}C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$.
+				\item Voltage step (upper bound): capacitive divider, $\Delta v_\mathrm{GS}=V_\mathrm{DC}\,C_\mathrm{GD}/(C_\mathrm{GD}+C_\mathrm{GS})$.
 			\end{itemize}
 			Illustrative 650\,V GaN, $C_\mathrm{GD}=2$\,pF, $C_\mathrm{GS}=250$\,pF, $V_\mathrm{th}\approx1.5$\,V, 400\,V at 100\,V/ns:
 			\begin{itemize}
-				\item $R_\mathrm{G,off}=1\,\Omega$: 0.2\,V, safe
-				\item step bound: 3.2\,V, false turn-on
+				\item $R_\mathrm{G,off}=1\,\Omega$: 0.2\,V, far below $V_\mathrm{th}$: safe.
+				\item Step bound: 3.2\,V $>V_\mathrm{th}$: false turn-on, shoot-through.
 			\end{itemize}
 			The off path must keep a low impedance up to hundreds of MHz: short gate loop. Details in L4.
 		\end{column}
@@ -615,20 +615,24 @@
 	\frametitle{Lateral, vertical and optimal loop}
 	\begin{figure}
 		\centering
-		\includegraphics[width=0.92\linewidth]{fig/lec03/pcb_loop_sections.pdf}
-		\caption{Cross-sections perpendicular to the loop current (schematic)}
+		\includegraphics[width=0.74\linewidth]{fig/lec03/pcb_loop_sections.pdf}
+		\caption{Cross-sections of the power loop, cut at right angles to the current (schematic)}
 	\end{figure}
 	\vspace{-0.4em}
 	\begin{table}
 		\centering
 		\footnotesize
-		\begin{tabular}{|>{\raggedright\arraybackslash}p{5.3cm}|>{\raggedright\arraybackslash}p{3.7cm}|>{\raggedright\arraybackslash}p{3.7cm}|}
+		\scriptsize
+		\begin{tabular}{|l|l|l|}
 			\hline
-			\textbf{Lateral}: no shield / shield at 0.66 / 0.33 / 0.1\,mm & \textbf{Vertical}: board 1.6 / 0.8\,mm & \textbf{Optimal}: return at 0.3 / 0.1\,mm \\
-			3.92 / 2.74 / 2.10 / 1.36\,nH                                  & 2.87 / 1.83\,nH                         & 0.87 / 0.37\,nH                          \\
+			\textbf{Loop}                          & \textbf{Variant}                                         & \textbf{$L_\mathrm{loop}$}               \\
+			\hline
+			lateral: both currents on the top layer & no shield; shield plane 0.66, 0.33, 0.1\,mm below      & 3.92; 2.74, 2.10, 1.36\,nH               \\
+			vertical: top and bottom layer          & board thickness 1.6, 0.8\,mm                           & 2.87, 1.83\,nH                           \\
+			optimal: top and first inner layer      & distance 0.3, 0.1\,mm                                  & 0.87, 0.37\,nH                           \\
 			\hline
 		\end{tabular}
-		\caption{Two 3\,mm $\times$ 8\,mm conductors, ideal end connections, FastHenry at 100\,MHz; same trends as in the measurements of Reusch and Strydom}
+		\caption{Two 3\,mm $\times$ 8\,mm conductors, FastHenry at 100\,MHz; same trends as measured by Reusch and Strydom}
 	\end{table}
 \end{frame}
 
@@ -654,15 +658,15 @@
 				\end{tabular}
 				\caption{Properties of the three loop types}
 			\end{table}
-			\small
+			\footnotesize
 			Four-layer boards, 2\,oz copper (simulation and measurement):
 			\begin{itemize}
-				\item vertical: $L$ up to 80\,\% higher when the board thickness doubles from 0.8 to 1.6\,mm
-				\item lateral: higher loss for the same $L$ (eddy currents in the shield)
+				\item Vertical loop: $L$ up to 80\,\% higher when the board thickness doubles from 0.8 to 1.6\,mm.
+				\item Lateral loop: higher loss for the same $L$; the shield lowers $L$ through eddy currents, which dissipate.
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.46\textwidth}
-			\small
+			\footnotesize
 			Optimal layout: input capacitors next to the drain of the high-side switch, return on the first inner layer directly underneath, rows of interleaved vias between the switches.
 			\begin{itemize}
 				\item 40\,\% lower loop inductance than the best conventional layout
@@ -681,40 +685,108 @@
 \begin{frame}
 	\frametitle{Return current path}
 	\begin{columns}[T]
+		\begin{column}{0.55\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}[font=\scriptsize, >={Latex[length=1.5mm]}]
+					% (a) continuous plane, U-shaped trace from A to B
+					\fill[gray!12] (0,0) rectangle (3.0,2.5);
+					\draw[gray!60] (0,0) rectangle (3.0,2.5);
+					\draw[line width=1.6pt] (0.5,0.45) -- (0.5,2.0) -- (2.5,2.0) -- (2.5,0.45);
+					\fill (0.5,0.45) circle (0.07); \fill (2.5,0.45) circle (0.07);
+					\node[anchor=north] at (0.5,0.38) {A};
+					\node[anchor=north] at (2.5,0.38) {B};
+					\draw[->, line width=0.8pt] (1.25,2.2) -- (1.75,2.2);
+					\draw[densely dashed, thick] (2.36,0.45) -- (2.36,1.86) -- (0.64,1.86) -- (0.64,0.45);
+					\draw[->] (1.75,1.7) -- (1.25,1.7);
+					\draw[densely dotted, very thick] (2.5,0.62) -- (0.5,0.62);
+					\draw[->] (1.75,0.8) -- (1.25,0.8);
+					\node at (1.5,-0.45) {(a) continuous plane};
+					% (b) plane with a slot under a straight trace
+					\begin{scope}[xshift=3.6cm]
+						\fill[gray!12] (0,0) rectangle (3.0,2.5);
+						\draw[gray!60] (0,0) rectangle (3.0,2.5);
+						\fill[white] (1.35,0.8) rectangle (1.65,2.5);
+						\draw[gray!60] (1.35,2.5) -- (1.35,0.8) -- (1.65,0.8) -- (1.65,2.5);
+						\node[anchor=south] at (1.5,2.5) {slot};
+						\draw[line width=1.6pt] (0.3,1.75) -- (2.7,1.75);
+						\fill (0.3,1.75) circle (0.07); \fill (2.7,1.75) circle (0.07);
+						\node[anchor=north] at (0.3,1.68) {A}; \node[anchor=north] at (2.7,1.68) {B};
+						\draw[densely dashed, thick] (2.7,1.6) -- (1.78,1.6) -- (1.78,0.66) -- (1.22,0.66) -- (1.22,1.6) -- (0.3,1.6);
+						\node at (1.5,-0.45) {(b) plane with a slot};
+					\end{scope}
+					% legend
+					\begin{scope}[yshift=-1.05cm]
+						\draw[line width=1.6pt] (0,0) -- (0.6,0); \node[anchor=west] at (0.7,0) {trace on the top layer, current from A to B};
+						\draw[densely dashed, thick] (0,-0.35) -- (0.6,-0.35); \node[anchor=west] at (0.7,-0.35) {return current in the plane at high frequency};
+						\draw[densely dotted, very thick] (0,-0.7) -- (0.6,-0.7); \node[anchor=west] at (0.7,-0.7) {return current in the plane at low frequency};
+					\end{scope}
+				\end{tikzpicture}
+				\caption{Top view of a trace above a ground plane on the next layer; A source, B load}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.42\textwidth}
+			\small
+			The current returns from B to A through the plane:
+			\begin{itemize}
+				\item Low frequency: path of least resistance, the shortest way from B to A.
+				\item Above a few hundred kHz: path of least inductance, directly under the trace, where the loop area is smallest.
+				\item A slot forces the high-frequency return around its end (b): larger loop, more inductance and radiation. Never cut a plane under a high-frequency current path.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Ott, 2009, Sec.\ 3.2.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Return current under the trace %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Return current under the trace}
+	\begin{columns}[T]
 		\begin{column}{0.5\textwidth}
 			\begin{figure}
 				\centering
-				\begin{tikzpicture}[font=\scriptsize]
-					% (a) plane with a U-shaped trace
-					\fill[gray!15] (0,0) rectangle (2.6,2.2);
-					\draw[very thick] (0.4,0.4) -- (0.4,1.8) -- (2.2,1.8) -- (2.2,0.4);
-					\fill (0.4,0.4) circle (0.06); \fill (2.2,0.4) circle (0.06);
-					\node[anchor=north] at (0.4,0.35) {A}; \node[anchor=north] at (2.2,0.35) {B};
-					\draw[densely dashed] (2.2,0.55) -- (0.4,0.55);
-					\draw[densely dotted, thick] (2.05,0.45) -- (2.05,1.65) -- (0.55,1.65) -- (0.55,0.45);
-					\node at (1.3,-0.35) {(a) solid plane};
-					% (b) plane with a slot under the trace
-					\begin{scope}[xshift=3.0cm]
-						\fill[gray!15] (0,0) rectangle (2.6,2.2);
-						\fill[white] (1.2,0.9) rectangle (1.4,2.2);
-						\draw[very thick] (0.3,1.5) -- (2.3,1.5);
-						\draw[densely dotted, thick] (2.3,1.4) -- (1.5,1.4) -- (1.5,0.75) -- (1.1,0.75) -- (1.1,1.4) -- (0.3,1.4);
-						\node at (1.3,-0.35) {(b) slot in the plane};
-					\end{scope}
+				\begin{tikzpicture}[font=\scriptsize, >={Latex[length=1.5mm]}]
+					% cross-section: plane and trace at height h
+					\fill[gray!25] (-2.9,-0.2) rectangle (2.9,0);
+					\node[anchor=west] at (1.2,-0.42) {ground plane};
+					\fill (-0.2,0.8) rectangle (0.2,0.9);
+					\node[anchor=south] at (0,0.92) {trace, current $I$};
+					\draw[<->] (-0.45,0) -- (-0.45,0.8); \node[anchor=east] at (-0.5,0.4) {$h$};
+					\draw[->] (0,0.45) -- (1.6,0.45); \node[anchor=south] at (1.4,0.45) {$x$};
 				\end{tikzpicture}
-				\caption{Top view: trace (solid), return current at low (dashed) and high frequency (dotted)}
+
+				\begin{tikzpicture}
+					\begin{axis}[
+							width=0.95\linewidth, height=3.1cm,
+							xmin=-5, xmax=5, ymin=0, ymax=1.15,
+							xtick={-3,-1,0,1,3}, xticklabels={$-3h$,$-h$,0,$h$,$3h$},
+							ytick={0,0.5,1},
+							xlabel={lateral distance $x$}, ylabel={$K(x)/K(0)$},
+							tick label style={font=\scriptsize}, label style={font=\scriptsize},
+						]
+						\addplot[fill=gray!15, draw=none, domain=-3:3, samples=100] {1/(1+x^2)} \closedcycle;
+						\addplot[fill=gray!40, draw=none, domain=-1:1, samples=60] {1/(1+x^2)} \closedcycle;
+						\addplot[black, thick, domain=-5:5, samples=200] {1/(1+x^2)};
+						\node[font=\scriptsize] at (axis cs:0,0.3) {50\,\%};
+						\node[font=\scriptsize] at (axis cs:2.1,0.06) {80\,\%};
+					\end{axis}
+				\end{tikzpicture}
+				\caption{Cross-section and return current density; dark area: 50\,\%, dark and light: 80\,\% of the current}
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
+			Return current density in the plane under a trace at height $h$ (image method):
+			\begin{equation*}
+				K(x)=\frac{I}{\pi h}\cdot\frac{1}{1+(x/h)^2}
+			\end{equation*}
+			$K$: current per unit width (A/m); $x$: lateral distance from the centre line of the trace; $I$: current of the trace.
 			\begin{itemize}
-				\item Low frequency: path of least resistance. High frequency: path of least inductance, under the trace. The transition lies at a few hundred kHz.
-				\item Current density in the plane, conductor at height $h$:
-				      \begin{equation*}
-					      K(x)=\frac{I}{\pi h}\cdot\frac{1}{1+(x/h)^2}
-				      \end{equation*}
-				      50\,\% within $\pm h$, 80\,\% within $\pm3h$.
-				\item A slot in the plane forces a detour: more inductance and radiation. No splits under high-frequency currents.
+				\item Half of the return current flows within $\pm h$, 80\,\% within $\pm3h$.
+				\item With 0.1\,mm between L1 and L2, 80\,\% of the return current stays within $\pm0.3$\,mm of the trace: the return follows the trace closely.
+				\item Keep this strip free of slots, rows of vias and cut-outs.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -730,7 +802,7 @@
 		\item Place the high-frequency capacitors inside the power loop, at the drain of the high-side and the source of the low-side switch, on the same side as the switches.
 		\item Use several equal capacitors in parallel, each with its own vias: $n$ capacitors give about $1/n$ of the inductance, and the current spreads over a wider path.
 		\item Class II ceramics (X7R, X5R) lose a large part of their capacitance under DC bias. Use the DC-bias curve of the manufacturer, not the nominal value. C0G does not lose capacitance but has a low capacitance per volume.
-		\item The ceramic capacitors supply the pulsed input current. Size them for ripple voltage and RMS current; the bulk capacitor covers low frequencies and the input filter.
+		\item The ceramic capacitors supply the pulsed input current of the converter. Size them for the ripple voltage and the RMS current; the bulk capacitor covers low frequencies and works with the input filter.
 	\end{itemize}
 	\begin{block}{Example: buck 48\,V to 12\,V, 10\,A, 1\,MHz ($D=0.25$)}
 		RMS current in the ceramic capacitors $I_\mathrm{o}\sqrt{D(1-D)}=4.3$\,A. For 1\,V ripple they need
@@ -744,7 +816,7 @@
 \begin{frame}
 	\frametitle{Bulk and ceramic capacitors}
 	\begin{columns}[T]
-		\begin{column}{0.52\textwidth}
+		\begin{column}{0.5\textwidth}
 			\begin{figure}
 				\centering
 				\begin{tikzpicture}[
@@ -753,36 +825,89 @@
 								Xb(\x)=w(\x)*15e-9-1/(w(\x)*100e-6);
 								Zp(\x,\ra,\rb)=sqrt(((\ra*\rb-Xa(\x)*Xb(\x))^2+(\ra*Xb(\x)+\rb*Xa(\x))^2)/((\ra+\rb)^2+(Xa(\x)+Xb(\x))^2));}]
 					\begin{loglogaxis}[
-							width=0.95\linewidth, height=4.8cm,
+							width=0.95\linewidth, height=4.6cm,
 							xmin=1e4, xmax=1e8, ymin=1e-3, ymax=10,
 							xlabel={$f$ (Hz)}, ylabel={$|Z|$ ($\Omega$)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
 						]
 						\addplot[black, thick, domain=4:8, samples=600] ({10^x}, {Zp(x,0.003,0.010)});
-						\addlegendentry{bulk ESR 10\,m$\Omega$}
-						\addplot[gray, thick, domain=4:8, samples=600] ({10^x}, {Zp(x,0.003,0.087)});
-						\addlegendentry{bulk ESR 87\,m$\Omega$}
+						\node[font=\tiny, anchor=north] at (axis cs:1.3e5,7e-3) {bulk};
+						\node[font=\tiny, anchor=south] at (axis cs:9.2e5,0.62) {$f_\mathrm{ar}$};
+						\node[font=\tiny, anchor=west] at (axis cs:8.5e6,2.9e-3) {ceramic};
 					\end{loglogaxis}
 				\end{tikzpicture}
-				\caption{2\,$\mu$F ceramic (0.3\,nH, 3\,m$\Omega$) in parallel with 100\,$\mu$F bulk (15\,nH including its connection)}
+				\caption{Impedance seen by the switches; bulk ESR 10\,m$\Omega$. Minima: series resonance of each capacitor; peak: parallel resonance $f_\mathrm{ar}$}
 			\end{figure}
 		\end{column}
-		\begin{column}{0.45\textwidth}
-			\small
-			Between the two series resonances the ceramic branch is capacitive and the bulk branch inductive: parallel resonance (anti-resonance) at
+		\begin{column}{0.47\textwidth}
+			\footnotesize
+			\begin{center}
+				\begin{circuitikz}[scale=0.62, transform shape]
+					\draw (0,3.6) node[ocirc]{} -- (5.0,3.6);
+					\draw (0,0) node[ocirc]{} -- (5.0,0);
+					\draw (1.5,3.6) to[C, l=2\,$\mu$F] (1.5,2.4) to[L, l=0.3\,nH] (1.5,1.2) to[R, l=3\,m$\Omega$] (1.5,0);
+					\draw (4.0,3.6) to[C, l=100\,$\mu$F] (4.0,2.4) to[L, l=15\,nH] (4.0,1.2) to[R, l=ESR] (4.0,0);
+					\node at (1.5,4.0) {ceramic};
+					\node at (4.0,4.0) {bulk};
+					\node[anchor=east, align=right] at (-0.15,1.8) {to the\\switches};
+				\end{circuitikz}
+			\end{center}
+			Each capacitor is a series $RLC$ circuit: resonance of the bulk at 130\,kHz, of the ceramic at 6.5\,MHz. In between, the bulk branch is inductive and the ceramic branch capacitive: a parallel resonance at
 			\begin{equation*}
 				f_\mathrm{ar}\approx\frac{1}{2\pi\sqrt{L_\mathrm{bulk}C_\mathrm{cer}}}=0.92\,\mathrm{MHz}
 			\end{equation*}
-			Peak 0.56\,$\Omega$, right at a typical $f_\mathrm{sw}$.
-			\begin{itemize}
-				\item Damping: resistance of about $\sqrt{L_\mathrm{bulk}/C_\mathrm{cer}}=87$\,m$\Omega$ in the bulk branch (e.g.\ an electrolytic capacitor): peak 0.12\,$\Omega$.
-				\item Check where $f_\mathrm{ar}$ lies relative to $f_\mathrm{sw}$ and its harmonics.
-			\end{itemize}
+			with a peak of 0.56\,$\Omega$, right at a typical $f_\mathrm{sw}$.
 		\end{column}
 	\end{columns}
 	\blfootnote{Source: Ott, 2009, Sec.\ 11.4.3 (largest peaks for values an order of magnitude or more apart); values illustrative.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Damping the anti-resonance %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Damping the parallel resonance}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}[
+						declare function={w(\x)=2*pi*10^\x;
+								Xa(\x)=w(\x)*0.3e-9-1/(w(\x)*2e-6);
+								Xb(\x)=w(\x)*15e-9-1/(w(\x)*100e-6);
+								Zp(\x,\ra,\rb)=sqrt(((\ra*\rb-Xa(\x)*Xb(\x))^2+(\ra*Xb(\x)+\rb*Xa(\x))^2)/((\ra+\rb)^2+(Xa(\x)+Xb(\x))^2));}]
+					\begin{loglogaxis}[
+							width=0.95\linewidth, height=4.2cm,
+							xmin=1e4, xmax=1e8, ymin=1e-3, ymax=10,
+							xlabel={$f$ (Hz)}, ylabel={$|Z|$ ($\Omega$)},
+							grid=major, grid style={gray!20},
+							tick label style={font=\scriptsize}, label style={font=\footnotesize},
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=1, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
+						]
+						\addplot[black, thick, domain=4:8, samples=600] ({10^x}, {Zp(x,0.003,0.010)});
+						\addlegendentry{bulk ESR 10\,m$\Omega$: peak 0.56\,$\Omega$}
+						\addplot[gray, thick, domain=4:8, samples=600] ({10^x}, {Zp(x,0.003,0.087)});
+						\addlegendentry{bulk ESR 87\,m$\Omega$: peak 0.12\,$\Omega$}
+					\end{loglogaxis}
+				\end{tikzpicture}
+				\caption{The circuit of the previous slide with two values of the bulk ESR}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\footnotesize
+			At $f_\mathrm{ar}$, $L_\mathrm{bulk}$ and $C_\mathrm{cer}$ form a parallel $LC$ circuit: energy swings between them, limited only by their small resistances.
+			\begin{itemize}
+				\item A resistance in this loop dissipates the energy. The peak is lowest when it is about the characteristic impedance
+				      \begin{equation*}
+					      Z_0=\sqrt{L_\mathrm{bulk}/C_\mathrm{cer}}=87\,\mathrm{m\Omega}.
+				      \end{equation*}
+				\item In practice: an electrolytic or polymer bulk capacitor whose ESR is close to $Z_0$, or a small resistor in series with a low-ESR bulk capacitor.
+				\item Check where $f_\mathrm{ar}$ lies relative to $f_\mathrm{sw}$ and its harmonics: the ripple current there sees the peak impedance.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Ott, 2009, Sec.\ 11.4.3; peaks computed for this lecture.}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -791,39 +916,44 @@
 \begin{frame}
 	\frametitle{Gate loop layout}
 	\begin{columns}[T]
-		\begin{column}{0.45\textwidth}
+		\begin{column}{0.46\textwidth}
 			\begin{figure}
 				\centering
-				\begin{tikzpicture}[font=\scriptsize]
-					% driver and transistor
-					\draw (0,0.6) rectangle (1.2,2.0); \node[align=center] at (0.6,1.3) {gate\\driver};
-					\draw[fill=gray!15] (2.8,0.2) rectangle (4.4,2.4); \node at (3.6,2.65) {GaN};
-					% gate and Kelvin return as a pair
-					\draw[very thick] (1.2,1.55) -- (2.8,1.55);
-					\draw[very thick, gray] (1.2,1.15) -- (2.8,1.15);
-					\node[anchor=south] at (2.0,1.6) {G};
-					\node[anchor=north] at (2.0,1.1) {K};
-					\draw[-{Latex[length=1.5mm]}] (1.6,1.68) -- (2.4,1.68);
-					\draw[-{Latex[length=1.5mm]}] (2.4,1.02) -- (1.6,1.02);
+				\begin{tikzpicture}[font=\scriptsize, >={Latex[length=1.5mm]}]
+					% driver
+					\draw (0,0.5) rectangle (1.3,2.3); \node[align=center] at (0.65,1.4) {gate\\driver};
+					\node[anchor=east] at (1.28,1.85) {\tiny OUT}; \node[anchor=east] at (1.28,0.95) {\tiny GND};
+					% transistor
+					\draw[fill=gray!15] (2.9,0.2) rectangle (4.5,2.6); \node at (3.7,1.4) {GaN};
+					\node[anchor=west] at (2.92,1.85) {\tiny G}; \node[anchor=west] at (2.92,0.95) {\tiny K};
+					\node[anchor=south] at (3.7,2.6) {\tiny D}; \node[anchor=north] at (3.7,0.2) {\tiny S};
+					% gate loop: gate trace and Kelvin return as a narrow pair
+					\fill[gray!30] (1.3,1.0) rectangle (2.9,1.8);
+					\draw[very thick] (1.3,1.85) -- (2.9,1.85);
+					\draw[very thick] (1.3,0.95) -- (2.9,0.95);
+					\draw[->] (1.8,2.05) -- (2.4,2.05); \draw[->] (2.4,0.75) -- (1.8,0.75);
+					\node[align=center, font=\tiny] at (2.1,1.4) {gate-loop\\area};
 					% driver supply capacitor
-					\draw (0.25,0.6) -- (0.25,0.35); \draw (0.95,0.6) -- (0.95,0.35);
-					\draw (0.1,0.35) -- (0.4,0.35); \draw (0.1,0.27) -- (0.4,0.27);
-					\node[anchor=north] at (0.6,0.2) {$C_\mathrm{VDD}$ at the pins};
-					% power current, orthogonal
-					\draw[-{Latex[length=2mm]}, thick] (4.0,3.1) -- (4.0,-0.5);
-					\node[anchor=west] at (4.1,-0.3) {power current};
+					\draw (0.3,0.5) -- (0.3,0.2); \draw (1.0,0.5) -- (1.0,0.2);
+					\draw (0.3,0.2) -- (0.55,0.2); \draw (0.75,0.2) -- (1.0,0.2);
+					\draw (0.55,0.05) -- (0.55,0.35); \draw (0.75,0.05) -- (0.75,0.35);
+					\node[anchor=north] at (0.65,0.0) {$C_\mathrm{VDD}$};
+					% power current from D to S
+					\draw[->, line width=1.2pt, gray] (3.7,3.4) -- (3.7,2.65);
+					\draw[->, line width=1.2pt, gray] (3.7,0.15) -- (3.7,-0.6);
+					\node[anchor=west, align=left] at (3.85,3.15) {power current\\(drain to source)};
 				\end{tikzpicture}
-				\caption{Top view of driver and transistor (schematic); G gate, K Kelvin source}
+				\caption{Top view (schematic): gate trace (OUT to G) and return (K to GND) as a narrow pair, at right angles to the power current; K: Kelvin-source pin}
 			\end{figure}
 		\end{column}
-		\begin{column}{0.52\textwidth}
-			\small
+		\begin{column}{0.51\textwidth}
+			\footnotesize
 			\begin{itemize}
-				\item Driver within a few mm of the gate; gate and return as a pair (side by side or on adjacent layers).
-				\item Return to the Kelvin-source pin (chip-scale GaN: the source pads closest to the gate). The gate loop then carries no power current.
-				\item Gate loop perpendicular to the power loop, or with opposite currents.
-				\item Driver supply capacitor directly at the driver pins.
-				\item A small gate-loop inductance allows a small $R_\mathrm{G}$ without gate ringing: $R_\mathrm{G}\geq2\sqrt{L_\mathrm{G}/C_\mathrm{GS}}$ (L4).
+				\item Driver within a few mm of the gate; gate trace and return as a narrow pair, side by side or on adjacent layers. Small loop area: small gate-loop inductance $L_\mathrm{G}$.
+				\item Return to the Kelvin-source pin K, not to the power source S (chip-scale GaN: the source pads next to the gate). Then no power current flows in the gate loop.
+				\item Keep the gate loop out of the field of the power loop: at right angles to the power current and away from the power-loop area.
+				\item Driver supply capacitor $C_\mathrm{VDD}$ directly at the driver pins: it delivers the gate-current pulses.
+				\item Small $L_\mathrm{G}$: small $R_\mathrm{G}$ without ringing, $R_\mathrm{G}\geq2\sqrt{L_\mathrm{G}/C_\mathrm{GS}}$ (L4).
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -857,12 +987,12 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.42\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
-				\item Thin dielectric between L1 and L2: return of the power loop, reference of the gate loop.
+				\item Thin dielectric (0.1\,mm) between L1 and L2: L2 carries the return of the power loop and is the reference of the gate loop.
 				\item Signals on L3 have their own reference plane and are shielded from the switch node by L2.
-				\item Symmetric build against warping; thick copper outside for current and heat.
-				\item Six layers: a second ground plane and more room for control signals.
+				\item Symmetric stack, so that the board does not warp; thick copper outside for current and heat.
+				\item Six layers: a second ground plane and room for control signals.
 			\end{itemize}
 			Ask the PCB manufacturer for standard prepreg thicknesses and copper weights; they set the loop inductance.
 		\end{column}
@@ -876,18 +1006,18 @@
 	\frametitle{Switch-node copper}
 	\begin{columns}[T]
 		\begin{column}{0.48\textwidth}
-			\textbf{Small area}
+			\textbf{Small area: advantages}
 			\begin{itemize}
-				\item less capacitance to planes and heat sink: lower $\frac12CV^2f_\mathrm{sw}$ and common-mode current
-				\item less coupling into gate and control signals
-				\item 25\,mm$^2$ over L2 at 0.1\,mm are already 10\,pF
+				\item Less capacitance to planes and heat sink: lower $\frac12CV^2f_\mathrm{sw}$ loss and less common-mode current.
+				\item Less coupling into gate and control signals.
+				\item Scale: 25\,mm$^2$ over L2 at 0.1\,mm already give 10\,pF.
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.48\textwidth}
-			\textbf{Large area}
+			\textbf{Large area: advantages}
 			\begin{itemize}
-				\item heat spreading for the high-side switch, whose source pad is the switch node
-				\item lower resistance to the output inductor
+				\item Heat spreading for the high-side switch, whose source pad is the switch node.
+				\item Lower resistance to the output inductor.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -916,11 +1046,11 @@
 					                      & 1\,oz    & 2\,oz    \\
 					\hline
 					Thickness             & 35\,$\mu$m & 70\,$\mu$m \\
-					m$\Omega$ per square, 20\,$^\circ$C & 0.49 & 0.25 \\
+					sheet resistance, 20\,$^\circ$C & 0.49\,m$\Omega$ & 0.25\,m$\Omega$ \\
 					\hline
 				\end{tabular}
 			\end{table}
-			Skin depth of copper: 66\,$\mu$m at 1\,MHz, 21\,$\mu$m at 10\,MHz, 6.6\,$\mu$m at 100\,MHz. Thicker copper helps the DC and low-frequency current, not the ringing current. Current capacity versus temperature rise: IPC-2152.
+			The sheet resistance is the resistance of a square of any size. Skin depth of copper: 66\,$\mu$m at 1\,MHz, 21\,$\mu$m at 10\,MHz, 6.6\,$\mu$m at 100\,MHz. Thicker copper helps the DC and low-frequency current, not the ringing current. Current capacity versus temperature rise: IPC-2152.
 		\end{column}
 		\begin{column}{0.48\textwidth}
 			\textbf{Spacing}
@@ -982,10 +1112,10 @@
 					      C_\mathrm{par}=\frac{C_\mathrm{add}}{(f_\mathrm{r0}/f_\mathrm{r1})^2-1},\quad L=\frac{1}{(2\pi f_\mathrm{r0})^2C_\mathrm{par}}
 				      \end{equation*}
 				      The frequency halves for $C_\mathrm{add}=3C_\mathrm{par}$.
-				\item $R\approx Z_0=\sqrt{L/C_\mathrm{par}}$ and $C_\mathrm{s}\approx3$--$4\,C_\mathrm{par}$ give $\zeta\approx0.5$--0.6.
-				\item Added loss: $\frac12C_\mathrm{s}V^2$ per fast edge, at most $C_\mathrm{s}V^2f_\mathrm{sw}$.
+				\item Choose $R\approx Z_0=\sqrt{L/C_\mathrm{par}}$, $C_\mathrm{s}\approx3$--$4\,C_\mathrm{par}$: damping ratio $\zeta\approx0.5$--0.6.
+				\item $C_\mathrm{s}$ is recharged at every edge: added loss $\frac12C_\mathrm{s}V^2$ per fast edge, at most $C_\mathrm{s}V^2f_\mathrm{sw}$.
 			\end{enumerate}
-			Small packages for $R$ and $C_\mathrm{s}$, inside the power loop; otherwise their own inductance makes them useless at $f_\mathrm{r}$.
+			Small packages for $R$ and $C_\mathrm{s}$, inside the power loop: otherwise their own inductance makes them useless at $f_\mathrm{r}$.
 		\end{column}
 	\end{columns}
 	\blfootnote{Sources: Taylor and Manack, TI SLYT465, 2012; damping curves computed for this lecture.}
@@ -1027,12 +1157,12 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{axis}[
-							width=\linewidth, height=5.0cm,
+							width=\linewidth, height=4.7cm,
 							xmin=-1, xmax=10, ymin=-5, ymax=90,
 							xlabel={$t$ (ns)}, ylabel={$v_\mathrm{sw}$ (V)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[gray, thick] table[x=t, y=v04] {fig/lec03/ring_turn_on.dat};
 						\addlegendentry{0.4\,nH}

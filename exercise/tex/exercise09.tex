@@ -1,0 +1,181 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Resonant converters: FHA and LLC design}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Series resonant converter}
+
+A half-bridge series resonant converter (SRC) operates from $V_\mathrm{in}=\SI{48}{\volt}$. The tank has $L_\mathrm{r}=\SI{1.59}{\micro\henry}$ and $C_\mathrm{r}=\SI{15.9}{\nano\farad}$; a transformer with $n=2$ and a full-bridge rectifier with capacitive filter supply \SI{12}{\volt} and \SI{5}{\ampere}. With FHA, $M=nV_\mathrm{o}/(V_\mathrm{in}/2)$ and
+\begin{equation}
+	M=\frac{1}{\sqrt{1+Q^2\left(F-1/F\right)^2}},\qquad F=\frac{f_\mathrm{sw}}{f_\mathrm{r}},\qquad Q=\frac{Z_0}{R_\mathrm{e}},\qquad R_\mathrm{e}=\frac{8n^2}{\pi^2}R_\mathrm{L}.
+\end{equation}
+
+\subtask{Calculate $f_\mathrm{r}$, $Z_0$, $R_\mathrm{e}$ and $Q$ at full load. Which output voltage results at $f_\mathrm{r}$?}
+
+\begin{solutionblock}
+	$f_\mathrm{r}=1/(2\pi\sqrt{L_\mathrm{r}C_\mathrm{r}})=\SI{1.00}{\mega\hertz}$, $Z_0=\sqrt{L_\mathrm{r}/C_\mathrm{r}}=\SI{10}{\ohm}$. $R_\mathrm{L}=\SI{2.4}{\ohm}$, $R_\mathrm{e}=8\cdot4\cdot\SI{2.4}{\ohm}/\pi^2=\SI{7.78}{\ohm}$, $Q=1.29$. At $f_\mathrm{r}$ the gain is 1 for every load: $nV_\mathrm{o}=V_\mathrm{in}/2$, $V_\mathrm{o}=\SI{12}{\volt}$.
+\end{solutionblock}
+
+\subtask{Calculate the amplitude of the tank current and the peak voltage across $C_\mathrm{r}$ at $f_\mathrm{r}$ and full load. Check the output current.}
+
+\begin{solutionblock}
+	$\hat{v}_\mathrm{s1}=2V_\mathrm{in}/\pi=\SI{30.6}{\volt}$. At $f_\mathrm{r}$ the tank is resistive: $\hat{\imath}=\hat{v}_\mathrm{s1}/R_\mathrm{e}=\SI{3.93}{\ampere}$; $I_\mathrm{o}=2n\hat{\imath}/\pi=\SI{5.0}{\ampere}$. The capacitor carries $\hat{\imath}Z_0=\SI{39.3}{\volt}$ on top of its DC bias $V_\mathrm{in}/2$: $\SI{63.3}{\volt}$ peak.
+\end{solutionblock}
+
+\subtask{The input voltage rises to \SI{56}{\volt}. Which switching frequency keeps \SI{12}{\volt} at full load and at 10\,\% load?}
+
+\begin{solutionblock}
+	$M=\SI{24}{\volt}/\SI{28}{\volt}=0.857$, so $Q^2(F-1/F)^2=1/M^2-1=0.361$. Full load: $F-1/F=0.468$, $F=1.26$, i.e.\ \SI{1.26}{\mega\hertz}. 10\,\% load ($Q=0.129$): $F-1/F=4.68$, $F=4.88$, i.e.\ \SI{4.9}{\mega\hertz}. Without load the SRC cannot regulate at all: its gain tends to 1 at every frequency.
+\end{solutionblock}
+
+\subtask{Plot the gain curves for 100\,\%, 50\,\% and 10\,\% load and verify the frequencies (notebook).}
+
+\begin{solutionblock}
+	The notebook reproduces \SI{1.26}{\mega\hertz} and \SI{4.88}{\mega\hertz}. The curves become flat at light load: a small change of the gain needs a large change of the frequency.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{LLC converter with an input-voltage range}
+
+A full-bridge LLC converter with $n=4$ and $f_\mathrm{r}=\SI{1}{\mega\hertz}$ shall supply \SI{12}{\volt} and \SI{250}{\watt} from an input of 40 to \SI{60}{\volt} (Fig.~\ref{fig:ex09_fha}). With $M=nV_\mathrm{o}/V_\mathrm{in}$, $L_\mathrm{n}=L_\mathrm{m}/L_\mathrm{r}$ and $Q=Z_0/R_\mathrm{e}$ the FHA gain is
+\begin{equation}
+	M=\left|\frac{L_\mathrm{n}F^2}{\left[(L_\mathrm{n}+1)F^2-1\right]+\mathrm{j}\left(F^2-1\right)FQL_\mathrm{n}}\right|.
+\end{equation}
+Peak gains from FHA:
+
+\begin{center}
+	\begin{tabular}{|l|c|c|c|c|}
+		\hline
+		                        & $Q=0.3$ & $Q=0.4$ & $Q=0.5$ & $Q=0.6$ \\
+		\hline
+		$L_\mathrm{n}=3$        & 2.31    & 1.79    & 1.50    & 1.32    \\
+		$L_\mathrm{n}=5$        & 1.75    & 1.39    & 1.20    & 1.11    \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Peak gain of the LLC (FHA)}
+	\label{tab:ex09_peak}
+\end{center}
+
+\input{fig/ex09/figFHA}
+
+\subtask{Calculate the required gain range and $R_\mathrm{e}$ at full load.}
+
+\begin{solutionblock}
+	$M=\SI{48}{\volt}/V_\mathrm{in}$: 1.2 at \SI{40}{\volt}, 0.8 at \SI{60}{\volt}. $R_\mathrm{L}=\SI{0.576}{\ohm}$, $R_\mathrm{e}=8\cdot16\cdot\SI{0.576}{\ohm}/\pi^2=\SI{7.47}{\ohm}$.
+\end{solutionblock}
+
+\subtask{Which $L_\mathrm{n}$ can reach $M=0.8$ without load? Choose $L_\mathrm{n}$ and $Q$ with at least 20\,\% margin of the peak gain above $M_\mathrm{max}$.}
+
+\begin{solutionblock}
+	Without load ($Q\to0$) and $F\to\infty$ the gain tends to $L_\mathrm{n}/(L_\mathrm{n}+1)$: 0.83 for $L_\mathrm{n}=5$, which cannot reach 0.8 (burst mode would be needed at high line and light load), but 0.75 for $L_\mathrm{n}=3$. With $L_\mathrm{n}=3$, $Q=0.5$ gives a peak gain of 1.50, 25\,\% above 1.2.
+\end{solutionblock}
+
+\subtask{Calculate $L_\mathrm{r}$, $C_\mathrm{r}$ and $L_\mathrm{m}$.}
+
+\begin{solutionblock}
+	$Z_0=QR_\mathrm{e}=\SI{3.74}{\ohm}$, $L_\mathrm{r}=Z_0/\omega_\mathrm{r}=\SI{594}{\nano\henry}$, $C_\mathrm{r}=1/(\omega_\mathrm{r}Z_0)=\SI{42.6}{\nano\farad}$, $L_\mathrm{m}=3L_\mathrm{r}=\SI{1.78}{\micro\henry}$.
+\end{solutionblock}
+
+\subtask{Calculate the peak magnetising current at $f_\mathrm{r}$ and the primary rms current at full load. Compare them with the DCX of Lecture 9 ($L_\mathrm{m}=\SI{5}{\micro\henry}$).}
+
+\begin{solutionblock}
+	$I_\mathrm{m,pk}=nV_\mathrm{o}/(4f_\mathrm{r}L_\mathrm{m})=\SI{6.7}{\ampere}$, three times more than ZVS needs. The load part of the primary current has the amplitude $\pi I_\mathrm{o}/(2n)=\SI{8.18}{\ampere}$ (\SI{5.79}{\ampere} rms). With the triangular magnetising current: $I_\mathrm{rms}=\sqrt{8.18^2/2+6.7^2/3}\,\si{\ampere}=\SI{6.97}{\ampere}$, i.e.\ 45\,\% more conduction loss. The DCX needs only \SI{2.4}{\ampere} and \SI{5.95}{\ampere} rms: the regulation range costs circulating current.
+\end{solutionblock}
+
+\subtask{Determine the frequency range at full load and at 10\,\% load and the ZVS limit with FHA (notebook).}
+
+\begin{solutionblock}
+	$M=1.2$ at $F=0.79$ (full load, \SI{40}{\volt}); $M=0.8$ at $F=1.49$ (full load), 1.70 (50\,\%) and 1.97 (10\,\% load, \SI{60}{\volt}). The converter spans 0.79 to \SI{1.97}{\mega\hertz}. The ZVS limit at full load lies at $F=0.62$, below the operating range.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{DC transformer for brief B2}
+
+The DCX of Lecture 9 converts \SI{48}{\volt} to \SI{12}{\volt} at \SI{250}{\watt} with a full bridge, $n=4$ and $f_\mathrm{sw}=f_\mathrm{r}=\SI{1}{\mega\hertz}$. The primary GaN transistors have $Q_\mathrm{oss}=\SI{10}{\nano\coulomb}$ at \SI{48}{\volt} and $R_\mathrm{DS(on)}=\SI{7}{\milli\ohm}$; the dead time is \SI{10}{\nano\second}, and the transformer capacitance needs another \SI{5}{\nano\coulomb} per transition. The synchronous rectifiers have $R_\mathrm{DS(on)}=\SI{1.5}{\milli\ohm}$ and \SI{0.2}{\nano\henry} between the sense point and the die.
+
+\subtask{Calculate the upper bound of $L_\mathrm{m}$. Choose $L_\mathrm{m}=\SI{4.7}{\micro\henry}$ and calculate $I_\mathrm{m,pk}$.}
+
+\begin{solutionblock}
+	$I_\mathrm{m,pk}\geq(2\cdot10+5)\,\si{\nano\coulomb}/\SI{10}{\nano\second}=\SI{2.5}{\ampere}$, so $L_\mathrm{m}\leq nV_\mathrm{o}/(4f_\mathrm{sw}\cdot\SI{2.5}{\ampere})=\SI{4.8}{\micro\henry}$. With \SI{4.7}{\micro\henry}: $I_\mathrm{m,pk}=\SI{2.55}{\ampere}$.
+\end{solutionblock}
+
+\subtask{Calculate the primary rms current and the conduction loss of the primary bridge (two transistors conduct in series).}
+
+\begin{solutionblock}
+	$I_\mathrm{rms}=\sqrt{8.18^2/2+2.55^2/3}\,\si{\ampere}=\SI{5.97}{\ampere}$ and $P=2I_\mathrm{rms}^2R_\mathrm{DS(on)}=\SI{0.50}{\watt}$, of which only \SI{0.03}{\watt} is due to the magnetising current. The LLC of Task 9.2 would lose \SI{0.68}{\watt}.
+\end{solutionblock}
+
+\subtask{The SR controller turns off when the sensed drain-source voltage crosses zero. How early does it turn off, and which loss results if the SR then conducts in reverse at \SI{2}{\volt}?}
+
+\begin{solutionblock}
+	The sensed voltage is $R_\mathrm{DS(on)}i+L\,\mathrm{d}i/\mathrm{d}t$ with $i=\hat{\imath}\sin\omega t$, $\hat{\imath}=\pi I_\mathrm{o}/2=\SI{32.7}{\ampere}$. Its zero comes $\arctan(\omega L/R_\mathrm{DS(on)})=\arctan0.838=\ang{40}$ (\SI{111}{\nano\second}) early. In this interval the average current over a period is $\hat{\imath}(1-\cos\ang{40})/(2\pi)=\SI{1.22}{\ampere}$: \SI{2.4}{\watt} per SR.
+\end{solutionblock}
+
+\subtask{Show that an $RC$ low-pass with $\tau=L/R_\mathrm{DS(on)}$ in the sensing path restores the zero crossing. How large is $\tau$? What happens when $R_\mathrm{DS(on)}$ is 50\,\% higher in operation than assumed for the filter?}
+
+\begin{solutionblock}
+	$(R+sL)/(1+s\tau)=R$ for $\tau=L/R=\SI{133}{\nano\second}$: the filtered signal is proportional to the current. With $R_\mathrm{hot}=1.5R$ the phase of the filtered signal is $\arctan(\omega L/R_\mathrm{hot})-\arctan(\omega L/R)=\ang{29.2}-\ang{40.0}=\ang{-10.8}$: the zero crossing comes \SI{30}{\nano\second} late, and the SR conducts reverse current. The filter is designed for the hot $R_\mathrm{DS(on)}$, or the timing is adapted from period to period.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{FHA versus time domain (notebook)}
+
+\subtask{Write a time-domain model of the LLC with ideal switches and an ideal rectifier into a constant output voltage. Compare its gain with FHA for the design of Task 9.2 at full load and $F=0.65$, 0.8, 1, 1.25 and 1.5.}
+
+\begin{solutionblock}
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|c|c|}
+			\hline
+			$F$           & 0.65 & 0.8  & 1    & 1.25 & 1.5  \\
+			\hline
+			FHA           & 1.42 & 1.19 & 1.00 & 0.88 & 0.80 \\
+			time domain   & 1.79 & 1.26 & 1.00 & 0.83 & 0.73 \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Gain of the LLC of Task 9.2 at full load}
+		\label{tab:ex09_exact}
+	\end{center}
+	FHA is exact at $f_\mathrm{r}$, underestimates the gain below resonance and overestimates it above.
+\end{solutionblock}
+
+\subtask{Which frequency range results from the time-domain model? What does this mean for the design?}
+
+\begin{solutionblock}
+	Time domain: $M=1.2$ at $F=0.83$ instead of 0.79; $M=0.8$ at $F=1.31$ instead of 1.49 at full load and at $F=1.69$ instead of 1.97 at 10\,\% load. The real converter needs 0.83 to \SI{1.69}{\mega\hertz} instead of 0.79 to \SI{1.97}{\mega\hertz}. FHA is conservative here: at low line more gain is left, at high line the frequency stays lower. The frequency limits of the controller, the currents and ZVS are taken from the time-domain model or from measurements.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Tank of your brief (homework)}
+
+Prepare the resonant part of milestone M2 (16.12.).
+
+\subtask{Size the tank of your converter with FHA: gain range, $L_\mathrm{n}$, $Q$, $L_\mathrm{r}$, $C_\mathrm{r}$, $L_\mathrm{m}$, frequency range.}
+
+\begin{solutionblock}
+	Check list: gain range from all voltage corners; $L_\mathrm{n}$ from the minimum gain at light load (or burst mode); $Q$ from the peak gain with margin; $L_\mathrm{m}$ from the ZVS charge; component types (C0G, leakage or air-core $L_\mathrm{r}$); tolerance of $f_\mathrm{r}$.
+\end{solutionblock}
+
+\subtask{Verify the gain, the currents and ZVS at the corners of the operating range in the time domain (notebook or SPICE).}
+
+\begin{solutionblock}
+	The corners are the lowest and the highest frequency at full and at light load. Compare the switching current with $(2Q_\mathrm{oss}+Q_\mathrm{TR})/t_\mathrm{d}$ and the rms currents with the loss budget.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx09\_task.ipynb} evaluates the SRC of Task 9.1, designs the LLC of Task 9.2, checks the DCX and the SR timing of Task 9.3 and compares FHA with a time-domain model (Task 9.4).

@@ -1,0 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4:1 Dickson step-down converter (Exercise 11, Task 1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.85, transform shape]
+			\draw (0,3) node[ocirc]{} node[above]{$V_\mathrm{in}$} to[nos, l=$S_4$\,(2)] (2,3) node[circ]{} to[nos, l=$S_3$\,(1)] (4,3) node[circ]{} to[nos, l=$S_2$\,(2)] (6,3) node[circ]{} to[nos, l=$S_1$\,(1)] (8,3) node[ocirc]{} node[above]{$V_\mathrm{out}$};
+			\draw (2,3) to[C, l_=$C_3$] (2,1.2) node[ocirc]{} node[below]{A};
+			\draw (4,3) to[C, l_=$C_2$] (4,1.2) node[ocirc]{} node[below]{B};
+			\draw (6,3) to[C, l_=$C_1$] (6,1.2) node[ocirc]{} node[below]{A};
+			\node at (1.0,2.75) {};
+			\node[anchor=north] at (4,0.4) {\small A: 0 in phase 1, $V_\mathrm{out}$ in phase 2; B: $V_\mathrm{out}$ in phase 1, 0 in phase 2};
+		\end{circuitikz}
+	\end{center}
+	\caption{4:1 Dickson step-down converter; the nodes A and B are driven by two half-bridges between output and ground (switches $S_\mathrm{A1}$, $S_\mathrm{B1}$ in phase 1, $S_\mathrm{A2}$, $S_\mathrm{B2}$ in phase 2)}
+	\label{fig:ex11_dickson}
+\end{figure}

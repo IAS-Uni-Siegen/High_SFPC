@@ -1,0 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thermal network of the high-side transistor (Exercise 13, Task 3)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.85, transform shape]
+			\draw (0,0) to[I, l=$P_\mathrm{T}$] (0,2.6) node[circ, label=above:$T_\mathrm{j}$]{} to[R, l=$R_\mathrm{jc}$] (2.2,2.6) to[R, l=$R_\mathrm{sp}$] (4.4,2.6) to[R, l=$R_\mathrm{vias}$] (6.6,2.6) to[R, l=$R_\mathrm{TIM}$] (8.8,2.6) node[circ, label=above:$T_\mathrm{hs}$]{} to[R, l=$R_\mathrm{sa}$] (11.2,2.6) to[V, l=$T_\mathrm{a}$] (11.2,0) -- (0,0);
+			\draw (8.8,0) to[I, l=$P_\mathrm{rest}$] (8.8,2.6);
+			\draw (5.6,0) node[ground]{};
+		\end{circuitikz}
+	\end{center}
+	\caption{Thermal network: losses as current sources, temperatures as node voltages, reference \SI{0}{\celsius}; the heat sink is shared with the rest of the converter}
+	\label{fig:ex13_thermal}
+\end{figure}

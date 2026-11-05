@@ -1,0 +1,673 @@
+\title[Modelling and control]{Modelling and control of high-frequency converters}
+\section{Modelling and control}
+
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Overview %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Averaged models}
+
+\begin{frame}
+	\frametitle{Overview}
+	A converter switches at $f_\mathrm{sw}$, but its controller only needs the behaviour well below $f_\mathrm{sw}$. This lecture builds the models for that band and shows where they end.
+	\begin{itemize}
+		\item State-space averaging, averaged switch, small-signal transfer functions
+		\item Buck and boost: resonance, ESR zero, right-half-plane zero
+		\item Loop gain, phase margin, compensators, feedforward
+		\item Current-mode control and sub-harmonic instability
+		\item What changes at MHz: delays, digital control, ripple-based control, resonant converters
+		\item Simulation tools and the choice of control by topology
+	\end{itemize}
+	After this lecture you can derive the control-to-output transfer function of a PWM converter, design a compensator for a chosen crossover and estimate how much phase the delays of a MHz loop cost.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Why averaging %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Why averaging}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item A switching converter is a time-varying, nonlinear circuit: in each switching interval it is a different linear circuit.
+				\item The controller acts on the duty cycle and sees the output through the filter; it needs the response at frequencies well below $f_\mathrm{sw}$.
+				\item Averaging over one period removes the switching ripple and keeps the low-frequency dynamics; linearising around the operating point gives transfer functions.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			Moving average over one period:
+			\begin{equation*}
+				\langle x\rangle_{T_\mathrm{s}}(t)=\frac{1}{T_\mathrm{s}}\int_{t-T_\mathrm{s}}^{t}x(\tau)\,\mathrm{d}\tau
+			\end{equation*}
+			Valid if the ripple is small (small-ripple approximation) and the signals of interest are slow compared with $f_\mathrm{sw}$.
+			\begin{block}{Key message}
+				Averaged models describe what the controller sees, not what the switches see.
+			\end{block}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 3rd ed., 2020, Ch.\ 7.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% State-space averaging %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{State-space averaging}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			Two intervals, state $x$ (inductor currents, capacitor voltages), input $u$:
+			\begin{align*}
+				\dot{x} & =A_1x+B_1u\quad\text{during }dT_\mathrm{s}     \\
+				\dot{x} & =A_2x+B_2u\quad\text{during }(1-d)T_\mathrm{s}
+			\end{align*}
+			Averaged model:
+			\begin{equation*}
+				\dot{x}=\left[dA_1+(1-d)A_2\right]x+\left[dB_1+(1-d)B_2\right]u
+			\end{equation*}
+			Steady state: $X=-A^{-1}BU$ with $A=DA_1+D'A_2$, $B=DB_1+D'B_2$.
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\small
+			Small signals $x=X+\hat{x}$, $d=D+\hat{d}$, products of small quantities neglected:
+			\begin{equation*}
+				\dot{\hat{x}}=A\hat{x}+B\hat{u}+\left[(A_1-A_2)X+(B_1-B_2)U\right]\hat{d}
+			\end{equation*}
+			\begin{itemize}
+				\item A linear, time-invariant model: Laplace transform, transfer functions.
+				\item The averaged switch model gives the same result as a circuit: the switch network is replaced by dependent sources $d\,v$ and $d\,i$, so a circuit simulator can use it.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: R.\,D. Middlebrook, S. \'Cuk, IEEE PESC 1976; Erickson and Maksimovi\'c, 2020, Ch.\ 7.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Buck transfer functions %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Buck transfer functions}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			Voltage mode, continuous conduction; output capacitor $C$ with its ESR $R_\mathrm{esr}$, load $R$:
+			\begin{equation*}
+				G_{vd}(s)=\frac{\hat{v}}{\hat{d}}=V_\mathrm{in}\,\frac{1+s/\omega_\mathrm{esr}}{1+\frac{s}{Q\omega_0}+\frac{s^2}{\omega_0^2}}
+			\end{equation*}
+			\begin{equation*}
+				\omega_0=\frac{1}{\sqrt{LC}},\quad Q\approx R\sqrt{\frac{C}{L}},\quad\omega_\mathrm{esr}=\frac{1}{R_\mathrm{esr}C}
+			\end{equation*}
+			From input voltage to output: $G_{vg}=D\,G_{vd}/V_\mathrm{in}$. Output impedance: $sL$ in parallel with the capacitor and $R$.
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}
+					\begin{groupplot}[
+							group style={group size=1 by 2, vertical sep=0.2cm, xticklabels at=edge bottom},
+							width=\linewidth, height=3.0cm, xmode=log,
+							xmin=100, xmax=500000, xtick={100,1000,10000,100000}, xticklabels={0.1,1,10,100},
+							grid=major, grid style={gray!20},
+							tick label style={font=\scriptsize}, label style={font=\footnotesize},
+						]
+						\nextgroupplot[ymin=-20, ymax=50, ytick={-20,0,20,40}, ylabel={$|G_{vd}|$ (dB)}]
+						\addplot[black, thick] table[x=f, y=Gdb] {fig/lec13/buck_bode.dat};
+						\nextgroupplot[ymin=-190, ymax=10, ytick={-180,-90,0}, ylabel={$\angle G_{vd}$ ($^\circ$)}, xlabel={$f$ (kHz)}]
+						\addplot[black, thick] table[x=f, y=Gph] {fig/lec13/buck_bode.dat};
+					\end{groupplot}
+				\end{tikzpicture}
+				\caption{Bode plot of $G_{vd}$ for 48 to 12\,V, $L=2.2\,\mu$H, $C=20\,\mu$F: resonance $f_0=24$\,kHz with $Q=4.3$, ESR zero at 4\,MHz}
+			\end{figure}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 2020, Ch.\ 8.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Boost RHP zero %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Boost and the right-half-plane zero}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			\begin{equation*}
+				G_{vd}(s)=\frac{V}{D'}\,\frac{1-s/\omega_\mathrm{z}}{1+\frac{s}{Q\omega_0}+\frac{s^2}{\omega_0^2}}
+			\end{equation*}
+			\begin{equation*}
+				\omega_\mathrm{z}=\frac{D'^2R}{L},\qquad\omega_0=\frac{D'}{\sqrt{LC}}
+			\end{equation*}
+			$V$: output voltage, $D'=1-D$, $R$: load. A step increase of $d$ first lowers the output: the diode conducts for a shorter part of the period, and the larger inductor current arrives only after some periods.
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\small
+			\begin{itemize}
+				\item The right-half-plane (RHP) zero raises the gain like a normal zero but adds phase lag, like a delay; no compensator can cancel it.
+				\item Example 12 to 48\,V, 100\,W ($R=23\,\Omega$), $L=4.7\,\mu$H, $D'=0.25$: $f_\mathrm{z}=49$\,kHz.
+				\item The crossover must stay well below $f_\mathrm{z}$, here about 10\,kHz, whatever $f_\mathrm{sw}$ is: a faster switch does not make this loop faster.
+				\item Buck-boost and flyback in continuous conduction (CCM) have the same RHP zero.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 2020, Ch.\ 8.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Poll: validity %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Two pages: question (page 1) and answer (page 2).
+\begin{frame}<handout:1-2>
+	\frametitle{Where does the averaged model end?}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			Poll: up to which frequency does the averaged model of a PWM converter describe the loop reliably?
+			\begin{enumerate}[A]
+				\item up to $f_\mathrm{sw}$
+				\item up to $f_\mathrm{sw}/2$, exactly
+				\item well below $f_\mathrm{sw}/2$; in practice crossover at $f_\mathrm{sw}/10$ to $f_\mathrm{sw}/5$
+				\item at all frequencies, it is exact
+			\end{enumerate}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\onslide<2-|handout:2>{
+				\begin{block}{Answer: C}
+					The modulator samples the control signal once per period: near $f_\mathrm{sw}/2$ (Nyquist) the sampled nature dominates, side bands fold back and the delay of the modulator appears. Current-mode control shows a double pole at $f_\mathrm{sw}/2$ that the averaged model misses entirely (Ridley).
+				\end{block}
+			}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Loop gain %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Loop design}
+
+\begin{frame}
+	\frametitle{Loop gain and margins}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			\begin{equation*}
+				T(s)=H\,G_\mathrm{c}(s)\,\frac{1}{V_\mathrm{M}}\,G_{vd}(s)
+			\end{equation*}
+			$H$: sensor gain, $G_\mathrm{c}$: compensator, $V_\mathrm{M}$: amplitude of the PWM ramp.
+			\begin{itemize}
+				\item Closed loop: disturbances are reduced by $1/(1+T)$; reference tracking $T/(1+T)$.
+				\item Crossover $|T(\mathrm{j}2\pi f_\mathrm{c})|=1$; phase margin $\varphi_\mathrm{m}=180^\circ+\angle T(\mathrm{j}2\pi f_\mathrm{c})$, typically 45 to $60^\circ$.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\small
+			\textbf{Choice of $f_\mathrm{c}$}
+			\begin{itemize}
+				\item PWM: $f_\mathrm{sw}/10$ to $f_\mathrm{sw}/5$, because the modulator samples and the feedback carries switching ripple.
+				\item Below RHP zeros and below the frequency at which delays cost more than about $20^\circ$.
+				\item High enough for the load step: the output deviation is roughly $\Delta I/(2\pi f_\mathrm{c}C)$.
+			\end{itemize}
+			Example: 8\,A step, $C=20\,\mu$F, $f_\mathrm{c}=100$\,kHz: about 0.64\,V.
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 2020, Ch.\ 9.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Compensators %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Type II and type III compensators}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\footnotesize
+			\begin{equation*}
+				G_\mathrm{c}(s)=\frac{\omega_\mathrm{I}}{s}\,\frac{(1+s/\omega_{\mathrm{z}1})(1+s/\omega_{\mathrm{z}2})}{(1+s/\omega_{\mathrm{p}1})(1+s/\omega_{\mathrm{p}2})}
+			\end{equation*}
+			\begin{itemize}
+				\item Integrator: no steady-state error.
+				\item Type II (one zero, one pole): for plants with a single pole near $f_\mathrm{c}$, e.g.\ current mode.
+				\item Type III (two zeros, two poles): voltage-mode buck, whose $LC$ double pole costs $180^\circ$.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\footnotesize
+			\textbf{Placement for the buck of the previous slides}
+			\begin{itemize}
+				\item Zeros at $0.8f_0=19$\,kHz: they cancel the phase drop of the double pole.
+				\item Poles at $f_\mathrm{sw}/2=500$\,kHz: they attenuate the switching ripple. (One pole usually cancels the ESR zero; here it lies above $f_\mathrm{sw}$, at 4\,MHz.)
+				\item The integrator gain $\omega_\mathrm{I}$ sets $f_\mathrm{c}=100$\,kHz.
+			\end{itemize}
+			Result: $\varphi_\mathrm{m}=51^\circ$ (next task).
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 2020, Ch.\ 9; design computed in \texttt{control\_l13.py}.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task: read the Bode plot %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Two pages: task (page 1) and task with solution (page 2).
+\begin{frame}<handout:1-2>
+	\frametitle{Reading a loop gain}
+	\begin{columns}[T]
+		\begin{column}{0.52\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}
+					\begin{groupplot}[
+							group style={group size=1 by 2, vertical sep=0.2cm, xticklabels at=edge bottom},
+							width=\linewidth, height=3.1cm, xmode=log,
+							xmin=1000, xmax=500000, xtick={1000,10000,100000}, xticklabels={1,10,100},
+							grid=both, grid style={gray!20}, minor grid style={gray!10},
+							tick label style={font=\scriptsize}, label style={font=\footnotesize},
+						]
+						\nextgroupplot[ymin=-30, ymax=60, ytick={-20,0,20,40,60}, ylabel={$|T|$ (dB)}]
+						\addplot[black, thick] table[x=f, y=Tdb] {fig/lec13/buck_bode.dat};
+						\nextgroupplot[ymin=-270, ymax=-45, ytick={-270,-225,-180,-135,-90}, ylabel={$\angle T$ ($^\circ$)}, xlabel={$f$ (kHz)}]
+						\addplot[black, thick] table[x=f, y=Tph] {fig/lec13/buck_bode.dat};
+					\end{groupplot}
+				\end{tikzpicture}
+				\caption{Loop gain $T$ of the compensated buck of the previous slides ($f_\mathrm{sw}=1$\,MHz)}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.45\textwidth}
+			\begin{block}{Task (3 minutes)}
+				Read the crossover frequency and the phase margin. How much delay could the loop tolerate before the margin falls to $30^\circ$?
+			\end{block}
+			\onslide<2-|handout:2>{
+				\small
+				$|T|=0$\,dB at $f_\mathrm{c}=100$\,kHz; $\angle T=-129^\circ$: $\varphi_\mathrm{m}=51^\circ$. Losing $21^\circ$ at 100\,kHz allows $T_\mathrm{d}=21/(360\cdot100\,\mathrm{kHz})=0.58\,\mu$s, about half a switching period.
+			}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Feedforward %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Input-voltage feedforward}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item $G_{vd}\propto V_\mathrm{in}$: the loop gain and $f_\mathrm{c}$ change with the input voltage.
+				\item Feedforward makes the ramp amplitude proportional to $V_\mathrm{in}$, $V_\mathrm{M}=kV_\mathrm{in}$: the product $G_{vd}/V_\mathrm{M}$ becomes independent of $V_\mathrm{in}$.
+				\item Line disturbances are corrected within the same period, not through the slow voltage loop.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item Digital form: divide the controller output by the measured $V_\mathrm{in}$.
+				\item Current-mode control has a similar effect: the inductor-current slope carries $V_\mathrm{in}$.
+				\item For B1 to B3 with wide input ranges the loop is then designed once.
+			\end{itemize}
+			\begin{block}{Key message}
+				Remove known plant variations before the compensator has to cope with them.
+			\end{block}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Current mode %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Current-mode control}
+
+\begin{frame}
+	\frametitle{Peak current-mode control}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			\begin{itemize}
+				\item The switch turns on with the clock and off when the inductor current reaches the control current $i_\mathrm{c}$ (minus a compensation ramp).
+				\item The inductor becomes a controlled current source: at low frequency the plant is first order, $R$ in parallel with $C$; a type II compensator suffices.
+				\item Inherent cycle-by-cycle current limit and current sharing of parallel phases.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\small
+			\begin{itemize}
+				\item Needs a fast and clean current measurement: leading-edge blanking after turn-on hides the ringing (L3, L5), which limits the minimum on-time.
+				\item At MHz the blanking time and comparator delay are a large part of $DT_\mathrm{s}$: small duty cycles become hard.
+				\item Valley current mode (off with the clock, on when the current falls to the valley threshold) suits small duty cycles; constant on-time is its natural form.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: Erickson and Maksimovi\'c, 2020, Ch.\ 18; R.\,B. Ridley, IEEE Trans.\ Power Electron., vol.\ 6, no.\ 2, 1991.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sub-harmonic instability %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Sub-harmonic instability}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\footnotesize
+			Slopes of the inductor current: $m_1$ rising, $m_2$ falling (magnitude); compensation ramp $m_\mathrm{a}$. A disturbance $\Delta i$ of the valley current develops from period $k$ to $k+1$ as
+			\begin{equation*}
+				\Delta i_{k+1}=-\frac{m_2-m_\mathrm{a}}{m_1+m_\mathrm{a}}\,\Delta i_k
+			\end{equation*}
+			Without ramp $m_2/m_1=D/D'$: unstable for $D>0.5$, an oscillation at $f_\mathrm{sw}/2$.
+			\begin{itemize}
+				\item $m_\mathrm{a}\geq m_2/2$ makes the factor smaller than one for every $D$.
+				\item Ridley: double pole at $f_\mathrm{sw}/2$ with $Q_\mathrm{p}=1/(\pi(m_\mathrm{c}D'-0.5))$, $m_\mathrm{c}=1+m_\mathrm{a}/m_1$.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\footnotesize
+			\textbf{Demo}: buck 12 to 7.2\,V ($D=0.6$), 1\,MHz, $i_\mathrm{c}=5$\,A, valley disturbed by 0.15\,A.
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}
+					\begin{groupplot}[
+							group style={group size=1 by 2, vertical sep=0.15cm, xticklabels at=edge bottom},
+							width=\linewidth, height=2.5cm,
+							xmin=0, xmax=16, ymin=2, ymax=6.3, ytick={3,5},
+							grid=major, grid style={gray!20},
+							tick label style={font=\scriptsize}, label style={font=\footnotesize}, 
+						]
+						\nextgroupplot[ylabel={$i_L$ (A)}]
+						\addplot[black] table[x=t, y=i] {fig/lec13/subharm0.dat};
+						\node[font=\tiny, anchor=north east, inner sep=1pt] at (rel axis cs:0.98,0.96) {$m_\mathrm{a}=0$};
+						\nextgroupplot[ylabel={$i_L$ (A)}, xlabel={$t$ ($\mu$s)}]
+						\addplot[black] table[x=t, y=i] {fig/lec13/subharm5.dat};
+						\node[font=\tiny, anchor=north east, inner sep=1pt] at (rel axis cs:0.98,0.96) {$m_\mathrm{a}=m_2/2$};
+					\end{groupplot}
+				\end{tikzpicture}
+				\caption{Inductor current after the disturbance: without ramp (top) it grows by the factor $-1.5$ per period, with $m_\mathrm{a}=m_2/2$ (bottom) it decays by $-0.43$}
+			\end{figure}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: Ridley, 1991; simulation \texttt{control\_l13.py} (on-time limited to 95\,\%).}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Delays %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{What changes at MHz}
+
+\begin{frame}
+	\frametitle{Delays at MHz}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			A delay $T_\mathrm{d}$ has gain 1 and phase $-360^\circ\cdot fT_\mathrm{d}$.
+			\begin{itemize}
+				\item Analogue control: driver and comparator delays, blanking; tens of ns.
+				\item Digital control: sampling, computation and update of the PWM, typically $1$ to $1.5\,T_\mathrm{s}$ in total ($T_\mathrm{s}$: switching period).
+				\item The loop is designed in fractions of $f_\mathrm{sw}$; the delays in ns do not scale with $f_\mathrm{sw}$.
+			\end{itemize}
+			Examples: 50\,ns at $f_\mathrm{c}=300$\,kHz (3\,MHz/10) cost $5^\circ$; 1.5 periods at $f_\mathrm{c}=f_\mathrm{sw}/10$ cost $54^\circ$.
+		\end{column}
+		\begin{column}{0.49\textwidth}
+			\begin{figure}
+				\centering
+				\begin{tikzpicture}
+					\begin{semilogxaxis}[
+							width=\linewidth, height=4.4cm,
+							xmin=10000, xmax=500000, xtick={10000,100000}, xticklabels={10,100},
+							ymin=-300, ymax=-60, ytick={-270,-225,-180,-135,-90},
+							xlabel={$f$ (kHz)}, ylabel={$\angle T$ ($^\circ$)},
+							grid=both, grid style={gray!20}, minor grid style={gray!10},
+							tick label style={font=\scriptsize}, label style={font=\footnotesize},
+							legend style={font=\tiny, at={(0.03,0.03)}, anchor=south west}, legend cell align=left,
+						]
+						\addplot[black, thick] table[x=f, y=Tph] {fig/lec13/buck_bode.dat};
+						\addlegendentry{analogue}
+						\addplot[black, thick, dashed] table[x=f, y=TDph] {fig/lec13/buck_bode.dat};
+						\addlegendentry{with $1.5\,T_\mathrm{s}$ delay}
+						\addplot[gray, domain=10000:500000, samples=2] {-180};
+						\addplot[gray, dotted] coordinates {(100000,-300) (100000,-60)};
+					\end{semilogxaxis}
+				\end{tikzpicture}
+				\caption{Phase of the loop gain of the previous task ($f_\mathrm{sw}=1$\,MHz); dotted: crossover at 100\,kHz. The delay turns the margin of $51^\circ$ into $-4^\circ$}
+			\end{figure}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task: digital delay %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Two pages: task (page 1) and task with solution (page 2).
+\begin{frame}<handout:1-2>
+	\frametitle{Phase lag of a digital loop}
+	\begin{block}{Task (2 minutes)}
+		A digital controller samples once per period and updates the PWM with a total delay of $1.5\,T_\mathrm{s}$.
+		\begin{enumerate}
+			\item Phase lag at $f_\mathrm{c}=f_\mathrm{sw}/10$ and at $f_\mathrm{sw}/5$?
+			\item Which crossover keeps the lag below $20^\circ$?
+		\end{enumerate}
+	\end{block}
+	\onslide<2-|handout:2>{
+		\begin{enumerate}
+			\item $360^\circ\cdot0.1\cdot1.5=54^\circ$; at $f_\mathrm{sw}/5$: $108^\circ$, more than the whole phase margin.
+			\item $f_\mathrm{c}\leq20/(360\cdot1.5)\,f_\mathrm{sw}=f_\mathrm{sw}/27$: 37\,kHz at 1\,MHz. Digital control at MHz therefore either accepts a slow loop, or reduces the delay (sampling synchronised with the PWM update, faster computation, double-update PWM).
+		\end{enumerate}
+	}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Digital control %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Digital control}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item The ADC samples once per period (synchronised to avoid the switching edges); the controller computes; the digital PWM (DPWM) applies the new duty cycle in the next period.
+				\item Discrete-time model: the converter with DPWM is described exactly at the sampling instants, including the modulator delay; design directly in the $z$ domain.
+				\item Strengths: adaptive timing (dead time, ZVS), nonlinear and multi-mode control, monitoring.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item Weaknesses at MHz: delay, ADC conversion time, computing time per sample, power of the controller itself.
+				\item Common compromise: an analogue or hardware-state-machine inner loop (current, timing) with a digital outer loop.
+			\end{itemize}
+			\begin{block}{Key message}
+				Digital control buys flexibility with delay; at MHz the delay sets the bandwidth.
+			\end{block}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: D. Maksimovi\'c, R. Zane, IEEE Trans.\ Power Electron., vol.\ 22, no.\ 6, 2007; L. Corradini et al., \textit{Digital Control of High-Frequency Switched-Mode Power Converters}, Wiley, 2015.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DPWM resolution %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{DPWM resolution and limit cycles}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\small
+			A buck changes its output by $V_\mathrm{in}\,\Delta D$ per DPWM step. If this step is larger than the ADC resolution around the reference, no duty cycle hits the reference: the loop hunts between levels, a limit cycle.
+			\begin{itemize}
+				\item Condition: DPWM step below the ADC step, plus a small integral gain.
+				\item Example 12 to 1\,V at 1\,MHz, 1\,mV resolution: $\Delta D=1/12000$, i.e.\ 83\,ps of time resolution; a counter would need 12\,GHz.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.47\textwidth}
+			\small
+			\textbf{Ways out}
+			\begin{itemize}
+				\item Delay-line or hybrid DPWM: a coarse counter plus a fine delay line.
+				\item Dithering: alternate between neighbouring duty cycles; the filter averages.
+				\item High-resolution PWM peripherals of microcontrollers with steps of the order of 100\,ps.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: A.\,V. Peterchev, S.\,R. Sanders, IEEE Trans.\ Power Electron., vol.\ 18, no.\ 1, 2003; Corradini et al., 2015.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ripple-based control %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Ripple-based control}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\textbf{Hysteretic}: on below the lower threshold, off above the upper one. \textbf{Constant on-time}: a fixed on-time starts when the output falls to the reference.
+			\begin{itemize}
+				\item Reaction within the same period, no compensator in the fast path: the standard in MHz point-of-load regulators.
+				\item The switching frequency varies; constant on-time with $t_\mathrm{on}\propto V_\mathrm{out}/V_\mathrm{in}$ keeps it nearly constant, $f_\mathrm{sw}\approx V_\mathrm{out}/(V_\mathrm{in}t_\mathrm{on})$.
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item The comparator needs a ripple in phase with the inductor current. With ceramic output capacitors the capacitive ripple lags: sub-harmonic oscillation. Remedy: inject a ripple derived from the inductor current.
+				\item Jitter and the spread spectrum change the EMI picture (L14).
+				\item Converters in triangular current mode (TCM, B1) use the same idea: the current thresholds set ZVS, the frequency follows.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: Erickson and Maksimovi\'c, 2020; Corradini et al., 2015.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Resonant converters %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Soft-switched and resonant converters}
+	\begin{table}
+		\centering
+		\scriptsize
+		\begin{tabular}{|l|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{6.6cm}|}
+			\hline
+			\textbf{Converter}  & \textbf{Control input}       & \textbf{Model and constraints}                                                                  \\
+			\hline
+			LLC, SRC (L9)       & switching frequency          & gain curve $M(F,Q)$; small-signal by extended describing functions; ZVS limit bounds the range    \\
+			DAB, CLLC (L8, L9)  & phase shift                  & power $\propto\varphi(\pi-\varphi)$; averaged over the period, the bridge current is the state  \\
+			TCM, QSW buck (L8)  & current thresholds, $f_\mathrm{sw}$ & ripple-based; ZVS sets the negative current                                              \\
+			VHF (L10)           & on/off (burst) at fixed $f_\mathrm{sw}$ & hysteretic; the modulation frequency sets the ripple                                  \\
+			\hline
+		\end{tabular}
+		\caption{Control inputs of soft-switched converters; QSW: quasi-square-wave}
+	\end{table}
+	\small
+	\begin{itemize}
+		\item The tank states are AC: averaging over $T_\mathrm{s}$ does not give slow states. The extended describing function method models the envelopes (Yang, 1994).
+		\item The controller must respect the soft-switching boundary, otherwise the efficiency collapses outside the designed range.
+	\end{itemize}
+	\blfootnote{Source: E.\,X. Yang, Ph.D.\ dissertation, Virginia Tech, 1994.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Tools %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Tools and wrap-up}
+
+\begin{frame}
+	\frametitle{Simulation tools}
+	\begin{table}
+		\centering
+		\scriptsize
+		\begin{tabular}{|l|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{5.6cm}|}
+			\hline
+			\textbf{Model}           & \textbf{Tool}                                     & \textbf{Use}                                                     \\
+			\hline
+			transfer functions       & python-control, SciPy (\texttt{scipy.signal})     & loop design, margins, Bode and Nyquist plots                    \\
+			averaged circuit         & ngspice with averaged switch, LTspice             & large-signal start-up, transients, AC analysis                  \\
+			switching circuit        & ngspice, LTspice; PLECS or Simulink where licensed & ripple, sampling effects, sub-harmonics, digital timing         \\
+			discrete time            & Python with the exact sampled model               & digital loops, delay, quantisation                              \\
+			\hline
+		\end{tabular}
+		\caption{Model fidelity versus question}
+	\end{table}
+	\small
+	\begin{itemize}
+		\item Start with the simplest model that answers the question; verify the final loop with a switching simulation that includes the delays.
+		\item Measure the loop gain of the hardware with an injection transformer and a network analyser (L5).
+	\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Control by topology %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Control in the briefs}
+	\begin{table}
+		\centering
+		\footnotesize
+		\begin{tabular}{|l|>{\raggedright\arraybackslash}p{3.0cm}|>{\raggedright\arraybackslash}p{9.6cm}|}
+			\hline
+			   & \textbf{Brief}           & \textbf{Control question}                                                                                     \\
+			\hline
+			B1 & ZVS GaN buck, 1--3\,MHz  & TCM: current thresholds per period, voltage loop on top; delays of the current comparator                    \\
+			B2 & LLC DCX, 1\,MHz          & open loop at $f_\mathrm{r}$; soft start and SR timing                                                         \\
+			B3 & DAB, 0.5--1\,MHz         & phase-shift loop; ZVS boundary as a constraint; digital controller delay                                     \\
+			B4 & 6.78\,MHz class E        & supply-voltage or on/off control of the power; fixed $f_\mathrm{sw}$                                        \\
+			B5 & 13.56\,MHz VHF           & hysteretic on/off control, ripple at the modulation frequency                                                 \\
+			B6 & hybrid SC, 48\,V         & regulation by the inductive stage or by $f_\mathrm{sw}$; flying-capacitor balance                            \\
+			\hline
+		\end{tabular}
+		\caption{Milestone M3 (20.01., CDR): control concept with crossover, margins and delays}
+	\end{table}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Key messages %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Key messages}
+	\begin{enumerate}
+		\item Averaged models describe the converter well below $f_\mathrm{sw}/2$; linearised they give transfer functions.
+		\item Buck: $LC$ double pole and ESR zero; boost and flyback add a right-half-plane zero that limits the crossover regardless of $f_\mathrm{sw}$.
+		\item Crossover at $f_\mathrm{sw}/10$ to $f_\mathrm{sw}/5$ with 45 to $60^\circ$ margin; type III for voltage mode, type II for current mode.
+		\item Peak current mode needs a ramp $m_\mathrm{a}\geq m_2/2$ above $D=0.5$.
+		\item Delays do not scale with $f_\mathrm{sw}$: $1.5\,T_\mathrm{s}$ costs $54^\circ$ at $f_\mathrm{sw}/10$; DPWM resolution must beat the ADC.
+		\item At MHz ripple-based, on/off and frequency control dominate; resonant converters need envelope models.
+	\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Exit ticket %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Two pages: questions (page 1) and answers (page 2).
+\begin{frame}<handout:1-2>
+	\frametitle{Exit questions}
+	\begin{varblock}[\textwidth]{Three questions, one minute each}
+		\begin{enumerate}
+			\item A comparator and driver delay of 40\,ns: phase lag at $f_\mathrm{c}=400$\,kHz?
+			\item A boost from 24 to 48\,V with $R=23\,\Omega$ and $L=2.2\,\mu$H: where is the RHP zero?
+			\item Peak current mode at $D=0.7$, $m_1=2\,\mathrm{A}/\mu$s: which ramp is needed at least?
+		\end{enumerate}
+	\end{varblock}
+	\onslide<2-|handout:2>{
+		\begin{enumerate}
+			\item $360^\circ\cdot400\,\mathrm{kHz}\cdot40\,\mathrm{ns}=5.8^\circ$.
+			\item $D'=0.5$: $f_\mathrm{z}=D'^2R/(2\pi L)=0.25\cdot23\,\Omega/(2\pi\cdot2.2\,\mu\mathrm{H})=416$\,kHz.
+			\item $m_2=m_1D/D'=4.67\,\mathrm{A}/\mu$s; $m_\mathrm{a}\geq m_2/2=2.33\,\mathrm{A}/\mu$s.
+		\end{enumerate}
+	}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% References %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{References}
+	\scriptsize
+	\begin{itemize}
+		\item R.\,W. Erickson, D. Maksimovi\'c, \textit{Fundamentals of Power Electronics}, 3rd ed., Springer, 2020, Ch.\ 7--9, 18, 19.
+		\item R.\,D. Middlebrook, S. \'Cuk, ``A general unified approach to modelling switching-converter power stages,'' IEEE PESC 1976, pp.\ 18--34.
+		\item R.\,B. Ridley, ``A new, continuous-time model for current-mode control,'' IEEE Trans.\ Power Electron., vol.\ 6, no.\ 2, pp.\ 271--280, 1991.
+		\item D. Maksimovi\'c, R. Zane, ``Small-signal discrete-time modeling of digitally controlled PWM converters,'' IEEE Trans.\ Power Electron., vol.\ 22, no.\ 6, pp.\ 2552--2556, 2007.
+		\item L. Corradini, D. Maksimovi\'c, P. Mattavelli, R. Zane, \textit{Digital Control of High-Frequency Switched-Mode Power Converters}, Wiley-IEEE Press, 2015.
+		\item A.\,V. Peterchev, S.\,R. Sanders, ``Quantization resolution and limit cycling in digitally controlled PWM converters,'' IEEE Trans.\ Power Electron., vol.\ 18, no.\ 1, pp.\ 301--308, 2003.
+		\item J.\,G. Kassakian, D.\,J. Perreault, G.\,C. Verghese, M.\,F. Schlecht, \textit{Principles of Power Electronics}, 2nd ed., Cambridge University Press, 2023.
+		\item E.\,X. Yang, ``Extended describing function method for small-signal modeling of resonant and multi-resonant converters,'' Ph.D.\ dissertation, Virginia Tech, 1994.
+	\end{itemize}
+\end{frame}

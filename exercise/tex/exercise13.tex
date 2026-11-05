@@ -1,0 +1,114 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{EMI and thermal design: spectrum, LISN, input filter and thermal network}
+
+The buck of Tutorial 12 converts \SI{48}{\volt} to \SI{12}{\volt} at \SI{100}{\watt} with $f_\mathrm{sw}=\SI{1}{\mega\hertz}$ ($D=0.25$, $L=\SI{2.2}{\micro\henry}$, $I_\mathrm{o}=\SI{8.33}{\ampere}$). Its DC input is tested with the LISN of Lecture 14; the class B limits of the mains port serve as the design target, with \SI{6}{dB} margin. For a steady harmonic the quasi-peak and the average detector read the same rms value, so the average limit decides: \SI{46}{dB\micro\volt} from 0.5 to \SI{5}{\mega\hertz}, \SI{50}{dB\micro\volt} from 5 to \SI{30}{\mega\hertz}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Spectrum of the switch node and common-mode current}
+
+The switch node is a trapezoid of amplitude $A=\SI{48}{\volt}$, pulse width $\tau=DT_\mathrm{s}$ and edges $t_\mathrm{r}=t_\mathrm{f}=\SI{2}{\nano\second}$. Its harmonics have the amplitudes
+\begin{equation}
+	c_n=2AD\left|\frac{\sin(n\pi D)}{n\pi D}\right|\left|\frac{\sin(n\pi t_\mathrm{r}/T_\mathrm{s})}{n\pi t_\mathrm{r}/T_\mathrm{s}}\right|.
+\end{equation}
+
+\subtask{Calculate the corners and the flat level of the envelope and the amplitudes $c_1$ to $c_4$. Why is the fourth harmonic missing? What does the receiver read at \SI{1}{\mega\hertz}?}
+
+\begin{solutionblock}
+	$\tau=\SI{250}{\nano\second}$: $1/(\pi\tau)=\SI{1.27}{\mega\hertz}$, $1/(\pi t_\mathrm{r})=\SI{159}{\mega\hertz}$; flat level $2AD=\SI{24}{\volt}$ (\SI{147.6}{dB\micro\volt}). $c_1$ to $c_4$: 21.6, 15.3, 7.2 and \SI{0}{\volt}; the edge factor is still 0.9999 at \SI{4}{\mega\hertz}. A pulse of exactly a quarter period contains no 4th, 8th, \ldots\ harmonic, since $\sin(4\pi D)=0$. The receiver is calibrated to the rms value of a sinusoid: $\SI{21.6}{\volt}/\sqrt{2}=\SI{15.3}{\volt}$, i.e.\ \SI{143.7}{dB\micro\volt}.
+\end{solutionblock}
+
+\input{fig/ex13/figCM}
+
+\subtask{The switch node has $C_\mathrm{p}=\SI{20}{\pico\farad}$ to the earthed heat sink (Fig.~\ref{fig:ex13_cm}, without $L_\mathrm{CM}$ and $C_\mathrm{Y}$). Estimate the CM current at \SI{1}{\mega\hertz} and the reading of the LISN. Why are the higher harmonics just as strong?}
+
+\begin{solutionblock}
+	$|Z_{C\mathrm{p}}|=\SI{7.96}{\kilo\ohm}\gg\SI{25}{\ohm}$, so $C_\mathrm{p}$ sets the current: $i_1=2\pi f C_\mathrm{p}c_1=\SI{2.72}{\milli\ampere}$; each line carries half, $V=\SI{25}{\ohm}\cdot i_1=\SI{67.9}{\milli\volt}$ amplitude, \SI{48.0}{\milli\volt} rms, \SI{93.6}{dB\micro\volt}: \SI{47.6}{dB} above the average limit. Below the second corner $c_n\propto1/n$ while the admittance of $C_\mathrm{p}$ rises with $n$: $i_n=4Af_\mathrm{sw}C_\mathrm{p}|\sin(n\pi D)|$, i.e.\ \SI{3.84}{\milli\ampere} for $n=2,6,10,\ldots$ (\SI{96.6}{dB\micro\volt}) and \SI{2.72}{\milli\ampere} for odd $n$. During each edge $C_\mathrm{p}\,\mathrm{d}v/\mathrm{d}t=\SI{0.48}{\ampere}$ flows.
+\end{solutionblock}
+
+\subtask{Size a CM choke with Y capacitors $2\times\SI{4.7}{\nano\farad}$ to earth. Which inductance would be needed if a shield layer, connected to the negative input rail, reduced $C_\mathrm{p}$ to \SI{2}{\pico\farad}? Would slower edges help?}
+
+\begin{solutionblock}
+	The \SI{1}{\mega\hertz} line decides, since the filter attenuates less at low frequency: $47.6+6=\SI{53.6}{dB}$, $f_\mathrm{c}=\SI{1}{\mega\hertz}\cdot10^{-53.6/40}=\SI{45.6}{\kilo\hertz}$, $L_\mathrm{CM}=1/((2\pi f_\mathrm{c})^2\,\SI{9.4}{\nano\farad})=\SI{1.3}{\milli\henry}$. With \SI{2}{\pico\farad} the current falls by \SI{20}{dB}: \SI{33.6}{dB} remain, $L_\mathrm{CM}=\SI{0.13}{\milli\henry}$. The shield returns the CM current inside the converter; the choke treats only what is left. Slower edges move only the second corner, which stays above \SI{30}{\mega\hertz} for $t_\mathrm{r}<\SI{10.6}{\nano\second}$: no help in the conducted band.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Differential-mode input filter}
+
+The input capacitor $C_\mathrm{in}=\SI{4.7}{\micro\farad}$ (effective at \SI{48}{\volt}, $R_\mathrm{ESR}=\SI{5}{\milli\ohm}$, $L_\mathrm{ESL}=\SI{0.5}{\nano\henry}$) supplies the pulsed input current: $I_\mathrm{o}$ during $DT_\mathrm{s}$, zero otherwise (neglect the inductor ripple). In the DM path the LISN appears as $2\times\SI{50}{\ohm}$ (Fig.~\ref{fig:ex13_dm}).
+
+\input{fig/ex13/figDM}
+
+\subtask{Calculate the first harmonic of the input current, the voltage on $C_\mathrm{in}$ and the reading of one LISN line without filter.}
+
+\begin{solutionblock}
+	$i_1=(2I_\mathrm{o}/\pi)\sin(\pi D)=\SI{3.75}{\ampere}$ (\SI{3.76}{\ampere} with the \SI{4.1}{\ampere} ripple, notebook). $Z_{C\mathrm{in}}=\SI{5}{\milli\ohm}+\mathrm{j}(3.1-33.9)\,\si{\milli\ohm}$, $|Z_{C\mathrm{in}}|=\SI{31.1}{\milli\ohm}$: $V_{C\mathrm{in}}=\SI{117}{\milli\volt}$. Each line sees half: \SI{58.4}{\milli\volt} amplitude, \SI{41.3}{\milli\volt} rms, \SI{92.3}{dB\micro\volt}, \SI{46.3}{dB} above the average limit.
+\end{solutionblock}
+
+\subtask{Add $L_\mathrm{f}$ and $C_\mathrm{f}=\SI{2.2}{\micro\farad}$. Which corner and inductance give the attenuation with \SI{6}{dB} margin? Check the second harmonic.}
+
+\begin{solutionblock}
+	$A=\SI{52.3}{dB}$: $f_\mathrm{c}=\SI{1}{\mega\hertz}\cdot10^{-52.3/40}=\SI{49}{\kilo\hertz}$, $L_\mathrm{f}=1/((2\pi f_\mathrm{c})^2C_\mathrm{f})=\SI{4.75}{\micro\henry}$; with \SI{4.7}{\micro\henry} the divider $1/|1-\omega^2L_\mathrm{f}C_\mathrm{f}|$ gives \SI{52.2}{dB} at \SI{1}{\mega\hertz}. It holds because $C_\mathrm{f}$ (\SI{72}{\milli\ohm}) is much smaller than the LISN and $L_\mathrm{f}$ (\SI{30}{\ohm}) much larger than $C_\mathrm{in}$. Second harmonic: \SI{80.9}{dB\micro\volt} without filter, \SI{64.3}{dB} attenuation, about \SI{17}{dB\micro\volt} with filter.
+\end{solutionblock}
+
+\subtask{Calculate the input resistance of the converter, the resonance of $L_\mathrm{f}$ with $C_\mathrm{in}$ and the undamped peak of the filter output impedance (stiff source, $R_\mathrm{ESR}$ plus \SI{10}{\milli\ohm} winding resistance). Size the damper with $C_\mathrm{b}=\SI{22}{\micro\farad}$ (optimum $R_\mathrm{d}$ after Erickson and Maksimovi\'c) and compare the damped peak with $|R_\mathrm{in}|$ (notebook).}
+
+\begin{solutionblock}
+	$R_\mathrm{in}=-V^2/P=\SI{-23}{\ohm}$. With a stiff source $C_\mathrm{f}$ is short-circuited: $f_0=1/(2\pi\sqrt{L_\mathrm{f}C_\mathrm{in}})=\SI{33.9}{\kilo\hertz}$, $R_0=\sqrt{L_\mathrm{f}/C_\mathrm{in}}=\SI{1.0}{\ohm}$, $Q=R_0/\SI{15}{\milli\ohm}=67$: peak $\approx QR_0=\SI{67}{\ohm}>\SI{23}{\ohm}$, the filter can destabilise the converter (Middlebrook). $n=C_\mathrm{b}/C_\mathrm{in}=4.7$: $R_\mathrm{d}=R_0\sqrt{(2+n)(4+3n)/(2n^2(4+n))}=\SI{0.56}{\ohm}$, peak $R_0\sqrt{2(2+n)}/n=\SI{0.78}{\ohm}$, 30 times below $|R_\mathrm{in}|$. A polymer or electrolytic capacitor whose ESR is $R_\mathrm{d}$ serves as damper. In the EMI test the LISN inductors ($2\times\SI{50}{\micro\henry}$) form a second resonance at a few kHz; the notebook checks it as well.
+\end{solutionblock}
+
+\subtask{$L_\mathrm{f}$ has \SI{20}{\pico\farad} winding capacitance, $C_\mathrm{f}$ an ESL of \SI{1}{\nano\henry} with its connections. Where do they limit the attenuation?}
+
+\begin{solutionblock}
+	$C_\mathrm{f}$ becomes inductive above \SI{3.4}{\mega\hertz}, $L_\mathrm{f}$ capacitive above \SI{16.4}{\mega\hertz}. In between the divider is $L_\mathrm{ESL}/L_\mathrm{f}$, \SI{-73}{dB} independent of frequency; above \SI{16.4}{\mega\hertz} it shrinks by \SI{40}{dB} per decade (\SI{-63}{dB} at \SI{30}{\mega\hertz}). Short connections of $C_\mathrm{f}$ and a winding with low capacitance matter more than a larger $L_\mathrm{f}$.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Thermal network of the high-side transistor}
+
+The high-side GaN transistor dissipates \SI{1.6}{\watt} at \SI{25}{\celsius}: \SI{1.2}{\watt} switching and \SI{0.4}{\watt} conduction; $R_\mathrm{DS(on)}$ rises by \SI{0.8}{\percent} per kelvin. Junction to pad $R_\mathrm{jc}=\SI{0.8}{\kelvin\per\watt}$, solder and pad spreading $R_\mathrm{sp}=\SI{1.5}{\kelvin\per\watt}$, 16 thermal vias as in Lecture 14 (\SI{190}{\kelvin\per\watt} each), gap pad \SI{1}{\milli\metre} thick, \SI{3}{\watt\per\metre\per\kelvin}, $10\times\SI{10}{\milli\metre}$. The heat sink ($R_\mathrm{sa}=\SI{4}{\kelvin\per\watt}$, ambient \SI{50}{\celsius}) also carries the other \SI{3.4}{\watt} of the converter (Fig.~\ref{fig:ex13_thermal}).
+
+\input{fig/ex13/figThermal}
+
+\subtask{Calculate $R_\mathrm{vias}$, $R_\mathrm{TIM}$ and the junction temperature for constant loss.}
+
+\begin{solutionblock}
+	$R_\mathrm{vias}=\SI{190}{\kelvin\per\watt}/16=\SI{11.9}{\kelvin\per\watt}$, $R_\mathrm{TIM}=t/(kA)=\SI{1}{\milli\metre}/(\SI{3}{\watt\per\metre\per\kelvin}\cdot\SI{100}{\milli\metre\squared})=\SI{3.3}{\kelvin\per\watt}$; path $0.8+1.5+11.9+3.3=\SI{17.5}{\kelvin\per\watt}$. $T_\mathrm{hs}=50+4\cdot5=\SI{70}{\celsius}$, $T_\mathrm{j}=70+1.6\cdot17.5=\SI{98}{\celsius}$.
+\end{solutionblock}
+
+\subtask{Include the temperature dependence of the conduction loss. How much does the electro-thermal feedback add?}
+
+\begin{solutionblock}
+	$P_\mathrm{T}=\SI{1.6}{\watt}+\SI{3.2}{\milli\watt\per\kelvin}\cdot(T_\mathrm{j}-\SI{25}{\celsius})$ and $T_\mathrm{j}=50+4\,(3.4+P_\mathrm{T})+17.5\,P_\mathrm{T}$ give $T_\mathrm{j}=\SI{103}{\celsius}$ and $P_\mathrm{T}=\SI{1.85}{\watt}$: \SI{5}{\kelvin} more. At MHz the switching loss dominates and depends little on temperature; a conduction-dominated design at the same loss would gain much more.
+\end{solutionblock}
+
+\subtask{Which element would you change first? Calculate $T_\mathrm{j}$ (constant loss) for 32 vias and for 16 copper-filled vias.}
+
+\begin{solutionblock}
+	The vias are \SI{68}{\percent} of the path. 32 vias: \SI{5.9}{\kelvin\per\watt}, path \SI{11.6}{\kelvin\per\watt}, $T_\mathrm{j}=\SI{88.5}{\celsius}$. Copper-filled ($A=\pi d^2/4$): \SI{58}{\kelvin\per\watt} per via, \SI{3.6}{\kelvin\per\watt} for 16, path \SI{9.3}{\kelvin\per\watt}, $T_\mathrm{j}=\SI{84.8}{\celsius}$. The shared heat sink sets \SI{20}{\kelvin} of the rise in every variant.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{EMI and thermal check of your brief (homework, milestone M4)}
+
+\subtask{Estimate the DM and CM emission of your converter at its first harmonic inside the band, size the filter corner with margin and damping, and check the hottest component with a thermal network at the worst-case operating point.}
+
+\begin{solutionblock}
+	Check list: switch-node amplitude, duty cycle and edge time; CM capacitances (heat sink, transformer, gate-driver barrier); impedance of the input capacitors at the harmonics; average limit and margin; filter corner, damping against $|R_\mathrm{in}|$ and parasitics; loss budget at operating temperature; thermal network with vias, interface material and shared heat sink; measurement plan with LISN and infrared camera.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx13\_task.ipynb} computes the spectra of the switch node and the input current by FFT, the LISN readings with and without filters against the limit, the filter output impedance with damping, and the thermal network in steady state and in time.

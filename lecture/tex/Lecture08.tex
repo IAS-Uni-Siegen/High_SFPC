@@ -68,8 +68,8 @@
 	\frametitle{Energy for the transition}
 	\begin{columns}[T]
 		\begin{column}{0.5\textwidth}
-			\small
-			Node from 0 to $V=V_\mathrm{DC}$, inductor to $V_x$. The current $i=\left[C(v)+C(V-v)\right]\mathrm{d}v/\mathrm{d}t$ flows from the inductor into the node:
+			\footnotesize
+			The switch node moves from 0 to $V=V_\mathrm{DC}$; the other end of the inductor sits at $V_x$. With $C$ the output capacitance of each switch, the inductor delivers $i=\left[C(v)+C(V-v)\right]\mathrm{d}v/\mathrm{d}t$ into the node:
 			\begin{align*}
 				W & =\int(v-V_x)\,i\,\mathrm{d}t                       \\
 				  & =\int_0^V(v-V_x)\left[C(v)+C(V-v)\right]\mathrm{d}v \\
@@ -78,12 +78,12 @@
 			The energy taken from the inductor depends only on $Q_\mathrm{oss}$, not on the shape of $C_\mathrm{oss}(v)$.
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
 				\item $V_x=0$: $W=Q_\mathrm{oss}V$, more than the $2E_\mathrm{oss}$ of an energy-equivalent estimate. GaN of L2 at 48\,V: 1.2\,$\mu$J instead of 0.9\,$\mu$J.
 				\item $V_x=V/2$ (LLC, DAB with a midpoint): $W=0$. Only the charge, i.e.\ the time, limits ZVS.
 				\item Buck 48\,V to 12\,V, high-side turn-on: $W=Q_\mathrm{oss}\cdot24$\,V.
-				\item Condition: $\frac{1}{2}LI_0^2\geq Q_\mathrm{oss}(V-2V_x)$.
+				\item Condition for ZVS, with the current $I_0$ at the start of the dead time: $\frac{1}{2}LI_0^2\geq Q_\mathrm{oss}(V-2V_x)$.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -124,12 +124,12 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{axis}[
-							width=\linewidth, height=4.6cm,
+							width=\linewidth, height=4.3cm,
 							xmin=0, xmax=25, ymin=0, ymax=66, ytick={0,10,...,50},
 							xlabel={Time in the dead time (ns)}, ylabel={$v_\mathrm{sw}$ (V)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny, at={(0.97,0.97)}, anchor=north east}, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[black, thick] table[x=t, y=v3] {fig/lec08/zvs_transition.dat};
 						\addlegendentry{$I_0=3$\,A: ZVS}
@@ -240,16 +240,16 @@
 			\begin{figure}
 				\centering
 				\begin{circuitikz}[scale=0.75, transform shape]
-					\draw (0,0) to[V, l=$V_\mathrm{in}$] (0,4.2) -- (1.6,4.2);
-					\draw (1.6,4.2) to[L, l_=$L_\mathrm{lk}$] (1.6,3.0) to[L, l_=$L_\mathrm{m}$] (1.6,1.8) coordinate (d);
-					\draw (1.6,4.2) -- (3.4,4.2) to[C, l=$C_\mathrm{cl}$] (3.4,3.2) -- (3.4,3.1) node[nigfete, anchor=D] (S2) {};
+					\draw (0,0) to[V, l=$V_\mathrm{in}$] (0,5.0) -- (1.6,5.0);
+					\draw (1.6,5.0) to[L, l_=$L_\mathrm{lk}$] (1.6,3.6) -- (1.6,3.3) to[L, l_=$L_\mathrm{m}$] (1.6,1.8) coordinate (d);
+					\draw (1.6,5.0) -- (3.4,5.0) to[C, l=$C_\mathrm{cl}$] (3.4,3.9) -- (3.4,3.6) node[nigfete, anchor=D] (S2) {};
 					\draw (S2.S) |- (d) node[circ]{};
 					\draw (1.6,0) node[nigfete, anchor=S] (S1) {};
 					\draw (d) -- (S1.D);
 					\draw (0,0) -- (S1.S);
 					\draw (0.8,0) node[ground]{};
 					\node[font=\scriptsize, anchor=west] at (1.85,0.55) {$S_1$};
-					\node[font=\scriptsize, anchor=west] at (3.65,2.55) {$S_2$};
+					\node[font=\scriptsize, anchor=west] at (3.65,2.95) {$S_2$};
 					\node[font=\scriptsize, anchor=west] at (1.7,1.45) {$v_\mathrm{DS1}$};
 				\end{circuitikz}
 				\caption{Primary side of an active-clamp flyback (secondary not shown)}
@@ -362,7 +362,7 @@
 		\end{column}
 		\begin{column}{0.49\textwidth}
 			\small
-			With $d=nV_2/V_1$, the current at the switching instants is
+			With the voltage ratio $d=nV_2/V_1$, the inductor current at the switching instants of the primary (0) and secondary ($\varphi$) is
 			\begin{align*}
 				i(0)       & =-\frac{V_1}{4f_\mathrm{sw}L}\left(1-d+\frac{2d\varphi}{\pi}\right) \\
 				i(\varphi) & =\frac{V_1}{4f_\mathrm{sw}L}\left(d-1+\frac{2\varphi}{\pi}\right)
@@ -436,9 +436,9 @@
 			\small
 			\textbf{Why they faded}
 			\begin{itemize}
-				\item High voltage or current stress.
-				\item Frequency control over a wide range.
-				\item ZVS only within a limited load range.
+				\item The switch sees a high voltage or current stress.
+				\item The output is controlled by the frequency over a wide range.
+				\item ZVS holds only within a limited load range.
 			\end{itemize}
 			\textbf{Where the idea survives}
 			\begin{itemize}

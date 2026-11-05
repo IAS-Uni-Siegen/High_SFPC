@@ -1,0 +1,20 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 3:1 series-parallel converter in its two phases (Exercise 11, Task 1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.85, transform shape]
+			% phase 1: input, C1, C2 and output in series
+			\draw (0,0) to[V, l=$V_\mathrm{in}$] (0,2.8) to[C, l=$C_1$] (1.8,2.8) to[C, l=$C_2$] (3.6,2.8) -- (4.4,2.8) to[V, l=$V_\mathrm{out}$] (4.4,0) -- (0,0);
+			\node at (2.2,-0.7) {phase 1};
+			% phase 2: C1 and C2 each in parallel with the output
+			\draw (7.6,2.8) to[C, l_=$C_1$] (7.6,0);
+			\draw (7.6,2.8) -- (9.2,2.8) to[C, l_=$C_2$] (9.2,0) -- (7.6,0);
+			\draw (9.2,2.8) -- (10.8,2.8) to[V, l=$V_\mathrm{out}$] (10.8,0) -- (9.2,0);
+			\node at (9.2,-0.7) {phase 2};
+		\end{circuitikz}
+	\end{center}
+	\caption{3:1 series-parallel converter: connections in the two phases (switches not shown, output as ideal source)}
+	\label{fig:ex11_sp3}
+\end{figure}

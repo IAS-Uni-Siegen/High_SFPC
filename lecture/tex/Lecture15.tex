@@ -1,0 +1,474 @@
+\title[Synthesis and exam preparation]{Synthesis, design showcase and exam preparation}
+\section{Synthesis and exam preparation}
+
+\begin{frame}[plain]
+	\titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Overview %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Synthesis}
+
+\begin{frame}
+	\frametitle{Overview}
+	Fourteen lectures took the converter apart: devices, layout, drivers, magnetics, topologies, control, EMI and heat. Today we put it back together and prepare the exam.
+	\begin{itemize}
+		\item The frequency ladder revisited: what limits each rung, and what moves the limit
+		\item One design, five questions
+		\item The oral exam: format, assessment, example questions
+		\item Design showcase: three-minute pitches with peer questions
+		\item Course evaluation, theses and projects
+	\end{itemize}
+	After this session you know how the exam works and can present your design in three minutes, with the number that matters most for each decision.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ladder revisited %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{The ladder revisited}
+	\begin{figure}
+		\centering
+		\begin{tikzpicture}[
+				rung/.style={draw, rounded corners=2pt, minimum width=1.7cm, minimum height=0.75cm, font=\small\bfseries},
+				limit/.style={draw, rounded corners=2pt, text width=3.6cm, align=left, font=\scriptsize, minimum height=0.8cm, inner sep=3pt},
+				answer/.style={draw, rounded corners=2pt, text width=5.9cm, align=left, font=\scriptsize, minimum height=0.8cm, inner sep=3pt},
+			]
+			\draw[line width=1.5pt, gray] (-1.1,-0.5) -- (-1.1,4.4);
+			\draw[line width=1.5pt, gray] (1.1,-0.5) -- (1.1,4.4);
+			\foreach \y/\f in {0/{100\,kHz}, 1.3/{1\,MHz}, 2.6/{10\,MHz}, 3.9/{100\,MHz}} {
+					\node[rung, fill=white] at (0,\y) {\f};
+				}
+			\node[limit, anchor=west] at (1.6,0) {\textbf{Switching loss}};
+			\node[limit, anchor=west] at (1.6,1.3) {\textbf{Parasitics and timing}};
+			\node[limit, anchor=west] at (1.6,2.6) {\textbf{Magnetics and $C_\mathrm{oss}$ loss}};
+			\node[limit, anchor=west] at (1.6,3.9) {\textbf{Packaging, control, heat}};
+			\node[answer, anchor=west] at (5.6,0) {WBG devices, $Q_\mathrm{oss}V$ instead of $E_\mathrm{oss}$, ZVS by charge in the dead time, TCM, resonant tanks (L2, L8, L9)};
+			\node[answer, anchor=west] at (5.6,1.3) {vertical loops, Kelvin source, damped gate loops, ns timing budget, probes four times faster than the edge (L3--L5)};
+			\node[answer, anchor=west] at (5.6,2.6) {performance factor, low-$\mu$ and air-core magnetics, single-switch inverters, SC and hybrid converters (L6, L7, L10, L12)};
+			\node[answer, anchor=west] at (5.6,3.9) {on/off and ripple-based control, integration, designed filters and thermal paths (L13, L14)};
+			\node[font=\scriptsize\bfseries, anchor=west] at (1.6,4.6) {What breaks};
+			\node[font=\scriptsize\bfseries, anchor=west] at (5.6,4.6) {What the course offers};
+			\draw[-{Latex[length=3mm]}, thick] (-1.8,-0.4) -- node[sloped, above, font=\scriptsize] {$f_\mathrm{sw}\times 10$ per rung} (-1.8,4.4);
+		\end{tikzpicture}
+		\caption{The frequency ladder of L1 with the answers developed in L2 to L14}
+	\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Limits today %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{What limits the rungs today}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\footnotesize
+			\textbf{Devices}
+			\begin{itemize}
+				\item $C_\mathrm{oss}$ hysteresis loss in Si and GaN transistors and SiC diodes: soft switching is not loss-free (L2, L5, L10).
+				\item Dynamic $R_\mathrm{DS(on)}$ of GaN after high-voltage blocking (L2).
+			\end{itemize}
+			\textbf{Magnetics}
+			\begin{itemize}
+				\item The performance factor of available materials improves up to about 30\,MHz; beyond, air core (L6, L10).
+				\item Carrying high current at high frequency: the copper skin depth is 21\,$\mu$m at 10\,MHz, and litz wire loses its advantage above several MHz (L7).
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\footnotesize
+			\textbf{Packaging and heat}
+			\begin{itemize}
+				\item Loop and common-source inductance move into the package; the heat density grows as the volume shrinks (L3, L14).
+			\end{itemize}
+			\textbf{Control and EMI}
+			\begin{itemize}
+				\item Delays of sensing and control are fixed in nanoseconds and do not shrink with the period (L13).
+				\item Filters shrink with $f_\mathrm{sw}$ only if their parasitics are designed (L14).
+			\end{itemize}
+			\begin{block}{Key message}
+				Each rung has a known limit and known tools; your design shows which limit you meet first.
+			\end{block}
+		\end{column}
+	\end{columns}
+	\blfootnote{Sources: Perreault, APEC 2024 plenary; A.\,J. Hanson et al., IEEE TPEL, vol.\ 31, no.\ 11, 2016.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Room at the top %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Plenty of room at the top}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			Perreault (APEC 2024): much higher frequencies appear possible, tens of MHz at kW power levels. The challenges are magnetics, devices, packaging, circuit design and control, the topics of this course.
+			\vspace{0.2cm}
+
+			Examples presented there:
+			\begin{itemize}
+				\item 5\,kW, 13.56\,MHz inverter with fast response and wide power range (H. Zhang, MIT, 2022)
+				\item 570\,nH inductor at 13.56\,MHz, $Q=1150$ at 80\,A peak (M. Joisher et al., APEC 2024)
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item Inductive power transfer: 1\,kW at 6.78\,MHz with 95\,\% (Stanford, 2021), 3\,kW at 3.39\,MHz with 95\,\% (Imperial College, 2023)
+				\item Capacitive power transfer: 3.7\,kW at 13.56\,MHz with 93\,\% (Cornell, 2022)
+				\item 30\,W LED driver at 5--10\,MHz and 250\,W PFC supply at 1--4\,MHz with small EMI filters (L14)
+			\end{itemize}
+			\begin{block}{Key message}
+				High frequency is no longer a laboratory curiosity; it is a design choice with known costs.
+			\end{block}
+		\end{column}
+	\end{columns}
+	\blfootnote{Source: D.\,J. Perreault, plenary talk, IEEE APEC 2024, and the works cited there.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Five questions %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{One design, five questions}
+	\begin{table}
+		\centering
+		\footnotesize
+		\begin{tabular}{|c|>{\raggedright\arraybackslash}p{4.6cm}|>{\raggedright\arraybackslash}p{6.4cm}|c|}
+			\hline
+			  & \textbf{Question}                                & \textbf{The number that answers it}                                                   & \textbf{Lectures} \\
+			\hline
+			1 & Where does the switching energy go?              & $Q_\mathrm{oss}V_\mathrm{DC}f_\mathrm{sw}$ hard, or the charge $2Q_\mathrm{oss}$ within the dead time & L2, L8      \\
+			2 & Where is the energy stored, and what limits it?  & $\hat{B}$ from core loss, $F_\mathrm{R}$ of the winding, capacitance at DC bias        & L6, L7, L12       \\
+			3 & Which parasitics are part of the circuit?        & $L_\mathrm{loop}$, $C_\mathrm{oss}$, winding and package capacitance in the tank        & L3, L9, L10       \\
+			4 & How is it driven, controlled and measured?       & delays against $T_\mathrm{s}$, crossover and margin, probe bandwidth                  & L4, L5, L13       \\
+			5 & Where do the heat and the noise go?              & $R_\mathrm{th}$ from junction to ambient, filter corner, CM capacitance              & L14               \\
+			\hline
+		\end{tabular}
+		\caption{The five questions behind every design review and the oral exam}
+	\end{table}
+	\small
+	$f_\mathrm{sw}$ is the answer to none of them alone: it is the variable that trades all five against volume.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Oral exam %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exam preparation}
+
+\begin{frame}
+	\frametitle{The oral exam}
+	\begin{columns}[T]
+		\begin{column}{0.56\textwidth}
+			\begin{table}
+				\centering
+				\footnotesize
+				\begin{tabular}{|l|c|>{\raggedright\arraybackslash}p{3.3cm}|}
+					\hline
+					\textbf{Part}   & \textbf{Time}    & \textbf{Content}                                     \\
+					\hline
+					A Presentation  & $\approx$10\,min & your design: at most 5 slides or one A3 design sheet \\
+					B Interrogation & $\approx$20\,min & what-if questions with short calculations on paper   \\
+					C Breadth       & $\approx$10\,min & 2--3 question chits on L1--L14                       \\
+					\hline
+				\end{tabular}
+				\caption{Oral exam of about 40 minutes, individual, with an assessor}
+			\end{table}
+		\end{column}
+		\begin{column}{0.41\textwidth}
+			\small
+			\begin{itemize}
+				\item Each team member is examined alone and must be able to defend the whole design.
+				\item Without an own design: the reference design announced in advance replaces it in parts A and B.
+				\item Measured results are not required for a top grade; a sound validation plan is.
+				\item Bring a calculator; the design package (M4) is the starting point.
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Assessment %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Assessment}
+	\begin{table}
+		\centering
+		\footnotesize
+		\begin{tabular}{|l|c|>{\raggedright\arraybackslash}p{7.6cm}|}
+			\hline
+			\textbf{Criterion}               & \textbf{Weight} & \textbf{What is assessed}                                                                     \\
+			\hline
+			Design reasoning and correctness & 30\,\%          & assumptions, calculations, a consistent loss budget, correct use of the models                \\
+			Depth under what-if questions    & 25\,\%          & quantitative prediction of consequences, identification of the limiting mechanism             \\
+			Breadth                          & 25\,\%          & chit questions across the course                                                              \\
+			Engineering judgement            & 20\,\%          & trade-offs, validation and measurement plan, safety, limitations, critical self-assessment    \\
+			\hline
+		\end{tabular}
+		\caption{Criteria of the oral exam; the grade is based on the oral performance only}
+	\end{table}
+	\small
+	\textbf{How to prepare:} know the five numbers of your design by heart (efficiency, $f_\mathrm{sw}$, the dominant loss, the peak stress, the hot spot); recalculate one what-if per lecture; practise the chits in groups of three (Tutorial 14).
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Example questions %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Example questions}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\textbf{Part B: what if \ldots}
+			\begin{itemize}
+				\item the load is halved: is ZVS kept?
+				\item $f_\mathrm{sw}$ is doubled: what fails first?
+				\item the loop inductance doubles: how large is the overshoot?
+				\item the MLCC loses 60\,\% of its capacitance at bias?
+				\item the core runs 20\,K hotter: loss and saturation margin?
+				\item you have to trust an efficiency of 98\,\%: which measurement?
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\textbf{Part C: chits (examples)}
+			\begin{itemize}
+				\item Why is the hard turn-on loss $Q_\mathrm{oss}V_\mathrm{DC}$ and not $E_\mathrm{oss}$?
+				\item Why does the optimum thickness of a winding layer fall with the number of layers?
+				\item What limits the frequency of a class E inverter?
+				\item Why does charging a capacitor from a voltage source lose $\frac12C\Delta V^2$, whatever the resistance?
+				\item What does a delay of $1.5\,T_\mathrm{s}$ cost at $f_\mathrm{sw}/10$?
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase format %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Design showcase}
+
+\begin{frame}
+	\frametitle{Design showcase}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\textbf{Each team: 3 minutes pitch, 2 minutes questions}
+			\begin{enumerate}
+				\item Specification and topology, in one sentence
+				\item $f_\mathrm{sw}$, efficiency and volume: the three numbers
+				\item The decision you can defend best, with its number
+				\item The largest risk and how you would test it
+			\end{enumerate}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\textbf{Peer questions}
+			\begin{itemize}
+				\item Every team prepares one question for the team after it; the next slides give a starting point for each brief.
+				\item Ask for a number, not an opinion.
+			\end{itemize}
+			\textbf{Demos} from the hardware track follow the pitches.
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B1: ZVS GaN buck}
+	\begin{varblock}[\textwidth]{48\,V to 12\,V, 100\,W, 1--3\,MHz, triangular current mode (TCM) or quasi-square-wave (QSW)}
+		\begin{itemize}
+			\item Which negative current gives ZVS, and what does it cost in RMS current (L8)?
+			\item What sets $f_\mathrm{sw}$ at light load, and how do you limit it?
+			\item Where is the hot spot of the GaN transistor, and how many vias carry its heat (L14)?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: $f_\mathrm{sw}$ at full and 10\,\% load, negative current, $I_\mathrm{rms}$, $T_\mathrm{j}$.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B2: LLC DC transformer}
+	\begin{varblock}[\textwidth]{48\,V to 12\,V (4:1), 250\,W, about 1\,MHz}
+		\begin{itemize}
+			\item How is $L_\mathrm{m}$ sized for the charge $2Q_\mathrm{oss}+Q_\mathrm{TR}$ in the dead time ($Q_\mathrm{TR}$: charge of the transformer winding capacitance, L9)?
+			\item Which winding arrangement, and what does it do to AC resistance and inter-winding capacitance (L7)?
+			\item How is the synchronous rectifier (SR) timed when the package inductance falsifies the sensed drain voltage (L9)?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: $L_\mathrm{m}$, dead time, gain at full and no load, transformer loss.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B3: Bidirectional DAB}
+	\begin{varblock}[\textwidth]{48\,V to 12\,V and back, 200\,W, 0.5--1\,MHz}
+		\begin{itemize}
+			\item Is ZVS kept at light load and when $nV_2\neq V_1$ ($n$: turns ratio), and which modulation helps (L8)?
+			\item Is the series inductance the transformer leakage or a separate part, and how accurate is it (L7)?
+			\item Two switch nodes: how does the CM current flow through the transformer (L14)?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: phase shift at full load, ZVS boundary, RMS current, series inductance.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B4: 6.78\,MHz wireless power}
+	\begin{varblock}[\textwidth]{24\,V input, 15\,W into a specified coil and load range}
+		\begin{itemize}
+			\item What does the class E see when the coupling or the load changes, and how do you keep ZVS (L10)?
+			\item Link efficiency at the worst coupling: which coil $Q$ do you need (L10)?
+			\item Where do the harmonics of 6.78\,MHz fall, and what radiates (L14)?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: $R$ and $C_\mathrm{sh}$ of the class E, drain peak voltage, coil $Q$, link efficiency.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B5: VHF dc--dc converter}
+	\begin{varblock}[\textwidth]{12--24\,V to 5\,V, 5--10\,W, 13.56\,MHz}
+		\begin{itemize}
+			\item Which $C_\mathrm{oss}$ limits the frequency, and how much of it does the tank absorb (L10)?
+			\item On/off control: modulation frequency, output ripple and what it does to the spectrum (L13, L14)?
+			\item Air-core inductors: $Q$, stray field and the distance to the rest of the board (L7, L10)?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: $C_\mathrm{oss}$ against $C_\mathrm{sh}$, drain peak voltage, on/off frequency, efficiency at 5 and 10\,W.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Showcase B6 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{B6: Hybrid SC converter}
+	\begin{varblock}[\textwidth]{48\,V to 12\,V (4:1), 150\,W, up to 1\,MHz}
+		\begin{itemize}
+			\item Which charge vectors, and which capacitance remains at DC bias (L12)?
+			\item Is the charging soft, and how does the resonance move when the capacitance changes with voltage (L12)?
+			\item How are the flying capacitors pre-charged at start-up?
+		\end{itemize}
+	\end{varblock}
+	\small
+	Numbers to show: $R_\mathrm{SSL}$ and $R_\mathrm{FSL}$, effective capacitance, resonant frequency, efficiency at full and half load.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Evaluation %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Evaluation and outlook}
+
+\begin{frame}
+	\frametitle{Course evaluation}
+	\begin{columns}[T]
+		\begin{column}{0.55\textwidth}
+			Please take ten minutes now for the course evaluation. This course runs for the first time; your answers decide what changes next year.
+			\begin{itemize}
+				\item Which lecture or tutorial helped you most in the design project?
+				\item Where did the story line break for you?
+				\item Notebooks, milestones, hardware track: what should stay, what should change?
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.4\textwidth}
+			\begin{block}{Key message}
+				Critical feedback is the most useful kind; please be specific.
+			\end{block}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Theses %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Theses and projects at IAS}
+	\begin{columns}[T]
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item MHz GaN converters with planar and low-$\mu$ magnetics
+				\item Wireless power at 6.78 and 13.56\,MHz
+				\item Higher switching frequency for SiC converters in EV charging: the CLLC simulation model of our running example and the TI PMP41042 CLLLC test bench
+				\item Data-driven core-loss models (MagNet) and their use in design
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\small
+			\begin{itemize}
+				\item Characterisation: $C_\mathrm{oss}$ loss, core loss and calorimetry at MHz
+				\item Digital and ripple-based control of MHz converters
+			\end{itemize}
+			Promising designs from the hardware track can continue as a project, Studienarbeit or thesis. Talk to me after the session or by e-mail.
+		\end{column}
+	\end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Key messages %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Key messages of the course}
+	\begin{enumerate}
+		\item $f_\mathrm{sw}$ is a design variable with an optimum: $L$ and $C$ shrink with $1/f_\mathrm{sw}$, losses, parasitics and delays do not.
+		\item Hard switching costs $Q_\mathrm{oss}V_\mathrm{DC}$ per cycle; at MHz the energy must be recovered by soft switching, resonant or switched-capacitor circuits.
+		\item At MHz the layout, the gate drive and the measurement are part of the circuit.
+		\item Magnetics set the limit: core loss limits $\hat{B}$, skin and proximity effect limit the copper; low $\mu$, planar and air-core designs follow.
+		\item Control, EMI and thermal design scale differently: delays stay, filters shrink, the heat density grows.
+		\item A design is defended with numbers: loss budget, sensitivities and a validation plan.
+	\end{enumerate}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Exit ticket %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Two pages: questions (page 1) and answers (page 2).
+\begin{frame}<handout:1-2>
+	\frametitle{Exit questions}
+	\begin{varblock}[\textwidth]{Three questions, one minute each}
+		\begin{enumerate}
+			\item Your design moves from 1 to 3\,MHz. Which three quantities do you recalculate first?
+			\item Why does the EMI filter shrink faster with $f_\mathrm{sw}$ than the power inductor?
+			\item Input and output power are measured with $\pm0.1$\,\% each at $\eta=98$\,\%. How uncertain is the loss?
+		\end{enumerate}
+	\end{varblock}
+	\onslide<2-|handout:2>{
+		\begin{enumerate}
+			\item The switching energy per second ($Q_\mathrm{oss}V f_\mathrm{sw}$, or the ZVS charge in a shorter dead time), $\hat{B}$ and $F_\mathrm{R}$ of the magnetics, and the delays as a share of the period.
+			\item The filter corner moves with $f_\mathrm{sw}$, so $L_\mathrm{f}$ and $C_\mathrm{f}$ fall with $1/f_\mathrm{sw}$. The power inductor carries the full ripple: core loss limits $\hat{B}$ and its VA per volume grows only with $f^{1-\alpha/\beta}$, e.g.\ $f^{0.44}$ (Tutorial 6).
+			\item Loss $2\,\%$ of $P_\mathrm{in}$; the error $\pm(0.1+0.098)\,\%$ of $P_\mathrm{in}$ in the worst case is $\pm10\,\%$ of the loss. Measure the loss directly: calorimetry (L5).
+		\end{enumerate}
+	}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% References %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{References}
+	\scriptsize
+	\begin{itemize}
+		\item D.\,J. Perreault, ``Opportunities, progress and challenges in high-frequency power conversion,'' plenary talk, IEEE APEC 2024.
+		\item A.\,J. Hanson, J.\,A. Belk, S. Lim, C.\,R. Sullivan, D.\,J. Perreault, ``Measurements and performance factor comparisons of magnetic materials at high frequency,'' IEEE Trans.\ Power Electron., vol.\ 31, no.\ 11, pp.\ 7909--7925, 2016.
+		\item H. Zhang, \textit{Techniques for Efficient Wide-Range Radio-Frequency Power Generation}, PhD thesis, MIT, 2022.
+		\item M. Joisher et al., ``High-performance high-power inductor design for high-frequency applications,'' IEEE APEC 2024.
+		\item J.\,G. Kassakian, D.\,J. Perreault, G.\,C. Verghese, M.\,F. Schlecht, \textit{Principles of Power Electronics}, 2nd ed., Cambridge University Press, 2023.
+		\item R.\,W. Erickson, D. Maksimovi\'c, \textit{Fundamentals of Power Electronics}, 3rd ed., Springer, 2020.
+		\item Lectures L1 to L14 and Tutorials 1 to 13 of this course, with their references.
+	\end{itemize}
+\end{frame}

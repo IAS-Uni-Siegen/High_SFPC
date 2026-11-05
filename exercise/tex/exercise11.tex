@@ -1,0 +1,143 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Switched-capacitor converters: charge vectors and output resistance}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Charge-multiplier vectors}
+
+Per period the output receives the charge $q_\mathrm{out}$. In each phase capacitor $i$ carries $a_{\mathrm{c},i}q_\mathrm{out}$ and switch $k$ carries $a_{\mathrm{r},k}q_\mathrm{out}$. For two phases of 50\,\% (Lecture 12)
+\begin{equation}
+	R_\mathrm{SSL}=\sum_i\frac{a_{\mathrm{c},i}^2}{C_if_\mathrm{sw}},\qquad R_\mathrm{FSL}=2\sum_kR_ka_{\mathrm{r},k}^2,\qquad R_\mathrm{out}\approx\sqrt{R_\mathrm{SSL}^2+R_\mathrm{FSL}^2}.
+\end{equation}
+
+\input{fig/ex11/figSP3}
+
+\subtask{3:1 series-parallel converter (Fig.~\ref{fig:ex11_sp3}): determine $a_\mathrm{c}$ and the capacitor voltages. The converter has seven switches: in phase 1 one from the input to $C_1$, one between $C_1$ and $C_2$, one from $C_2$ to the output; in phase 2 two per capacitor (top plate to the output, bottom plate to ground). Determine the blocking voltages and the products $\sum a_\mathrm{c}v_\mathrm{c}$ and $\sum a_\mathrm{r}v_\mathrm{r}$ in units of $P_\mathrm{out}$.}
+
+\begin{solutionblock}
+	Phase 1 carries the charge $q$ through input, $C_1$, $C_2$ and output; in phase 2 each capacitor returns $q$ to the output. $q_\mathrm{out}=3q$: $a_\mathrm{c}=(\tfrac13,\tfrac13)$, $q_\mathrm{in}=\tfrac13q_\mathrm{out}$, both capacitors at $V_\mathrm{out}$ and $\sum a_\mathrm{c}v_\mathrm{c}=\tfrac23P_\mathrm{out}$. All switches carry $\tfrac13q_\mathrm{out}$. In phase 2 the top plate of $C_1$ is at $V_\mathrm{out}$ and its bottom plate at ground, while the input is at $3V_\mathrm{out}$: the input switch blocks $2V_\mathrm{out}$. In phase 1 $C_1$ sits between $3V_\mathrm{out}$ and $2V_\mathrm{out}$, so its two phase-2 switches block $2V_\mathrm{out}$; the other four switches block $V_\mathrm{out}$. $\sum a_\mathrm{r}v_\mathrm{r}=\tfrac13(3\cdot2+4\cdot1)=\tfrac{10}{3}P_\mathrm{out}$.
+\end{solutionblock}
+
+\input{fig/ex11/figDickson4}
+
+\subtask{4:1 Dickson converter (Fig.~\ref{fig:ex11_dickson}): determine the capacitor voltages, $a_\mathrm{c}$, the charge of the switches at A and B and of the chain switches, and their blocking voltages. Compare $\sum a_\mathrm{c}v_\mathrm{c}$, $\sum a_\mathrm{r}v_\mathrm{r}$, $\sum a_\mathrm{c}^2$ and $2\sum a_\mathrm{r}^2$ with the 4:1 series-parallel converter (0.75, 4.5, 3/16 and 1.25).}
+
+\begin{solutionblock}
+	Phase 1 ($S_1$, $S_3$, A at 0, B at $V_\mathrm{out}$): $C_1$ is charged to $V_\mathrm{out}$, and $C_3$ takes the voltage of node 2, $V_\mathrm{out}+v_{C2}$. Phase 2 ($S_2$, $S_4$): $v_{C2}=V_\mathrm{out}+v_{C1}-0$ and $V_\mathrm{in}=V_\mathrm{out}+v_{C3}$. Hence $v_\mathrm{C}=(1,2,3)V_\mathrm{out}$ and $V_\mathrm{in}=4V_\mathrm{out}$.
+	Each capacitor moves $\tfrac14q_\mathrm{out}$; the chain switches carry $\tfrac14$, the switches of node A $\tfrac12$ (two capacitors), those of node B $\tfrac14$. The A and B switches and $S_1$, $S_4$ block $V_\mathrm{out}$, $S_2$ and $S_3$ block $2V_\mathrm{out}$.
+
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|c|}
+			\hline
+			                & $\sum a_\mathrm{c}v_\mathrm{c}$ & $\sum a_\mathrm{r}v_\mathrm{r}$ & $\sum a_\mathrm{c}^2$ & $2\sum a_\mathrm{r}^2$ \\
+			\hline
+			series-parallel & 0.75                            & 4.5                             & 0.1875                & 1.25                   \\
+			Dickson         & 1.5                             & 3.0                             & 0.1875                & 1.75                   \\
+			\hline
+		\end{tabular}
+		\captionof{table}{4:1 step-down converters, products in units of $P_\mathrm{out}$}
+		\label{tab:ex11_metrics}
+	\end{center}
+	Same $\sum a_\mathrm{c}^2$, so the same $R_\mathrm{SSL}$ for equal effective capacitances; the Dickson needs twice the capacitor energy (its capacitors see up to $3V_\mathrm{out}$) and a third less switch VA.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Output resistance with DC-bias derating for brief B6}
+
+Brief B6: \SI{48}{\volt} to \SI{12}{\volt}, \SI{150}{\watt} ($I_\mathrm{out}=\SI{12.5}{\ampere}$), $f_\mathrm{sw}=\SI{1}{\mega\hertz}$, all switches $R_\mathrm{DS(on)}=\SI{2}{\milli\ohm}$, all flying capacitors with the same nominal value $C_0$. For the class II capacitors assume the derating $C_\mathrm{eff}=C_0/(1+V/\SI{12}{\volt})$ at the DC bias $V$ (an assumed model; use the data sheet in your design).
+
+\subtask{Calculate the effective capacitances of the 4:1 series-parallel and the 4:1 Dickson converter in units of $C_0$, and $R_\mathrm{SSL}C_0f_\mathrm{sw}$ for both.}
+
+\begin{solutionblock}
+	Series-parallel: all capacitors at \SI{12}{\volt}, $C_\mathrm{eff}=0.5C_0$: $R_\mathrm{SSL}C_0f_\mathrm{sw}=3\cdot(1/4)^2/0.5=0.375$. Dickson: capacitors at 12, 24 and \SI{36}{\volt}, $C_\mathrm{eff}=(0.5, 0.333, 0.25)C_0$: $R_\mathrm{SSL}C_0f_\mathrm{sw}=\tfrac{1}{16}(2+3+4)=0.5625$. With equal parts the Dickson has 1.5 times the $R_\mathrm{SSL}$ of the series-parallel converter.
+\end{solutionblock}
+
+\subtask{Which nominal capacitance is needed at \SI{1}{\mega\hertz} for $R_\mathrm{SSL}\leq\SI{9.6}{\milli\ohm}$ (1\,\% of the output power)? Calculate $R_\mathrm{FSL}$ for both converters and the switch voltage ratings.}
+
+\begin{solutionblock}
+	$C_0=0.375/(\SI{9.6}{\milli\ohm}\cdot\SI{1}{\mega\hertz})=\SI{39}{\micro\farad}$ (series-parallel) and \SI{59}{\micro\farad} (Dickson). $R_\mathrm{FSL}=2\cdot\SI{2}{\milli\ohm}\cdot\sum a_\mathrm{r}^2$: \SI{2.5}{\milli\ohm} (series-parallel, ten switches) and \SI{3.5}{\milli\ohm} (Dickson, eight switches). The series-parallel converter needs three switches for \SI{36}{\volt} and two for \SI{24}{\volt}, the Dickson only two for \SI{24}{\volt} and six for \SI{12}{\volt}: for the same silicon the Dickson switches have the lower resistance.
+\end{solutionblock}
+
+\subtask{Plot $R_\mathrm{out}$ versus $f_\mathrm{sw}$ for $C_0=22$ and \SI{47}{\micro\farad} and calculate loss, output voltage and efficiency at \SI{1}{\mega\hertz} and full load, counting charge sharing and switch conduction only (notebook).}
+
+\begin{solutionblock}
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|c|}
+			\hline
+			                                & SP, \SI{22}{\micro\farad} & SP, \SI{47}{\micro\farad} & Dickson, \SI{22}{\micro\farad} & Dickson, \SI{47}{\micro\farad} \\
+			\hline
+			$R_\mathrm{out}$ (m$\Omega$)    & 17.2                      & 8.4                       & 25.8                           & 12.5                           \\
+			loss (W)                        & 2.69                      & 1.31                      & 4.03                           & 1.95                           \\
+			$V_\mathrm{out}$ (V)            & 11.78                     & 11.90                     & 11.68                          & 11.84                          \\
+			efficiency                      & 98.2\,\%                  & 99.1\,\%                  & 97.3\,\%                       & 98.7\,\%                       \\
+			\hline
+		\end{tabular}
+		\captionof{table}{B6 SC stage at \SI{1}{\mega\hertz}, \SI{12.5}{\ampere}}
+		\label{tab:ex11_b6}
+	\end{center}
+	With the derated capacitors both converters are still in the SSL region at \SI{1}{\mega\hertz}; the corner frequency lies at a few MHz. Gate-drive and $C_\mathrm{oss}$ losses (L2, L4) come on top.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Soft charging, resonant SC and flying-capacitor buck}
+
+\subtask{The 2:1 converter of Lecture 12 ($C=\SI{10}{\micro\farad}$, \SI{500}{\kilo\hertz}, \SI{10}{\ampere}, \SI{5}{\milli\ohm} per switch) receives a resonant inductor. Which $L_\mathrm{r}$ resonates at \SI{500}{\kilo\hertz}? Calculate the peak current, the rms current per switch and the switch conduction loss, and compare with the hard-charged converter (\SI{5.1}{\watt}).}
+
+\begin{solutionblock}
+	$L_\mathrm{r}=1/((2\pi\cdot\SI{500}{\kilo\hertz})^2\cdot\SI{10}{\micro\farad})=\SI{10.1}{\nano\henry}$, $Z_0=\sqrt{L_\mathrm{r}/C}=\SI{32}{\milli\ohm}$. The output receives a rectified sine with mean \SI{10}{\ampere}: peak $\pi/2\cdot\SI{10}{\ampere}=\SI{15.7}{\ampere}$. Each switch conducts one half sine per period: $I_\mathrm{rms}=\hat{\imath}/2=\SI{7.85}{\ampere}$; four switches: $4\cdot(\SI{7.85}{\ampere})^2\cdot\SI{5}{\milli\ohm}=\SI{1.23}{\watt}$, i.e.\ $\pi^2/8$ times the ideal FSL value of \SI{1.0}{\watt}. The inductor carries $\hat{\imath}/\sqrt2=\SI{11.1}{\ampere}$ rms; with \SI{2}{\milli\ohm} it adds \SI{0.25}{\watt}. Total about \SI{1.5}{\watt} instead of \SI{5.1}{\watt}.
+\end{solutionblock}
+
+\subtask{Why is the resonant converter operated slightly above its resonant frequency?}
+
+\begin{solutionblock}
+	At $f_\mathrm{r}$ the current is zero at the switching instants: zero-current switching, but no current is left to charge and discharge $C_\mathrm{oss}$, so the switches turn on hard against their capacitance. Slightly above $f_\mathrm{r}$ a small current flows at the transitions and moves the switch-node charge within the dead time (Lecture 8).
+\end{solutionblock}
+
+\subtask{A two-level buck from \SI{48}{\volt} to \SI{12}{\volt} at \SI{1}{\mega\hertz} needs which inductance for a ripple of \SI{4}{\ampere}? A three-level flying-capacitor buck at the same switching frequency? What is the ratio, and why is it not 4?}
+
+\begin{solutionblock}
+	Two-level: $L=V_\mathrm{in}D(1-D)/(f_\mathrm{sw}\Delta i)=\SI{48}{\volt}\cdot0.25\cdot0.75/(\SI{1}{\mega\hertz}\cdot\SI{4}{\ampere})=\SI{2.25}{\micro\henry}$. Three-level: the switch node toggles between 0 and $V_\mathrm{in}/2$ at \SI{2}{\mega\hertz} with duty cycle $2D=0.5$: $L=(\SI{24}{\volt}-\SI{12}{\volt})\cdot0.5\cdot\SI{0.5}{\micro\second}/\SI{4}{\ampere}=\SI{0.75}{\micro\henry}$. Ratio 3: the factor $(N-1)^2=4$ applies to the maximum ripple over all duty cycles; at $D=0.25$ the three-level converter works at its ripple maximum, the two-level one at 75\,\% of its maximum. The switches block \SI{24}{\volt} instead of \SI{48}{\volt}.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{SC analyser (notebook)}
+
+\subtask{Write a function that derives $a_\mathrm{c}$, $a_\mathrm{r}$, the capacitor voltages and the switch blocking voltages from a netlist of capacitors and switches with their phases (Kirchhoff's laws in both phases, charge balance, ideal sources at input and output). Verify Tasks 11.1.1 and 11.1.2.}
+
+\begin{solutionblock}
+	The charge equations (KCL per node and phase, one balance per capacitor, normalisation of $q_\mathrm{out}$) and the voltage equations (closed switches as shorts, capacitor voltages equal in both phases) are linear; a least-squares solution with a rank check finds the multipliers and the ideal ratio. The notebook reproduces $a_\mathrm{c}=(\tfrac13,\tfrac13)$, $\sum a_\mathrm{r}v_\mathrm{r}=\tfrac{10}{3}$ for the 3:1 and Table~\ref{tab:ex11_metrics}.
+\end{solutionblock}
+
+\subtask{Compare the 4:1 series-parallel, Dickson, ladder and cascaded 2:1 converters. Which would you choose for B6, and why?}
+
+\begin{solutionblock}
+	Ladder: $\sum a_\mathrm{c}v_\mathrm{c}=2.25$, $\sum a_\mathrm{r}v_\mathrm{r}=3.0$; cascade: 1.5 and 4.0 (Lecture 12). For B6 the capacitors are cheap at \SI{12}{\volt} but lose capacitance at higher bias, and the switches dominate cost and loss at \SI{12.5}{\ampere}: the Dickson (low switch VA, all switches $\leq\SI{24}{\volt}$) with soft charging, or the series-parallel converter if capacitor volume is critical. The answer depends on the capacitor data at bias and on the available low-voltage transistors: compute both.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Capacitive conversion in your brief (homework)}
+
+\subtask{Team B6: choose topology, capacitors (with the data-sheet derating at bias), switches and $f_\mathrm{sw}$; show $R_\mathrm{out}$ versus $f_\mathrm{sw}$ and the loss budget. Other teams: check whether a flying capacitor or a 2:1 stage would reduce the device voltage or the inductor in your design.}
+
+\begin{solutionblock}
+	Check list: ideal ratio against the input range (efficiency $V_\mathrm{out}/(V_\mathrm{in}/n)$); $a_\mathrm{c}$, $a_\mathrm{r}$ from the topology; effective capacitance at bias and temperature; SSL and FSL corner; soft charging or resonant operation; start-up and pre-charge of the flying capacitors; balancing.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx11\_task.ipynb} contains the SC analyser of Task 11.4 and evaluates the B6 designs of Task 11.2 and the resonant and flying-capacitor converters of Task 11.3.

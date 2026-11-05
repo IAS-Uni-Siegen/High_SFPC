@@ -270,7 +270,7 @@
 					\draw[thick, dashed] (0,0) .. controls (0.7,1.2) and (1.8,2.3) .. (4,3.1);
 					\node[anchor=south east] at (1.0,2.3) {charge};
 					\node[anchor=north west] at (1.6,1.6) {discharge};
-					\node at (1.25,1.75) {$E_\mathrm{diss}$};
+					\draw[thin] (1.75,2.2) -- (2.3,3.1) node[anchor=south west, inner sep=1pt] {$E_\mathrm{diss}$};
 				\end{tikzpicture}
 				\caption{Measured charge--voltage loop (schematic); the enclosed area is the energy lost per cycle}
 			\end{figure}
@@ -279,10 +279,10 @@
 			\small
 			Soft switching is ideally lossless, but charging and discharging $C_\mathrm{oss}$ dissipates energy:
 			\begin{itemize}
-				\item reported for Si superjunction MOSFETs, GaN HEMTs and SiC diodes
-				\item in GaN: equal to or greater than the conduction loss at MHz, rising exponentially with $\mathrm{d}v/\mathrm{d}t$
-				\item a fixed fraction of $E_\mathrm{oss}$ is not a valid model: the loss depends on $f$, voltage swing and $\mathrm{d}v/\mathrm{d}t$
-				\item within one device family the loss scales with $E_\mathrm{oss}$
+				\item The loss has been measured in Si superjunction MOSFETs, GaN HEMTs and SiC diodes.
+				\item In GaN HEMTs at MHz it can equal or exceed the conduction loss, and it rises steeply with $\mathrm{d}v/\mathrm{d}t$.
+				\item It cannot be modelled as a fixed fraction of $E_\mathrm{oss}$: it depends on frequency, voltage swing and $\mathrm{d}v/\mathrm{d}t$.
+				\item Within one device family it scales with $E_\mathrm{oss}$, i.e.\ with the die size.
 			\end{itemize}
 			Measured with Sawyer--Tower circuits (charge versus voltage) or calorimetrically (L5).
 		\end{column}
@@ -305,7 +305,7 @@
 		\end{column}
 		\begin{column}{0.47\textwidth}
 			\small
-			Fit for one 650\,V GaN device (5--35\,MHz):
+			Measured energy loss per cycle $E_\mathrm{diss}$ of one 650\,V GaN device, fitted between 5 and 35\,MHz ($V_\mathrm{pp}$: drain voltage swing):
 			\begin{equation*}
 				E_\mathrm{diss}=k\,f^{\alpha}\,V_\mathrm{pp}^{\beta},\quad \alpha=0.6,\ \beta=1.7
 			\end{equation*}
@@ -321,7 +321,7 @@
 					\hline
 				\end{tabular}
 			\end{table}
-			For comparison: 3\,A rms in 100\,m$\Omega$ give 0.9\,W. At tens of MHz, $C_\mathrm{oss}$ losses can dominate.
+			For comparison, the conduction loss of 3\,A rms in 100\,m$\Omega$ is 0.9\,W: at tens of MHz the $C_\mathrm{oss}$ loss can dominate.
 		\end{column}
 	\end{columns}
 	\blfootnote{Sources: Guacci et al., IEEE JESTPE, 2019; Zulauf et al., IEEE TPEL, 2018 (GS66504B, $k=2.84\cdot10^{-10}$, $E$ in $\mu$J).}
@@ -406,7 +406,7 @@
 					% voltage: parabola during t_f, then linear
 					\draw[thick, gray, domain=0:1.6, samples=40] plot (\x, {0.35*\x*\x});
 					\draw[thick, gray] (1.6,0.896) -- (3.3,3.0) -- (4.3,3.0);
-					\node[anchor=west, gray] at (3.4,3.0) {$v_\mathrm{DS}$};
+					\node[anchor=south, gray] at (3.85,3.05) {$v_\mathrm{DS}$};
 					\draw[densely dotted] (1.6,0) -- (1.6,2.5);
 					\node[anchor=north] at (1.6,0) {$t_\mathrm{f}$};
 				\end{tikzpicture}
@@ -499,8 +499,8 @@
 			Charging and discharging the gate draws $P_\mathrm{G}=Q_\mathrm{G}\,V_\mathrm{dr}\,f_\mathrm{sw}$ per switch from the driver supply. It is dissipated in $R_\mathrm{dr}$, $R_\mathrm{G,ext}$ and $R_\mathrm{G,int}$ in proportion to their values; the total does not depend on $R_\mathrm{G}$.
 			\begin{itemize}
 				\item Use $Q_\mathrm{G}$ at $V_\mathrm{dr}$ from the gate-charge curve.
-				\item 100\,V GaN, 7\,nC at 5\,V: 0.35\,W per switch at 10\,MHz.
-				\item 100\,V Si, 35\,nC at 10\,V: 0.35\,W per switch at 1\,MHz.
+				\item Example: 100\,V GaN with 7\,nC at 5\,V draws 0.35\,W per switch at 10\,MHz,
+				\item a 100\,V Si MOSFET with 35\,nC at 10\,V the same 0.35\,W already at 1\,MHz.
 				\item Driver quiescent and level-shifter losses also grow with $f_\mathrm{sw}$. Resonant gate drivers recover part of the energy (L4).
 			\end{itemize}
 		\end{column}
@@ -523,7 +523,7 @@
 							xlabel={$f_\mathrm{sw}$ (MHz)}, ylabel={Loss (W)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=south east, legend cell align=left,
+							legend style={font=\tiny}, legend pos=north west, legend cell align=left,
 						]
 						\addplot[black, very thick, domain=-2:1, samples=60] ({10^x}, {0.5+10.42*10^x});
 						\addlegendentry{Si MOSFET, total}
@@ -639,12 +639,12 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{axis}[
-							width=\linewidth, height=5.0cm,
+							width=\linewidth, height=4.6cm,
 							xmin=0.1, xmax=3, ymin=0, ymax=8,
 							xlabel={Relative die area $a$}, ylabel={Device loss (W)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=3, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[black, thick, domain=0.1:3, samples=100] {0.5/x+2.41*x};
 						\addlegendentry{hard, 1\,MHz}
@@ -757,9 +757,9 @@
 			\end{equation*}
 			1\,nH at 5\,A/ns gives 5\,V, as much as the whole GaN gate drive voltage.
 			\begin{itemize}
-				\item slower current transitions, more overlap loss
-				\item calculated for a GaN buck: 1\,nH of $L_\mathrm{CS}$ adds 50\,\% loss (Reusch and Strydom)
-				\item remedy: Kelvin-source pin for the gate loop, low-inductance package
+				\item Consequence: slower current transitions and more overlap loss.
+				\item Calculated for a GaN buck: 1\,nH of $L_\mathrm{CS}$ adds 50\,\% switching loss (Reusch and Strydom).
+				\item Remedy: a Kelvin-source pin, so that the gate loop does not share the power source path, and a low-inductance package.
 			\end{itemize}
 		\end{column}
 	\end{columns}

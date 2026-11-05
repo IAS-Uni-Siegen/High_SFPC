@@ -108,7 +108,7 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.51\textwidth}
-			\small
+			\footnotesize
 			\begin{equation*}
 				F_\mathrm{R}=\varphi\left[G_1(\varphi)+\frac{2}{3}\left(M^2-1\right)\left(G_1(\varphi)-2G_2(\varphi)\right)\right]
 			\end{equation*}
@@ -117,9 +117,9 @@
 				G_2 & =\frac{\sinh\varphi\cos\varphi+\cosh\varphi\sin\varphi}{\cosh2\varphi-\cos2\varphi}
 			\end{align*}
 			\begin{itemize}
-				\item $\varphi=h/\delta$ (foil); round wire: $\varphi=\sqrt{\eta}\,\frac{\sqrt{\pi}}{2}\frac{d}{\delta}$, porosity $\eta$.
-				\item $M$: layers from zero MMF to its peak.
-				\item $\varphi\gg1$: $F_\mathrm{R}\approx\varphi\,(2M^2+1)/3$.
+				\item $\varphi=h/\delta$: layer thickness $h$ in skin depths (foil). Round wire of diameter $d$: $\varphi=\sqrt{\eta}\,\frac{\sqrt{\pi}}{2}\frac{d}{\delta}$, with the porosity $\eta$ (share of the layer width filled with copper).
+				\item $M$: number of layers between the point of zero MMF and the MMF peak.
+				\item $F_\mathrm{R}=R_\mathrm{ac}/R_\mathrm{dc}$; for $\varphi\gg1$: $F_\mathrm{R}\approx\varphi\,(2M^2+1)/3$.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -137,14 +137,14 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{loglogaxis}[
-							width=\linewidth, height=4.6cm,
+							width=\linewidth, height=4.0cm,
 							xmin=0.1, xmax=10, ymin=0.8, ymax=40,
 							xtick={0.1,1,10}, xticklabels={0.1,1,10},
 							ytick={1,10}, yticklabels={1,10},
 							xlabel={$\varphi=h/\delta$}, ylabel={$R_\mathrm{ac}/R_\mathrm{dc}(\varphi=1)$},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=south west, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[black, thick] table[x=phi, y=R6] {fig/lec07/dowell.dat};
 						\addlegendentry{$M=6$}
@@ -161,7 +161,7 @@
 		\end{column}
 		\begin{column}{0.51\textwidth}
 			\small
-			Thin layers have a high DC resistance, thick layers a high proximity loss. With $F_\mathrm{R}\approx1+\frac{5M^2-1}{45}\varphi^4$ and $R\propto F_\mathrm{R}/\varphi$:
+			Thin layers have a high DC resistance, thick layers a high proximity loss. With $F_\mathrm{R}\approx1+\frac{5M^2-1}{45}\varphi^4$ and $R\propto F_\mathrm{R}/\varphi$ (the DC resistance falls with $1/h$):
 			\begin{equation*}
 				\varphi_\mathrm{opt}\approx\left(\frac{15}{5M^2-1}\right)^{1/4},\qquad F_\mathrm{R}(\varphi_\mathrm{opt})\approx\frac{4}{3}
 			\end{equation*}
@@ -395,8 +395,8 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.53\textwidth}
-			\small
-			Energy in the window, $W=\frac{\mu_0}{2}\int H^2\,\mathrm{d}V$, with the mean turn length MLT:
+			\footnotesize
+			Energy in the window, $W=\frac{\mu_0}{2}\int H^2\,\mathrm{d}V$, with the mean turn length MLT, winding thicknesses $a$, $b$, their distance $d$ and the window height $h_\mathrm{w}$:
 			\begin{equation*}
 				L_\mathrm{lk}=\frac{\mu_0N^2\,\mathrm{MLT}}{h_\mathrm{w}}\left(d+\frac{a+b}{3}\right)
 			\end{equation*}
@@ -508,7 +508,7 @@
 			\small
 			\begin{itemize}
 				\item Turn-to-turn and layer-to-layer capacitances store electric energy. Lumped into $C_\mathrm{w}$, they set the self-resonance.
-				\item Energy method: adjacent layers with capacitance $C_0$, voltage linear along the winding. Layers wound back and forth:
+				\item Energy method: $n$ layers, capacitance $C_0$ between adjacent layers, voltage rising linearly along the winding. Layers wound back and forth:
 				      \begin{equation*}
 					      C_\mathrm{w}=\frac{4}{3}C_0\frac{n-1}{n^2}
 				      \end{equation*}

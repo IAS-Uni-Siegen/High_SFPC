@@ -256,12 +256,12 @@
 			3 & Data-centre DC transformer 380\,V $\rightarrow$ 12\,V      & 1\,kW                         & \onslide<2-|handout:2>{1\,MHz}     \\
 			4 & Mains-powered LED driver (120\,V AC)                      & 30\,W                         & \onslide<2-|handout:2>{5--10\,MHz} \\
 			5 & Inductive wireless power link                             & 1\,kW                         & \onslide<2-|handout:2>{6.78\,MHz}  \\
-			6 & SiC CLLC dc--dc stage (IAS research model)                & 11\,kW                        & \onslide<2-|handout:2>{125\,kHz}   \\
+			6 & SiC CLLC dc--dc stage (IAS simulation model)              & 11\,kW                        & \onslide<2-|handout:2>{125\,kHz}   \\
 			\hline
 		\end{tabular}
 	\end{table}
 	\onslide<2-|handout:2>{$f_\mathrm{sw}$ spans three decades and neither power nor voltage alone predicts it. The ceilings differ: interconnect and conduction at high current (1, 2), capacitive switching energy at high voltage (3, 6), magnetics and EMI everywhere.}
-	\blfootnote{(1) Burton et al., APEC 2014 (Intel FIVR); (2) Elasser et al., APEC 2023; (3) Ranjram and Perreault, TPEL 2022; (4) Lim, Otten and Perreault, TPEL 2016; (5) Gu et al., TPEL 2021; (6) IAS LTspice model.}
+	\blfootnote{(1) Burton et al., APEC 2014 (Intel FIVR); (2) Elasser et al., APEC 2023; (3) Ranjram and Perreault, TPEL 2022; (4) Lim, Otten and Perreault, TPEL 2016; (5) Gu et al., TPEL 2021; (6) IAS LTspice simulation model.}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -287,7 +287,8 @@
 			\hline
 			\multicolumn{5}{|l|}{\textit{For comparison}}                                                                                                     \\
 			EV battery charger                          & 18\,kW         & 500\,kHz                 & 98.8\,\% efficiency                     & Cao 2022                       \\
-			IAS SiC CLLC dc--dc stage                   & 11\,kW         & 125\,kHz                 & our running example (L9, L11)           & IAS model                      \\
+			IAS SiC CLLC dc--dc stage                   & 11\,kW         & 125\,kHz                 & running example (L9, L11), simulation   & IAS model                      \\
+			TI PMP41042 CLLLC (IAS test bench)          & 3.6\,kW        & $\approx$170\,kHz        & 380--410\,V $\leftrightarrow$ 40--60\,V & TI 2023                        \\
 			\hline
 		\end{tabular}
 		\caption{Published designs in the MHz range ($^{*}$as summarised by Perreault, APEC 2024; full references at the end of the lecture)}
@@ -340,7 +341,7 @@
 						\node[font=\tiny, anchor=north] at (axis cs:1000,0.9e6) {DCX};
 						\node[font=\tiny, anchor=east] at (axis cs:27,7e6) {LED};
 						\node[font=\tiny, anchor=south] at (axis cs:250,4.2e6) {PFC};
-						\node[font=\tiny, anchor=west] at (axis cs:12500,1.25e5) {IAS CLLC};
+						\node[font=\tiny, anchor=west] at (axis cs:12500,1.25e5) {IAS CLLC (sim.)};
 						\node[font=\tiny] at (axis cs:8500,4.4e4) {Si OBC};
 					\end{loglogaxis}
 				\end{tikzpicture}
@@ -367,31 +368,33 @@
 	\begin{columns}[T]
 		\begin{column}{0.48\textwidth}
 			\begin{block}{Low voltage, high current}
+				\footnotesize
 				e.g.\ 48\,V $\rightarrow$ 1\,V at 240\,A
 				\begin{itemize}
-					\item conduction and interconnect: $P=I^2R_\mathrm{ac}(f_\mathrm{sw})$
-					\item loop inductance: $v_L=L_\mathrm{loop}\,\mathrm{d}i/\mathrm{d}t$
-					\item large dies, hence large $C_\mathrm{oss}$ and $Q_\mathrm{G}$
-					\item winding and termination loss in transformers
+					\item Conduction and interconnect loss $P=I^2R_\mathrm{ac}$ grows with the current, and $R_\mathrm{ac}$ rises with $f_\mathrm{sw}$ (skin effect).
+					\item The loop inductance turns fast current changes into voltage spikes $v_L=L_\mathrm{loop}\,\mathrm{d}i/\mathrm{d}t$.
+					\item High current needs large dies, which bring a large $C_\mathrm{oss}$ and gate charge $Q_\mathrm{G}$.
+					\item Transformer windings and terminations carry the full current: high AC winding loss.
 				\end{itemize}
-				Typical answers: many phases, matrix and fractional-turn transformers, vertical power delivery.
+				Typical answers: many parallel phases, matrix and fractional-turn transformers, vertical power delivery.
 			\end{block}
 		\end{column}
 		\begin{column}{0.48\textwidth}
 			\begin{block}{High voltage}
+				\footnotesize
 				e.g.\ 400\,V bus at 1\,kW
 				\begin{itemize}
-					\item capacitive switching loss: $P=Q_\mathrm{oss}V f_\mathrm{sw}$, $\propto V^2$ for a linear $C_\mathrm{oss}$
-					\item $\mathrm{d}v/\mathrm{d}t$ drives common-mode current $i=C\,\mathrm{d}v/\mathrm{d}t$
-					\item creepage and clearance distances enlarge the loops
-					\item $C_\mathrm{oss}$ hysteresis, dynamic $R_\mathrm{DS(on)}$ (GaN)
+					\item Hard switching costs $P=Q_\mathrm{oss}V f_\mathrm{sw}$, which grows with $V^2$ for a linear $C_\mathrm{oss}$.
+					\item Fast voltage edges drive common-mode current $i=C\,\mathrm{d}v/\mathrm{d}t$ through every parasitic capacitance.
+					\item Creepage and clearance distances make the loops larger, and with them $L_\mathrm{loop}$.
+					\item $C_\mathrm{oss}$ hysteresis loss and dynamic $R_\mathrm{DS(on)}$ of GaN grow with the voltage.
 				\end{itemize}
 				Typical answers: zero-voltage switching, resonant converters, careful insulation design.
 			\end{block}
 		\end{column}
 	\end{columns}
 	\vspace{0.1cm}
-	{\small Parasitic inductance grows with current (device area) and spacing grows with voltage. Both lower the ceiling at high power.}
+	{\small Parasitic inductance grows with the current (larger devices), spacing grows with the voltage: both lower the frequency ceiling at high power.}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -443,7 +446,7 @@
 							xtick={0.1,1,10}, xticklabels={$0.1f_0$,$f_0$,$10f_0$}, yticklabels={},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,0.97)}, anchor=north}, legend cell align=left,
 						]
 						\addplot[gray, thick, domain=0.1:10, samples=100] {0.55/x};
 						\addlegendentry{passive components}
@@ -1078,5 +1081,6 @@
 		\item H. Zhang, ``Techniques for efficient wide-range radio-frequency power generation,'' PhD thesis, MIT, 2022.
 		\item Y. Cao et al., ``Design and implementation of an 18 kW 500 kHz 98.8\,\% efficiency high-density battery charger with partial power processing,'' IEEE J.\ Emerg.\ Sel.\ Topics Power Electron., vol.\ 10, pp.\ 7963--7975, 2022.
 		\item Further wireless and RF power designs on the map (Braun 2019; Al Bastami 2020; Regensburger 2022; Nikiforidis 2023) as cited in Perreault, APEC 2024.
+		\item Texas Instruments, PMP41042, ``3.6-kW bi-directional CLLLC resonant converter reference design,'' test report TIDT367, 2023 (hardware used for tests at IAS).
 	\end{itemize}
 \end{frame}

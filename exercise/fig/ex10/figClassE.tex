@@ -1,0 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Class E inverter (Exercise 10, Tasks 1 and 2)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.9, transform shape]
+			\draw (0,0) to[V, l=$V_\mathrm{DC}$] (0,3.2) to[L, l=$L_\mathrm{F}$, i>^=$i_\mathrm{F}$] (2.6,3.2) node[circ]{};
+			\draw (2.6,3.2) -- (2.6,2.5) node[nigfete, anchor=D] (S) {};
+			\draw (S.S) -- (2.6,0) node[circ]{};
+			\draw (2.6,3.2) -- (4.0,3.2) to[C, l=$C_\mathrm{ext}$, v_>=$v_\mathrm{S}$] (4.0,0) node[circ]{};
+			\draw (4.0,3.2) to[L, l=$L$, i>^=$i_\mathrm{o}$] (6.0,3.2) to[C, l=$C_0$] (7.6,3.2) to[R, l=$R$] (7.6,0) -- (0,0);
+		\end{circuitikz}
+	\end{center}
+	\caption{Class E inverter: $C_\mathrm{sh}=C_\mathrm{oss}+C_\mathrm{ext}$, $Q_\mathrm{L}=\omega L/R$, $X=\omega L-1/(\omega C_0)$}
+	\label{fig:ex10_classe}
+\end{figure}

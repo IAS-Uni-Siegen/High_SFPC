@@ -1,0 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Low-pass matching networks (Exercise 10, Task 3)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.85, transform shape]
+			% (a) L-section
+			\draw (0,2.4) node[ocirc]{} -- (1.2,2.4) node[circ]{} to[L, l=$L$] (3.4,2.4) to[R, l=$R_\mathrm{low}$] (3.4,0) -- (0,0) node[ocirc]{};
+			\draw (1.2,2.4) to[C, l_=$C$] (1.2,0) node[circ]{};
+			\node at (1.7,-0.7) {(a)};
+			% (b) pi network
+			\draw (5.6,2.4) node[ocirc]{} -- (6.8,2.4) node[circ]{} to[L, l=$L$] (9.0,2.4) node[circ]{} -- (10.4,2.4) to[R, l=$R_\mathrm{low}$] (10.4,0) -- (5.6,0) node[ocirc]{};
+			\draw (6.8,2.4) to[C, l_=$C_1$] (6.8,0) node[circ]{};
+			\draw (9.0,2.4) to[C, l_=$C_2$] (9.0,0) node[circ]{};
+			\node at (8.0,-0.7) {(b)};
+		\end{circuitikz}
+	\end{center}
+	\caption{Low-pass matching networks, $R_\mathrm{high}$ seen at the left port: (a) L-section, (b) $\pi$ network}
+	\label{fig:ex10_match}
+\end{figure}

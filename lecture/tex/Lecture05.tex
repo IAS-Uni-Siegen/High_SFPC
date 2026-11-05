@@ -118,10 +118,10 @@
 		\begin{column}{0.55\textwidth}
 			\small
 			\begin{itemize}
-				\item A 10:1 passive probe has a few pF: 4\,pF is 400\,$\Omega$ at 100\,MHz. Negligible at the switch node, not at a gate or sense node.
+				\item A 10:1 passive probe adds a few pF: 4\,pF are 400\,$\Omega$ at 100\,MHz. Negligible at the low-impedance switch node, not at a gate or sense node.
 				\item The ground lead adds about 1\,nH per mm. With 160\,mm and 4\,pF it resonates at $f_\mathrm{p}=1/(2\pi\sqrt{L_\mathrm{g}C_\mathrm{p}})=200$\,MHz. Every fast edge excites this resonance: the scope shows ringing that does not exist.
-				\item Spring tip or ground spring (a few mm, a few nH): $f_\mathrm{p}$ above 1\,GHz.
-				\item The ground loop also picks up the field of the power loop.
+				\item Remedy: a spring tip or ground spring of a few mm (a few nH) moves $f_\mathrm{p}$ above 1\,GHz.
+				\item The loop of tip and ground lead also picks up the field of the power loop as an induced voltage.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -140,12 +140,12 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{axis}[
-							width=\linewidth, height=5.0cm,
+							width=\linewidth, height=4.7cm,
 							xmin=-1, xmax=20, ymin=-5, ymax=130,
 							xlabel={Time (ns)}, ylabel={Measured $v_\mathrm{sw}$ (V)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[gray, thick] table[x=t, y=clip] {fig/lec05/probe_artefact.dat};
 						\addlegendentry{probe A}
@@ -322,7 +322,7 @@
 			\small
 			\begin{itemize}
 				\item 5\,\% error for a 1\,ns edge of 10\,A needs $L_\mathrm{s}\leq0.05\,R\,t_\mathrm{r}=0.5$\,pH: only a coaxial geometry or mutual-inductance cancellation reaches this.
-				\item An RC filter with $R_\mathrm{f}C_\mathrm{f}=L_\mathrm{s}/R$ compensates the zero, if $L_\mathrm{s}$ is known.
+				\item An RC low-pass after the shunt with $R_\mathrm{f}C_\mathrm{f}=L_\mathrm{s}/R$ cancels the zero at $f_\mathrm{c}$, if $L_\mathrm{s}$ is known.
 				\item Insertion inductance is a second problem: 6.5\,nH of a coaxial shunt in a 0.5\,nH power loop changes the very ringing and overshoot that we want to measure.
 			\end{itemize}
 			\begin{block}{Key message}
@@ -367,7 +367,7 @@
 			\textbf{Deskew methods}
 			\begin{itemize}
 				\item Deskew fixture: one fast edge into all probes.
-				\item Resistive load: current and voltage must be in phase.
+				\item Resistive load: in a resistor, current and voltage must be in phase.
 				\item Physical marker in the waveform: at the start of the current rise of a hard turn-on, $L_\mathrm{loop}\,\mathrm{d}i/\mathrm{d}t$ makes $v_\mathrm{DS}$ drop at the same instant.
 			\end{itemize}
 			Repeat after changing probes, cables or scope settings. A residual skew of 100\,ps still gives $\pm0.05\,\mu$J here.
@@ -387,19 +387,19 @@
 		\begin{column}{0.44\textwidth}
 			\begin{figure}
 				\centering
-				\begin{circuitikz}[scale=0.6, transform shape]
-					\draw (-0.8,0) to[V, l=$V_\mathrm{DC}$] (-0.8,6.0) -- (0.6,6.0);
-					\draw (0.6,6.0) to[C, l=$C_\mathrm{bus}$] (0.6,0);
-					\draw (0.6,6.0) -- (3.6,6.0) -- (3.6,5.8) node[nigfete, anchor=D] (QH) {};
+				\begin{circuitikz}[scale=0.56, transform shape]
+					\draw (-1.6,0) to[V, l=$V_\mathrm{DC}$] (-1.6,6.0) -- (0.6,6.0);
+					\draw (0.6,6.0) to[C, l_=$C_\mathrm{bus}$] (0.6,0);
+					\draw (0.6,6.0) -- (4.4,6.0) -- (4.4,5.8) node[nigfete, anchor=D] (QH) {};
 					\draw (QH.S) -- ++(0,-0.35) coordinate (sw);
-					\draw (QH.G) -- ++(-0.3,0) node[left, font=\small] {off};
+					\draw (QH.G) -- ++(-0.4,0) node[left] {off};
 					\draw (sw) node[nigfete, anchor=D] (QL) {};
-					\draw (QL.S) to[R, l=$R_\mathrm{sh}$] (QL.S |- 0,0) -- (-0.8,0);
-					\draw (QL.G) -- ++(-0.3,0) node[left, font=\small] {DUT gate};
-					\draw (3.6,6.0) -- (5.4,6.0) to[L, l=$L$] (5.4,0 |- sw) -- (sw);
+					\draw (QL.S) to[R, l=$R_\mathrm{sh}$] (QL.S |- 0,0) -- (-1.6,0);
+					\draw (QL.G) -- ++(-0.4,0) node[left] {DUT};
+					\draw (4.4,6.0) -- (6.2,6.0) to[L, l=$L$] (6.2,0 |- sw) -- (sw);
 					\draw (sw) node[circ]{};
 				\end{circuitikz}
-				\caption{Low-side device under test; the load inductor across the high-side switch}
+				\caption{Low-side device under test (DUT); the high-side switch stays off, the load inductor $L$ lies across it}
 			\end{figure}
 		\end{column}
 		\begin{column}{0.53\textwidth}
@@ -443,7 +443,7 @@
 			\begin{itemize}
 				\item Measured at the terminals, $E_\mathrm{off}$ contains the energy $E_\mathrm{oss}$ that charges $C_\mathrm{oss}$ of the DUT; it is not lost yet.
 				\item At the next turn-on $C_\mathrm{oss}$ discharges inside the DUT, through its channel. The terminals do not see this current: the measured $E_\mathrm{on}$ is too small by $E_\mathrm{oss}$.
-				\item The sum $E_\mathrm{on}+E_\mathrm{off}$ is right; the split is not. Correction with the turn-off energy measured at zero current: $E_\mathrm{on}+E_\mathrm{off,0A}$ and $E_\mathrm{off}-E_\mathrm{off,0A}$.
+				\item The sum $E_\mathrm{on}+E_\mathrm{off}$ is right, the split is not. Correction: measure the turn-off energy at zero current, $E_\mathrm{off,0A}\approx E_\mathrm{oss}$, and move it from $E_\mathrm{off}$ to $E_\mathrm{on}$.
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.47\textwidth}
@@ -506,7 +506,7 @@
 			\small
 			$R_\mathrm{DS(on)}$ right after turn-on needs $v_\mathrm{DS}$ with mV resolution, while the same channel saw 400\,V a moment earlier.
 			\begin{itemize}
-				\item About 9 effective bits: on a 400\,V range one step is 0.78\,V.
+				\item A scope has about 9 effective bits: on a 400\,V range one step is 0.78\,V, far too coarse for mV.
 				\item A sensitive range overdrives the input amplifier during the off-state; it needs time to recover.
 			\end{itemize}
 			A clamp circuit at the DUT limits the voltage seen by the scope to a few volts. The scope can then use a fine range; valid on-state data within about 100\,ns after turn-on.
@@ -613,19 +613,19 @@
 	\frametitle{Core loss at MHz}
 	\begin{columns}[T]
 		\begin{column}{0.5\textwidth}
-			\small
-			\textbf{Two-winding method}: $P=\frac{1}{T}\int v_2\,i_1\,\mathrm{d}t\cdot\frac{N_1}{N_2}$ excludes the copper loss of the drive winding. For a low-loss core $v$ and $i$ are almost $90^\circ$ apart:
+			\footnotesize
+			\textbf{Two-winding method}: $P=\frac{1}{T}\int v_2\,i_1\,\mathrm{d}t\cdot\frac{N_1}{N_2}$ ($i_1$ in the drive winding, $v_2$ across an open sense winding) excludes the copper loss. For a low-loss core $v$ and $i$ are almost $90^\circ$ apart, and a phase error $\Delta\varphi$ is amplified by the quality factor $Q$:
 			\begin{equation*}
 				\frac{\Delta P}{P}\approx Q\,\Delta\varphi
 			\end{equation*}
 			10\,MHz, 100\,ps skew: $\Delta\varphi=0.36^\circ$. With $Q=100$ the loss is wrong by 63\,\%.
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			\textbf{Resonant methods}
 			\begin{itemize}
-				\item A capacitor cancels the reactive voltage; the phase sensitivity drops.
-				\item Resonant $Q$ method: series tank driven at resonance, $Q=V_\mathrm{out}/V_\mathrm{in}$, no phase measurement:
+				\item A series capacitor cancels the reactive voltage of the winding, so a phase error matters much less.
+				\item Resonant $Q$ method: series tank driven at resonance with $V_\mathrm{in}$; the capacitor voltage is $V_\mathrm{out}=QV_\mathrm{in}$. No phase measurement ($R_\mathrm{C}$, $R_\mathrm{cu}$: capacitor and winding resistance):
 				      \begin{equation*}
 					      R_\mathrm{core}=\frac{2\pi fL\,V_\mathrm{in}}{V_\mathrm{out}}-R_\mathrm{C}-R_\mathrm{cu}
 				      \end{equation*}

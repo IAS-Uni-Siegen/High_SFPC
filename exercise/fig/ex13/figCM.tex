@@ -1,0 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Common-mode path of the buck with CM choke and Y capacitors (Exercise 13, Task 1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.85, transform shape]
+			\draw (0,0) to[R, l=$25\,\Omega$] (0,2.6) to[L, l=$L_\mathrm{CM}$] (2.8,2.6) node[circ]{} -- (5.6,2.6);
+			\draw (2.8,2.6) to[C, l=$C_\mathrm{Y}$] (2.8,0) node[circ]{};
+			\draw (5.6,2.6) to[sV, l=$v_\mathrm{sw}$] (5.6,1.3) to[C, l=$C_\mathrm{p}$] (5.6,0) -- (0,0);
+			\draw (1.4,0) node[ground]{};
+			\node[font=\footnotesize] at (0,-0.6) {LISN};
+			\node[font=\footnotesize] at (2.8,-0.6) {Y capacitors};
+			\node[font=\footnotesize] at (5.6,-0.6) {switch node};
+		\end{circuitikz}
+	\end{center}
+	\caption{Common-mode equivalent circuit: the switch-node voltage drives current through $C_\mathrm{p}$ into earth; it returns through the Y capacitors or through the LISN (both lines in parallel, $25\,\Omega$)}
+	\label{fig:ex13_cm}
+\end{figure}

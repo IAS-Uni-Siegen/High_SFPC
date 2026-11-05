@@ -1,0 +1,8 @@
+# Class E design for ZVS and ZDS versus Q_L = omega L/R (L: whole series inductance), D = 0.5,
+# choke omega L_F = 1e4 R (exact time-domain steady state, classe_timedomain.py)
+QL wCR XR RPV2 Vpk Ipk
+3 0.2184 1.4241 0.4647 3.657 2.758
+5 0.2091 1.2855 0.5167 3.616 2.775
+10 0.1980 1.2088 0.5497 3.588 2.813
+20 0.1912 1.1781 0.5641 3.575 2.837
+1000 0.1838 1.1528 0.5767 3.562 2.862

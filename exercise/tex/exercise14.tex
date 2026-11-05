@@ -1,0 +1,102 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{Mock oral exam: design presentation, what-if questions and chits}
+
+Work in groups of three: one student is examined, one examines with the model answers, one keeps time and assesses with the criteria of Lecture 15. Change roles after each task. The what-if questions use the designs of the earlier tutorials; answer them on paper, with numbers, in about three minutes each.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Part A: your design in ten minutes}
+
+\subtask{Present your design with at most five slides or one A3 sheet. The observer marks which of the five questions of Lecture 15 (switching energy, energy storage, parasitics, drive and control, heat and noise) you answer with a number.}
+
+\begin{solutionblock}
+	A complete presentation shows: specification and parameter variant; topology and $f_\mathrm{sw}$ with the reason; loss budget at operating temperature with the dominant loss and its uncertainty; devices, magnetics ($\hat{B}$, $F_\mathrm{R}$) and capacitors at bias; commutation loop and thermal path; timing budget and control concept; EMI estimate; validation plan and limitations. Frequent gaps: an efficiency without loss breakdown, nominal instead of effective capacitance, losses at \SI{25}{\celsius}, no dead-time or delay budget, no plan for measuring the loss.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Part B: what-if questions}
+
+\subtask{TCM buck of Tutorial 8 ($L=\SI{225}{\nano\henry}$, $I_\mathrm{neg}=\SI{1.67}{\ampere}$, $R_\mathrm{DS(on)}=\SI{7}{\milli\ohm}$): the load is halved. Is ZVS kept? What happens to $f_\mathrm{sw}$, the peak and the rms current? What happens at \SI{10}{\percent} load?}
+
+\begin{solutionblock}
+	ZVS depends only on $I_\mathrm{neg}$, which the control keeps at $\SI{1.67}{\ampere}>\SI{1.46}{\ampere}$: kept. $f_\mathrm{sw}=V_\mathrm{o}(1-D)/(2L(I_\mathrm{o}+I_\mathrm{neg}))$ rises from 2.00 to \SI{3.43}{\mega\hertz}, the peak falls from 18.3 to \SI{10.0}{\ampere}, $I_\mathrm{rms}$ from 10.1 to \SI{5.36}{\ampere}; the conduction loss falls from 0.72 to \SI{0.20}{\watt}. The gate-drive loss rises by 1.7, the turn-off loss stays about the same (smaller current, more events) and the core loss falls, because the flux swing shrinks with $1/f_\mathrm{sw}$. At \SI{10}{\percent} load $f_\mathrm{sw}=\SI{8}{\mega\hertz}$: the frequency must be limited, by burst mode or by a larger negative current (\SI{5.8}{\ampere} for \SI{3}{\mega\hertz}, at the price of rms current).
+\end{solutionblock}
+
+\subtask{Hard-switched buck of Tutorials 12 and 13: $f_\mathrm{sw}$ is doubled to \SI{2}{\mega\hertz}. The switching loss of the high-side transistor doubles; assume the rest of the converter loss unchanged. What fails first?}
+
+\begin{solutionblock}
+	$P_\mathrm{T}$ rises from 1.6 to \SI{2.8}{\watt} at \SI{25}{\celsius}. With the network of Task 13.3: $T_\mathrm{j}=50+4\,(3.4+2.8)+17.5\cdot2.8=\SI{124}{\celsius}$ at constant loss and \SI{131}{\celsius} with electro-thermal feedback (from 98 and \SI{103}{\celsius}). The thermal margin goes first. The rest improves: the ripple halves, the first harmonic moves to \SI{2}{\mega\hertz}, where $C_\mathrm{in}$ has a lower impedance and the input filter attenuates \SI{12}{dB} more.
+\end{solutionblock}
+
+\subtask{The commutation loop of Tutorial 3 ($L_\mathrm{loop}=\SI{1.94}{\nano\henry}$, $C=\SI{326}{\pico\farad}$, $I=\SI{10}{\ampere}$, \SI{48}{\volt}, $t_\mathrm{r}=\SI{2.5}{\nano\second}$) doubles its inductance in a new layout. Ringing frequency, $Z_0$, turn-off overshoot bound and turn-on peak?}
+
+\begin{solutionblock}
+	$f_\mathrm{r}=\SI{200}{\mega\hertz}/\sqrt{2}=\SI{141}{\mega\hertz}$, $Z_0=\SI{2.44}{\ohm}\cdot\sqrt{2}=\SI{3.45}{\ohm}$. Turn-off: $IZ_0=\SI{34.5}{\volt}$ instead of \SI{24.4}{\volt}. Turn-on: $x=\pi f_\mathrm{r}t_\mathrm{r}=1.11$, amplitude $V_\mathrm{DC}\sin x/x=\SI{38.7}{\volt}$, peak \SI{86.7}{\volt} instead of \SI{78.5}{\volt}. The edge now covers 0.35 instead of 0.5 of the ring period and suppresses less of the oscillation: a \SI{100}{\volt} transistor keeps only \SI{13}{\volt} of margin.
+\end{solutionblock}
+
+\subtask{The filter capacitor $C_\mathrm{f}=\SI{2.2}{\micro\farad}$ of Tutorial 13 turns out to be the nominal value; at \SI{48}{\volt} the MLCC keeps only \SI{40}{\percent}. Does the converter still pass?}
+
+\begin{solutionblock}
+	$C_\mathrm{f,eff}=\SI{0.88}{\micro\farad}$: the corner rises by $\sqrt{2.5}$ from 49.5 to \SI{78}{\kilo\hertz} and the attenuation at \SI{1}{\mega\hertz} falls by $40\log_{10}\sqrt{2.5}=\SI{8.0}{dB}$. The margin of \SI{6.7}{dB} becomes \SI{-1.3}{dB} (\SI{-1.7}{dB} in the notebook model): the converter fails the average limit. Specify the capacitance at bias: \SI{2.2}{\micro\farad} effective need about \SI{5.5}{\micro\farad} nominal of this type, or $L_\mathrm{f}=\SI{11.8}{\micro\henry}$ with more resistance and a lower self-resonance.
+\end{solutionblock}
+
+\subtask{The converter of Tutorial 5 now reaches \SI{98}{\percent} at \SI{100}{\watt}, measured with the same instruments ($\pm(0.05\,\%$ of reading $+\,0.05\,\%$ of the \SI{150}{\watt} range$)$ each). How uncertain is the loss, and which measurement would you trust?}
+
+\begin{solutionblock}
+	$P_\mathrm{in}=\SI{102.04}{\watt}$, loss \SI{2.04}{\watt}; $\Delta P_\mathrm{in}=\SI{0.126}{\watt}$, $\Delta P_\mathrm{out}=\SI{0.125}{\watt}$: worst case $\pm\SI{0.25}{\watt}$ ($\pm12.3\,\%$ of the loss), RSS $\pm\SI{0.18}{\watt}$ ($\pm8.7\,\%$). A calorimetric loss measurement with $\pm2\,\%$ of the loss ($\pm\SI{0.04}{\watt}$), cross-checked by the temperatures of the main components. Report the loss with its uncertainty, not only the efficiency.
+\end{solutionblock}
+
+\subtask{The load of the class E of Tutorial 10 ($Q_\mathrm{L}=5$, 100\,V GaN transistor) varies between $0.5R_\mathrm{nom}$ and $2R_\mathrm{nom}$. Which end endangers the transistor, which costs efficiency?}
+
+\begin{solutionblock}
+	At $0.5R_\mathrm{nom}$ the body diode conducts before turn-on (ZVS kept), but the peak rises to \SI{100.4}{\volt}: above the rating of the \SI{100}{\volt} device. At $2R_\mathrm{nom}$ the peak falls to \SI{66.6}{\volt}, but the turn-on is hard from \SI{37.1}{\volt}: \SI{1.16}{\watt} turn-on loss, \SI{9.5}{\percent} of the \SI{12.2}{\watt} output. Low resistance endangers the device, high resistance costs efficiency; the power changes little. Remedies: a \SI{150}{\volt} device or class DE, and a compressing or tunable network.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Part C: question chits}
+
+\subtask{Draw two chits each and answer them in two minutes without notes. Example chits:
+	\begin{enumerate}
+		\item Why is the hard turn-on loss $Q_\mathrm{oss}V_\mathrm{DC}$ and not $E_\mathrm{oss}$?
+		\item Why does the optimum layer thickness of a winding fall with the number of layers?
+		\item What limits the frequency of a class E inverter?
+		\item Why does charging a capacitor from a voltage source lose $\frac12C\Delta V^2$, whatever the resistance?
+		\item What does a delay of $1.5\,T_\mathrm{s}$ cost at a crossover of $f_\mathrm{sw}/10$?
+		\item Why does an LLC converter at $f_\mathrm{r}$ have the gain 1 at every load?
+	\end{enumerate}}
+
+\begin{solutionblock}
+	\begin{enumerate}
+		\item The turning-on transistor dissipates its own $E_\mathrm{oss}$ and charges the capacitance of the other transistor from the bus: the bus supplies $Q_\mathrm{oss}V_\mathrm{DC}$, of which $E_\mathrm{oss}$ is stored. Dissipated in total: $E_\mathrm{oss}+(Q_\mathrm{oss}V_\mathrm{DC}-E_\mathrm{oss})=Q_\mathrm{oss}V_\mathrm{DC}$ (L2).
+		\item The magneto-motive force builds up from layer to layer; the proximity loss of layer $m$ grows with $m^2$. With more layers the optimum thickness falls below the skin depth: $\varphi_\mathrm{opt}\approx(15/(5M^2-1))^{1/4}$ (L7).
+		\item The shunt capacitance $C_\mathrm{sh}=0.1836/(\omega R)$ falls with frequency, and the transistor's $C_\mathrm{oss}$ must fit into it: $f_\mathrm{max}=0.0507P/(C_\mathrm{oss}V_\mathrm{DC}^2)$ (L10).
+		\item The source delivers $VC\Delta V$, the stored energy rises by $VC\Delta V-\frac12C\Delta V^2$; the resistance sets only the time constant (L12).
+		\item $360^\circ\cdot1.5\,T_\mathrm{s}\cdot f_\mathrm{sw}/10=\ang{54}$ of phase margin (L13).
+		\item At $f_\mathrm{r}$ the series tank has zero impedance: input and output are connected through the transformer, and $L_\mathrm{m}$ only adds magnetising current (L9).
+	\end{enumerate}
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Feedback and design package (milestone M4)}
+
+\subtask{The observer rates the mock exam with the four criteria of Lecture 15 (design reasoning, depth, breadth, judgement) and names one improvement for each. Complete your design package with the report tables of the notebook.}
+
+\begin{solutionblock}
+	Typical improvements: state the assumption before the number; give the limiting mechanism, not only the trend; check units and orders of magnitude aloud; name the measurement that would confirm the claim. The design package (D1 to D8) should contain the loss budget at operating temperature with sensitivities, the operating points of the converter, and the validation plan.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx14\_task.ipynb} provides the template of a design notebook: specification, loss models from the tutorials, an $\eta$--$\rho$ sweep over frequency and inductor size for the TCM buck, the Pareto front and report tables for the design package.

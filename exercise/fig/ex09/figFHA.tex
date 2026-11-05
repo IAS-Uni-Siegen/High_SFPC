@@ -1,0 +1,15 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FHA equivalent circuit of the LLC (Exercise 09, Tasks 2 and 3)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[htb]
+	\begin{center}
+		\begin{circuitikz}[scale=0.9, transform shape]
+			\draw (0,0) to[sV, l=$v_\mathrm{s1}$] (0,2.5) to[C, l=$C_\mathrm{r}$] (2,2.5) to[L, l=$L_\mathrm{r}$, i>^=$i_\mathrm{r}$] (4,2.5) -- (5.8,2.5);
+			\draw (4,2.5) node[circ]{} to[L, l_=$L_\mathrm{m}$] (4,0) node[circ]{};
+			\draw (5.8,2.5) to[R, l_=$R_\mathrm{e}$, v^>=$v_\mathrm{o1}$] (5.8,0) -- (0,0);
+		\end{circuitikz}
+	\end{center}
+	\caption{FHA equivalent circuit of the LLC, referred to the primary: $\hat{v}_\mathrm{s1}=4V_\mathrm{in}/\pi$ (full bridge), $R_\mathrm{e}=8n^2R_\mathrm{L}/\pi^2$}
+	\label{fig:ex09_fha}
+\end{figure}

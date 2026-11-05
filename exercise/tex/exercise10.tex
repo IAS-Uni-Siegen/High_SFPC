@@ -1,0 +1,200 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin exercise %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ex{VHF inverters: class E, matching and wireless power}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 1 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Class E inverter for brief B4}
+
+Brief B4 asks for \SI{15}{\watt} from \SI{24}{\volt} at \SI{6.78}{\mega\hertz}. A class E inverter with $D=0.5$ (Fig.~\ref{fig:ex10_classe}) shall be built with the \SI{100}{\volt} GaN transistor of Tutorial 8,
+\begin{equation}
+	C_\mathrm{oss}(v)=\frac{C_0}{\sqrt{1+v/V_\mathrm{j}}},\qquad C_0=\SI{443}{\pico\farad},\quad V_\mathrm{j}=\SI{5}{\volt}.
+\end{equation}
+The design coefficients for ZVS and zero $\mathrm{d}v/\mathrm{d}t$ at turn-on are (Lecture 10):
+
+\begin{center}
+	\begin{tabular}{|l|c|c|c|c|}
+		\hline
+		                        & $RP/V_\mathrm{DC}^2$ & $\omega C_\mathrm{sh}R$ & $X/R$  & $V_\mathrm{S,pk}/V_\mathrm{DC}$ \\
+		\hline
+		$Q_\mathrm{L}\to\infty$ & 0.5768               & 0.1836                  & 1.1525 & 3.562                           \\
+		$Q_\mathrm{L}=5$        & 0.5167               & 0.2091                  & 1.2855 & 3.616                           \\
+		\hline
+	\end{tabular}
+	\captionof{table}{Class E design coefficients for $D=0.5$; $Q_\mathrm{L}=\omega L/R$ with the whole series inductance $L$}
+	\label{tab:ex10_coeff}
+\end{center}
+
+\input{fig/ex10/figClassE}
+
+\subtask{Design the inverter with the ideal equations ($Q_\mathrm{L}\to\infty$): $R$, $C_\mathrm{sh}$, $X$, the peak switch voltage, $I_\mathrm{DC}$ and the peak switch current ($I_\mathrm{S,pk}=2.862\,I_\mathrm{DC}$).}
+
+\begin{solutionblock}
+	$R=0.5768\cdot(\SI{24}{\volt})^2/\SI{15}{\watt}=\SI{22.1}{\ohm}$. With $\omega=2\pi\cdot\SI{6.78}{\mega\hertz}=\SI{4.26\cdot10^{7}}{\per\second}$: $C_\mathrm{sh}=0.1836/(\omega R)=\SI{194.6}{\pico\farad}$, $X=1.1525R=\SI{25.5}{\ohm}$ (\SI{599}{\nano\henry} more than the inductance that resonates with $C_0$). $V_\mathrm{S,pk}=3.562\cdot\SI{24}{\volt}=\SI{85.5}{\volt}$, $I_\mathrm{DC}=\SI{0.625}{\ampere}$, $I_\mathrm{S,pk}=\SI{1.79}{\ampere}$.
+\end{solutionblock}
+
+\subtask{Calculate the small-signal $C_\mathrm{oss}$ at \SI{24}{\volt} and the maximum frequency $f_\mathrm{max}=0.0507\,P/(C_\mathrm{oss}V_\mathrm{DC}^2)$. Is the transistor small enough? Which external capacitance remains?}
+
+\begin{solutionblock}
+	$C_\mathrm{oss}(\SI{24}{\volt})=\SI{443}{\pico\farad}/\sqrt{5.8}=\SI{184}{\pico\farad}$; $f_\mathrm{max}=0.0507\cdot\SI{15}{\watt}/(\SI{184}{\pico\farad}\cdot(\SI{24}{\volt})^2)=\SI{7.18}{\mega\hertz}$, just above \SI{6.78}{\mega\hertz}. Only $C_\mathrm{ext}=\SI{10.6}{\pico\farad}$ remain: the pad and heat-sink capacitance of the layout alone can use them up.
+\end{solutionblock}
+
+\subtask{Repeat the design for $Q_\mathrm{L}=5$: $R$, $C_\mathrm{sh}$, $C_\mathrm{ext}$, $X$, $L$, $C_0$ and $V_\mathrm{S,pk}$. Estimate the loss of the series inductor for $Q_\mathrm{ind}=150$.}
+
+\begin{solutionblock}
+	$R=0.5167\cdot(\SI{24}{\volt})^2/\SI{15}{\watt}=\SI{19.8}{\ohm}$, $C_\mathrm{sh}=0.2091/(\omega R)=\SI{247.4}{\pico\farad}$, so $C_\mathrm{ext}=\SI{63.4}{\pico\farad}$ with the small-signal $C_\mathrm{oss}$. $X=1.2855R=\SI{25.5}{\ohm}$, $L=Q_\mathrm{L}R/\omega=\SI{2.33}{\micro\henry}$, $1/(\omega C_0)=\omega L-X=\SI{73.7}{\ohm}$, $C_0=\SI{318.5}{\pico\farad}$, $V_\mathrm{S,pk}=3.616\cdot\SI{24}{\volt}=\SI{86.8}{\volt}$. The finite $Q_\mathrm{L}$ needs more shunt capacitance and leaves room for the transistor.
+
+	The inductor carries $\hat{\imath}_\mathrm{o}=\sqrt{2P/R}=\SI{1.23}{\ampere}$ through $R_\mathrm{ESR}=\omega L/Q_\mathrm{ind}=\SI{0.66}{\ohm}$: $\SI{0.50}{\watt}$, i.e.\ $Q_\mathrm{L}/Q_\mathrm{ind}=3.3\,\%$ of the output power.
+\end{solutionblock}
+
+\subtask{Simulate the $Q_\mathrm{L}=5$ design with a linear $C_\mathrm{sh}$ in the time domain ($L_\mathrm{F}=\SI{100}{\micro\henry}$, body diode across the switch) and vary $R$ from 0.5 to $2R_\mathrm{nom}$: voltage at turn-on, peak voltage, output power and turn-on loss $\tfrac12C_\mathrm{sh}v^2f$ (notebook).}
+
+\begin{solutionblock}
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|c|c|}
+			\hline
+			$R/R_\mathrm{nom}$               & 0.5             & 0.75            & 1     & 1.5           & 2.0           \\
+			\hline
+			$v_\mathrm{S}$ at turn-on (V)    & 0 (diode)       & 0 (diode)       & 0     & 23.0          & 37.1          \\
+			$V_\mathrm{S,pk}$ (V)            & 100.4           & 94.6            & 87.4  & 74.0          & 66.6          \\
+			$P$ (W)                          & 11.8            & 14.6            & 15.1  & 13.3          & 12.2          \\
+			turn-on loss (W)                 & 0               & 0               & 0     & 0.44          & 1.16          \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Class E of Task 10.1.3 with load variation (exact steady state)}
+		\label{tab:ex10_load}
+	\end{center}
+	Below $R_\mathrm{nom}$ the drain voltage reaches zero before turn-on and the body diode conducts (from \ang{316} at $0.5R_\mathrm{nom}$); ZVS is kept, but the peak reaches \SI{100}{\volt}. Above $R_\mathrm{nom}$ the turn-on is hard: 3.3\,\% of the output power at $1.5R_\mathrm{nom}$, 9.5\,\% at $2R_\mathrm{nom}$. The power changes surprisingly little; the stresses and the losses change a lot.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 2 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Nonlinear output capacitance (notebook)}
+
+The design of Task 10.1.3 was made with a linear $C_\mathrm{sh}$. Now the transistor contributes $C_\mathrm{oss}(v)$ of Eq.~(1).
+
+\subtask{Calculate $C_\mathrm{oss}$ at \SI{0}{\volt}, \SI{24}{\volt} and at the peak of \SI{87.4}{\volt}, and the charge-equivalent capacitance $Q_\mathrm{oss}/V$ for a swing from 0 to \SI{87.4}{\volt}. Why does the small-signal value at \SI{24}{\volt} not describe the drain node?}
+
+\begin{solutionblock}
+	$C_\mathrm{oss}=\SI{443}{\pico\farad}$, \SI{184}{\pico\farad} and \SI{103}{\pico\farad}. $Q_\mathrm{oss}=2C_0V_\mathrm{j}\left(\sqrt{1+V/V_\mathrm{j}}-1\right)=\SI{14.6}{\nano\coulomb}$ at \SI{87.4}{\volt}, $Q_\mathrm{oss}/V=\SI{167}{\pico\farad}$. The drain swings from zero to more than three times $V_\mathrm{DC}$; the capacitance is large near zero and small near the peak. A linear model fixed at \SI{24}{\volt} gives the wrong shape of the waveform, above all near the peak.
+\end{solutionblock}
+
+\subtask{Simulate the inverter with $C_\mathrm{sh}=C_\mathrm{oss}(v)+\SI{63.4}{\pico\farad}$. Are ZVS and zero $\mathrm{d}v/\mathrm{d}t$ kept? Peak voltage and output power?}
+
+\begin{solutionblock}
+	$v_\mathrm{S}=\SI{0.9}{\volt}$ at turn-on, still nearly ZVS, but the capacitor still carries \SI{95}{\milli\ampere}: the slope is no longer zero. The peak rises from \SI{87.4}{\volt} to \SI{100.1}{\volt} (+15\,\%); the output power becomes \SI{16.2}{\watt}. The small capacitance near the peak lets the voltage rise further.
+\end{solutionblock}
+
+\subtask{Retune $C_\mathrm{ext}$ and $X$ numerically for ZVS and zero $\mathrm{d}v/\mathrm{d}t$. Which voltage rating does the transistor need?}
+
+\begin{solutionblock}
+	$C_\mathrm{ext}=\SI{66.5}{\pico\farad}$ and $X=\SI{27.4}{\ohm}$ (+7.6\,\%, $C_0=\SI{327}{\pico\farad}$) restore both conditions; the peak stays at \SI{98.3}{\volt}, the power is \SI{14.7}{\watt}. A \SI{100}{\volt} transistor has no margin left, before any load variation (Task 10.1.4) and ringing. Options: a \SI{150}{\volt} device, a lower drain voltage, or class DE with a stress of only $V_\mathrm{DC}$.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 3 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Matching networks}
+
+For an L-section the transformation quality factor is $Q=\sqrt{R_\mathrm{high}/R_\mathrm{low}-1}$, with $X_\mathrm{s}=QR_\mathrm{low}$ and $X_\mathrm{p}=R_\mathrm{high}/Q$; its efficiency is $\eta\approx1-Q/Q_\mathrm{ind}-Q/Q_\mathrm{cap}$. Use $Q_\mathrm{ind}=150$ and $Q_\mathrm{cap}=1000$ (Fig.~\ref{fig:ex10_match}).
+
+\input{fig/ex10/figMatch}
+
+\subtask{The class E inverter of brief B5 ($R=\SI{33.2}{\ohm}$, \SI{13.56}{\mega\hertz}) feeds a resonant rectifier that presents $R_\mathrm{rec}=\SI{8}{\ohm}$. Design a low-pass L-section and estimate its efficiency.}
+
+\begin{solutionblock}
+	$Q=\sqrt{33.2/8-1}=1.78$. Series inductor next to the rectifier: $X_\mathrm{s}=\SI{14.2}{\ohm}$, $L=\SI{167}{\nano\henry}$. Shunt capacitor at the inverter side: $X_\mathrm{p}=\SI{18.7}{\ohm}$, $C=\SI{627}{\pico\farad}$ (C0G). $\eta\approx1-1.78/150-1.78/1000=98.6\,\%$.
+\end{solutionblock}
+
+\subtask{The 50 to \SI{5}{\ohm} match at \SI{13.56}{\mega\hertz} of Lecture 10 shall be built as a $\pi$ network with $Q_1=4$ at the \SI{50}{\ohm} side. Calculate the virtual resistance $R_\mathrm{v}$ at the centre, $Q_2$, the element values and the efficiency. Compare with the L-section ($Q=3$, 97.7\,\%).}
+
+\begin{solutionblock}
+	The $\pi$ network consists of two L-sections that meet at $R_\mathrm{v}$, lower than both terminations: $R_\mathrm{v}=\SI{50}{\ohm}/(1+Q_1^2)=\SI{2.94}{\ohm}$, $Q_2=\sqrt{\SI{5}{\ohm}/R_\mathrm{v}-1}=0.837$.
+	$C_1$: $X=\SI{50}{\ohm}/Q_1=\SI{12.5}{\ohm}$, \SI{939}{\pico\farad}. $L$: $X=(Q_1+Q_2)R_\mathrm{v}=\SI{14.2}{\ohm}$, \SI{167}{\nano\henry}. $C_2$: $X=\SI{5}{\ohm}/Q_2=\SI{5.98}{\ohm}$, \SI{1964}{\pico\farad}.
+	The inductor carries the current at $R_\mathrm{v}$: $\eta\approx1-(Q_1+Q_2)/Q_\mathrm{ind}-(Q_1+Q_2)/Q_\mathrm{cap}=96.3\,\%$. The $\pi$ network costs 1.4\,\% more loss; in exchange its loaded $Q$ is chosen freely, e.g.\ for more harmonic attenuation.
+\end{solutionblock}
+
+\subtask{Draw both matching paths in a Smith chart ($Z_0=\SI{50}{\ohm}$) and plot $|\Gamma|$ from 10 to \SI{17}{\mega\hertz}. Which network has the wider band (notebook)?}
+
+\begin{solutionblock}
+	L-section: series $L$ moves \SI{5}{\ohm} along the circle $r=0.1$ to $0.1+\mathrm{j}0.3$, the shunt $C$ along a circle of constant conductance to the centre. $\pi$ network: three arcs (shunt $C_2$, series $L$, shunt $C_1$). $|\Gamma|\leq0.2$: L-section 12.55 to \SI{14.50}{\mega\hertz} (\SI{1.95}{\mega\hertz}), $\pi$ network 12.86 to \SI{14.20}{\mega\hertz} (\SI{1.34}{\mega\hertz}). The higher $Q$ narrows the band.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 4 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Wireless power link for brief B4}
+
+The link of brief B4 operates at \SI{6.78}{\mega\hertz} with series compensation on both sides (Fig.~\ref{fig:ex10_link}): $L_1=\SI{1.2}{\micro\henry}$, $Q_1=250$, $L_2=\SI{0.8}{\micro\henry}$, $Q_2=150$, coupling $k=0.10$ to 0.25. A full-bridge rectifier with capacitive filter supplies \SI{12}{\volt} and \SI{15}{\watt}. With $U^2=k^2Q_1Q_2$:
+\begin{equation}
+	\eta=\frac{U^2x}{(1+x)(1+x+U^2)},\quad x=\frac{R_\mathrm{ac}}{R_2};\qquad \eta_\mathrm{max}=\frac{U^2}{\left(1+\sqrt{1+U^2}\right)^2}\ \text{at}\ R_\mathrm{ac}=R_2\sqrt{1+U^2}.
+\end{equation}
+
+\input{fig/ex10/figLink}
+
+\subtask{Calculate $R_1$, $R_2$, $C_1$, $C_2$ and the AC equivalent load $R_\mathrm{ac}$. Why does $R_\mathrm{ac}=8R_\mathrm{L}/\pi^2$ apply here?}
+
+\begin{solutionblock}
+	$R_1=\omega L_1/Q_1=\SI{0.204}{\ohm}$, $R_2=\SI{0.227}{\ohm}$, $C_1=1/(\omega^2L_1)=\SI{459}{\pico\farad}$, $C_2=\SI{689}{\pico\farad}$. $R_\mathrm{L}=(\SI{12}{\volt})^2/\SI{15}{\watt}=\SI{9.6}{\ohm}$, $R_\mathrm{ac}=\SI{7.78}{\ohm}$. The series-resonant secondary impresses a nearly sinusoidal current on the rectifier, whose input voltage is a square wave of $\pm V_\mathrm{o}$: the case of Lecture 9.
+\end{solutionblock}
+
+\subtask{Calculate $\eta_\mathrm{max}$, the optimum load and the link efficiency with $R_\mathrm{ac}$ for $k=0.10$, 0.18 and 0.25. Derive $\eta_\mathrm{max}$ from the expression for $\eta$.}
+
+\begin{solutionblock}
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|}
+			\hline
+			$k$                                   & 0.10   & 0.18   & 0.25   \\
+			\hline
+			$U$                                   & 19.4   & 34.9   & 48.4   \\
+			$\eta_\mathrm{max}$                   & 90.2\,\% & 94.4\,\% & 96.0\,\% \\
+			$R_\mathrm{ac,opt}$ ($\Omega$)        & 4.41   & 7.92   & 11.0   \\
+			$\eta$ with $R_\mathrm{ac}=\SI{7.78}{\ohm}$ & 88.8\,\% & 94.4\,\% & 95.7\,\% \\
+			\hline
+		\end{tabular}
+		\captionof{table}{Link efficiency of brief B4}
+		\label{tab:ex10_link}
+	\end{center}
+	$\mathrm{d}\ln\eta/\mathrm{d}x=1/x-1/(1+x)-1/(1+x+U^2)=0$ gives $x^2=1+U^2$; inserting $s=\sqrt{1+U^2}$ with $1+s+U^2=s(1+s)$ yields $\eta_\mathrm{max}=U^2/(1+s)^2$. The rectifier load is close to the optimum at $k=0.18$; the loss of efficiency away from the optimum is small.
+\end{solutionblock}
+
+\subtask{Calculate the resistance $R_\mathrm{refl}=(\omega M)^2/(R_2+R_\mathrm{ac})$ reflected into the primary and the total primary resistance for the three couplings. A fixed L-section designed for $k=0.18$ transforms the primary to the $R=\SI{19.8}{\ohm}$ of the class E of Task 10.1.3. What does the inverter see at $k=0.10$ and 0.25, and what happens (notebook)?}
+
+\begin{solutionblock}
+	$\omega M=k\,\omega\sqrt{L_1L_2}=k\cdot\SI{41.7}{\ohm}$: $R_\mathrm{refl}=\SI{2.18}{\ohm}$, \SI{7.05}{\ohm} and \SI{13.6}{\ohm}; with $R_1$ the primary presents \SI{2.38}{\ohm}, \SI{7.25}{\ohm} and \SI{13.8}{\ohm}, a range of 5.8:1.
+	The L-section for \SI{7.25}{\ohm} to \SI{19.8}{\ohm} ($Q=1.32$, $X_\mathrm{s}=\SI{9.55}{\ohm}$, $X_\mathrm{p}=\SI{15.1}{\ohm}$) presents $(15.0+\mathrm{j}19.7)\,\Omega$ at $k=0.10$ and $(14.2-\mathrm{j}9.4)\,\Omega$ at $k=0.25$. The time-domain model gives \SI{5.0}{\watt} with diode conduction at $k=0.10$, and \SI{26.9}{\watt} with a peak of \SI{101}{\volt} and a hard turn-on from \SI{7.6}{\volt} at $k=0.25$. A fixed class E cannot cover this coupling range; the power must be regulated by the supply voltage, by on/off control or by a tunable or compressing network.
+\end{solutionblock}
+
+\subtask{A half-bridge (class D or DE) drives the series-resonant primary instead. Which DC voltage delivers \SI{15}{\watt} to the load at the three couplings ($P=2V_\mathrm{DC}^2/(\pi^2R_\mathrm{prim})$)? What does this mean for the system?}
+
+\begin{solutionblock}
+	With $P_\mathrm{in}=\SI{15}{\watt}/\eta$: $V_\mathrm{DC}=\sqrt{\pi^2R_\mathrm{prim}P_\mathrm{in}/2}=\SI{14.1}{\volt}$, \SI{23.8}{\volt} and \SI{32.7}{\volt}. The switches see only $V_\mathrm{DC}$, and ZVS is kept if the tank is operated slightly above resonance, but the power must be controlled by an adjustable supply of the inverter (e.g.\ a buck-boost pre-regulator) or on the receiver side.
+\end{solutionblock}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Task 5 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\task{Inverter and matching of your brief (homework)}
+
+\subtask{Teams B4 and B5: choose class E, class DE or class $\Phi_2$ and justify the choice with $f_\mathrm{max}$, the peak voltage with the nonlinear $C_\mathrm{oss}$ and the load range. Other teams: list the switching instants of your converter at which a resonant gate drive or a single-switch topology would help, or explain why not.}
+
+\begin{solutionblock}
+	Check list: $f_\mathrm{max}$ with the small-signal and with the charge-equivalent $C_\mathrm{oss}$; peak voltage including load variation; range of the load seen by the inverter (coupling, rectifier, input voltage, $P\propto V_\mathrm{in}^2$ at fixed tuning); regulation method (supply voltage, on/off control, tunable network).
+\end{solutionblock}
+
+\subtask{Simulate your inverter with the nonlinear $C_\mathrm{oss}$ at the corners of the operating range and report drain efficiency and total efficiency including the gate drive.}
+
+\begin{solutionblock}
+	Use the shooting method of the notebook or a SPICE model with the transistor's $C_\mathrm{oss}(v)$; verify ZVS, the peak voltage and the turn-on loss at the corners, and state which efficiency you report.
+\end{solutionblock}
+
+\vspace{0.5cm}
+Remark: The notebook \texttt{tutorialEx10\_task.ipynb} designs and simulates the class E inverter of Tasks 10.1 and 10.2, designs the matching networks of Task 10.3 with a Smith chart, and evaluates the wireless-power link of Task 10.4.

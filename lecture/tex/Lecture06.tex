@@ -129,10 +129,10 @@
 			\end{table}
 		\end{column}
 		\begin{column}{0.45\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
-				\item At constant loss density the loss fraction grows as $1/\varepsilon$: small parts become inefficient before they become hot.
-				\item Small components are therefore limited by efficiency. At fixed efficiency, halving all dimensions of an HF inductor divides its VA by $2^8=256$.
+				\item How to read the table: all dimensions are scaled by $\varepsilon$, the quantity in the first column is kept fixed, and VA and VA per volume follow.
+				\item At constant loss density the loss fraction grows as $1/\varepsilon$: small parts become inefficient before they become hot. At fixed efficiency, halving all dimensions of an HF inductor divides its VA by $2^8=256$.
 				\item Magnetics cannot be built from many small cells, as capacitors and transistors can.
 			\end{itemize}
 			\begin{block}{Key message}
@@ -175,7 +175,7 @@
 		\end{column}
 		\begin{column}{0.51\textwidth}
 			\small
-			At fixed winding loss $I\propto R_\mathrm{ac}^{-1/2}$, and $VA\propto N\hat{B}f\cdot I/N$:
+			At a fixed winding loss the current must fall as $R_\mathrm{ac}$ rises, $I\propto R_\mathrm{ac}^{-1/2}$. With $V\propto N\hat{B}f$ the core handles $VA\propto\hat{B}f/\sqrt{R_\mathrm{ac}}$, so the frequency dependence of $R_\mathrm{ac}$ sets the fair metric:
 			\begin{table}
 				\centering
 				\footnotesize
@@ -229,12 +229,12 @@
 				\centering
 				\begin{tikzpicture}
 					\begin{axis}[
-							width=\linewidth, height=4.6cm,
+							width=\linewidth, height=4.1cm,
 							xmin=0.5, xmax=2, ymin=0, ymax=4.5,
 							xlabel={$\hat{B}/\hat{B}_\mathrm{opt}$}, ylabel={Loss (normalised)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny, at={(0.55,0.97)}, anchor=north}, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.07)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.25cm}}, legend cell align=left,
 						]
 						\addplot[black, thick, densely dashed, domain=0.5:2, samples=100] {0.8*x^2.5};
 						\addlegendentry{core $\propto\hat{B}^{\beta}$}
@@ -534,14 +534,14 @@
 				\end{tikzpicture}
 				\caption{Triangular flux with the same $\hat{B}$ and $f$ as the sine}
 			\end{figure}
-			\small
-			Triangle, $\Delta B=2\hat{B}$ peak to peak:
+			\footnotesize
+			Triangle, $\Delta B=2\hat{B}$ peak to peak, flux rising during the fraction $D$ of the period:
 			\begin{equation*}
 				P_\mathrm{v}=k_\mathrm{i}(\Delta B)^{\beta}f^{\alpha}\left(D^{1-\alpha}+(1-D)^{1-\alpha}\right)
 			\end{equation*}
 		\end{column}
 		\begin{column}{0.51\textwidth}
-			\small
+			\footnotesize
 			Improved generalised Steinmetz equation (iGSE):
 			\begin{equation*}
 				P_\mathrm{v}=\frac{1}{T}\int_0^Tk_\mathrm{i}\left|\frac{\mathrm{d}B}{\mathrm{d}t}\right|^{\alpha}(\Delta B)^{\beta-\alpha}\,\mathrm{d}t
@@ -580,9 +580,9 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.55\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
-				\item While $v=0$ the iGSE predicts no loss. Measurements show extra loss after each step to zero voltage: relaxation. The i$^2$GSE adds a term that grows with $1-\mathrm{e}^{-t_1/\tau}$ (N87: $\tau=6\,\mu$s). It matters for three-level bridge voltages and for DCM.
+				\item While $v=0$ the iGSE predicts no loss. Measurements show extra loss after each step to zero voltage: relaxation. The i$^2$GSE adds a term that grows with $1-\mathrm{e}^{-t_1/\tau}$ ($t_1$: duration of the zero-voltage interval; $\tau$: relaxation time constant of the material, N87: 6\,$\mu$s). It matters for three-level bridge voltages and for DCM.
 				\item A DC flux raises the loss, even far below saturation. NiZn ferrite ($\mu_\mathrm{r}=125$) at 10\,MHz and 6.5\,mT ac: at least three times the loss, with hysteresis. Heuristic: DC flux not larger than the allowed ac amplitude.
 				\item The permeability changes with the bias, and so does $L$.
 				\item Model with the iGSE, then check with the real waveform (L5: resonant or calorimetric method).

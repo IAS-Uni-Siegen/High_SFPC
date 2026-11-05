@@ -34,7 +34,8 @@
 			\begin{figure}
 				\centering
 				\begin{circuitikz}[scale=0.78, transform shape]
-					\tikzset{blk/.style={draw, minimum height=0.9cm, minimum width=1.3cm, align=center, font=\small}}
+					\tikzset{blk/.style={draw, fill=white, minimum height=0.9cm, minimum width=1.3cm, align=center, font=\footnotesize}}
+					\draw[densely dashed, gray] (2.1,-1.9) -- (2.1,1.3);
 					\node[blk] (pwm) at (0,0) {PWM};
 					\node[blk] (iso) at (2.1,0) {level\\shift};
 					\node[blk, minimum height=1.3cm] (drv) at (4.2,0) {driver};
@@ -47,7 +48,6 @@
 					\draw (Q.D) -- ++(0,0.5) node[above] {$V_\mathrm{DC}$};
 					\draw (Q.S) -- (Q.S |- 0,-1.6) coordinate (sw) node[circ]{} -- ++(0.7,0) node[right] {$v_\mathrm{sw}$};
 					\draw (drv.south) -- (drv.south |- sw) -- (sw);
-					\draw[densely dashed, gray] (2.1,-1.9) -- (2.1,1.3);
 					\node[font=\scriptsize, anchor=north east] at (2.0,-1.3) {ground};
 					\node[font=\scriptsize, anchor=north west] at (2.2,-1.3) {switch node};
 				\end{circuitikz}
@@ -55,13 +55,13 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
 				\item Shift the logic signal from ground to the source of the switch. For the high-side switch this is the switch node, which moves by $V_\mathrm{DC}$ within nanoseconds.
-				\item Amperes for nanoseconds: $5\,\mathrm{V}/2\,\Omega=2.5$\,A peak, but on average only $Q_\mathrm{G}f_\mathrm{sw}=59$\,mA (EPC2045, 10\,MHz). A capacitor at the driver pins supplies the peaks.
+				\item Deliver amperes for nanoseconds: $5\,\mathrm{V}/2\,\Omega=2.5$\,A peak, but on average only $Q_\mathrm{G}f_\mathrm{sw}=59$\,mA (EPC2045, 10\,MHz). A capacitor at the driver pins supplies the peaks.
 				\item Hold the switch off while the other switch turns on.
 				\item Protect: undervoltage lockout (UVLO), over-current, over-temperature.
-				\item Floating supply for the high-side driver.
+				\item Provide a floating supply for the high-side driver, referred to the switch node.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -210,7 +210,7 @@
 							xlabel={Time (ns)}, ylabel={$v_\mathrm{GS}$ (V)},
 							grid=major, grid style={gray!20},
 							tick label style={font=\scriptsize}, label style={font=\footnotesize},
-							legend style={font=\tiny}, legend pos=north east, legend cell align=left,
+							legend style={font=\tiny, at={(0.5,1.08)}, anchor=south, legend columns=2, /tikz/every even column/.append style={column sep=0.3cm}}, legend cell align=left,
 						]
 						\addplot[black, thick] table[x=t, y=r10] {fig/lec04/gate_step.dat};
 						\addlegendentry{$R_\mathrm{G}=1\,\Omega$, $\zeta=0.22$}
@@ -219,7 +219,7 @@
 						\addplot[gray, thick] table[x=t, y=r45] {fig/lec04/gate_step.dat};
 						\addlegendentry{$R_\mathrm{G}=4.5\,\Omega$, $\zeta=1$}
 						\addplot[black, densely dotted, domain=0:15, samples=2] {6};
-						\addlegendentry{absolute maximum}
+						\addlegendentry{absolute maximum, 6\,V}
 					\end{axis}
 				\end{tikzpicture}
 				\caption{Ideal 5\,V step, $L_\mathrm{G}=3$\,nH, $C_\mathrm{iss}=600$\,pF}
@@ -281,12 +281,12 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.53\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
 				\item \textbf{Turn-on}: $R_\mathrm{G,on}$ sets $\mathrm{d}v/\mathrm{d}t$ and $\mathrm{d}i/\mathrm{d}t$, i.e.\ loss against overshoot and EMI. Plateau time (L2) $t_\mathrm{vf}\approx R_\mathrm{G}Q_\mathrm{GD}/(V_\mathrm{dr}-V_\mathrm{pl})$. EPC2045 at 50\,V, $V_\mathrm{pl}\approx2.5$\,V: $R_\mathrm{G}=2.7\,\Omega$ (driver and internal) gives 0.9\,ns ($\approx$\,60\,V/ns), 4.7\,$\Omega$ gives 1.5\,ns ($\approx$\,33\,V/ns).
 				\item \textbf{Turn-off}: small $R_\mathrm{G,off}$. If the channel closes before $v_\mathrm{DS}$ rises, the load current charges the output capacitances; the turn-off is almost lossless (L2).
 				\item The turn-off loop does not contain the driver supply capacitor and tolerates negative undershoot. It must not ring back above $V_\mathrm{th}$.
-				\item Split outputs, e.g.\ LMG1205: 2.1\,$\Omega$ pull-up, 0.6\,$\Omega$ pull-down. Otherwise a diode in the off path.
+				\item Split outputs (separate pins for turn-on and turn-off), e.g.\ LMG1205: 2.1\,$\Omega$ pull-up, 0.6\,$\Omega$ pull-down. With a single output, a diode in parallel with $R_\mathrm{G,on}$ creates the separate off path.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -360,7 +360,7 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.53\textwidth}
-			\small
+			\footnotesize
 			When the other switch turns on, $v_\mathrm{DS}$ of the off-state switch rises and $C_\mathrm{GD}$ pushes charge into its gate.
 			\begin{itemize}
 				\item Worst case, gate open: the charge $Q_\mathrm{GD}$ must not lift the gate to $V_\mathrm{th}$. A Miller ratio
@@ -369,7 +369,7 @@
 				      \end{equation*}
 				      guarantees immunity, whatever the driver does.
 				\item EPC2045: $0.8/1.3=0.62$ at 50\,V, immune up to its rated 100\,V. The older EPC2016 is sensitive above 40\,\% of its rating, the 650\,V GS66516B at even lower voltage.
-				\item Ratio above 1: the off path must carry $C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$ (L3). At the edge frequency $L_\mathrm{G}$ adds to $R_\mathrm{G,off}$: 2\,nH at 300\,MHz is 3.8\,$\Omega$.
+				\item Ratio above 1: the off path must carry the current $C_\mathrm{GD}\,\mathrm{d}v/\mathrm{d}t$ without lifting the gate (L3). At the frequency of the edge the gate-loop inductance adds to $R_\mathrm{G,off}$: 2\,nH at 300\,MHz are 3.8\,$\Omega$.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -451,43 +451,50 @@
 
 \begin{frame}
 	\frametitle{Driving e-mode GaN}
+	\textbf{Schottky-type p-GaN gate} (e.g.\ EPC, GaN Systems)
+	\begin{itemize}
+		\item Voltage drive: 5--6\,V on, 0\,V off; the gate behaves like a capacitor.
+		\item Only about 1\,V margin to the absolute maximum: damp the gate loop near critically, regulate the driver supply, control the bootstrap voltage.
+		\item Low threshold (EPC2045: 1.4\,V): the off path needs a low impedance, so that coupled currents cannot lift the gate.
+		\item Turn off with 0\,V where possible. A negative off-voltage raises $V_\mathrm{SD}$ in the dead time by the same amount, and with it the dead-time loss.
+	\end{itemize}
+	\begin{block}{Key message}
+		The e-mode GaN gate is fast and sensitive: every part of the gate loop is designed, not just the driver.
+	\end{block}
+	\blfootnote{Source: Lidow et al., 2019, Sec.\ 3.2--3.3.}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Driving GIT %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+	\frametitle{Driving a gate injection transistor}
 	\begin{columns}[T]
 		\begin{column}{0.45\textwidth}
-			\small
-			\textbf{Schottky-type p-GaN gate} (e.g.\ EPC, GaN Systems)
-			\begin{itemize}
-				\item Voltage drive: 5--6\,V on, 0\,V off.
-				\item Little margin to the absolute maximum: near-critical damping, a regulated driver supply and a controlled bootstrap voltage.
-				\item Low threshold (EPC2045: 1.4\,V): low-impedance off path.
-				\item Turn off with 0\,V where possible. A negative off-voltage raises $V_\mathrm{SD}$ in the dead time by the same amount.
-			\end{itemize}
-		\end{column}
-		\begin{column}{0.52\textwidth}
-			\small
-			\textbf{Gate injection transistor (GIT)}: the gate behaves like a diode, clamped at 3--4\,V; a few mA keep the transistor on. RC drive:
 			\begin{figure}
 				\centering
-				\begin{circuitikz}[scale=0.62, transform shape]
-					\draw (0,0) to[sqV, l=$V_\mathrm{P}/V_\mathrm{S}$] (0,2.0) -- (0.6,2.0) coordinate (a);
+				\begin{circuitikz}[scale=0.8, transform shape]
+					\draw (0,0) to[sqV, l=$0/V_\mathrm{P}$] (0,2.0) -- (0.6,2.0) coordinate (a);
 					\draw (a) -- (0.6,3.1) to[R, l=$R_\mathrm{G2}$] (4.4,3.1) -- (4.4,2.0) coordinate (g);
 					\draw (a) to[R, l_=$R_\mathrm{G1}$] (2.5,2.0) to[C, l_=$C_\mathrm{SU}$] (g);
 					\draw (g) node[circ]{} -- (4.8,2.0) node[nigfete, anchor=G] (Q) {};
 					\draw (Q.D) -- ++(0,0.3);
 					\draw (Q.S) -- (Q.S |- 0,-0.5) -- (0,-0.5) -- (0,0);
 				\end{circuitikz}
+				\caption{RC drive of a GIT: speed-up branch $R_\mathrm{G1}$--$C_\mathrm{SU}$, holding branch $R_\mathrm{G2}$}
 			\end{figure}
-			\vspace{-0.6em}
-			\begin{equation*}
-				I_\mathrm{G,pk}=\frac{V_\mathrm{P}-V_\mathrm{S}}{R_\mathrm{G1}},\quad
-				\tau=R_\mathrm{G1}C_\mathrm{SU},
-			\end{equation*}
-			\begin{equation*}
-				I_\mathrm{G,ss}=\frac{V_\mathrm{P}-V_\mathrm{GS,ss}}{R_\mathrm{G2}}
-			\end{equation*}
-			At turn-off the charge on $C_\mathrm{SU}$ drives a reverse gate current and speeds up the turn-off.
+		\end{column}
+		\begin{column}{0.52\textwidth}
+			\small
+			In a GIT the gate behaves like a diode, clamped at $V_\mathrm{GS,ss}\approx3$--4\,V; a few mA keep the transistor on. The driver output switches between 0 and $V_\mathrm{P}$.
+			\begin{itemize}
+				\item Turn-on: $C_\mathrm{SU}$ is still discharged, so a large current flows through $R_\mathrm{G1}$, $I_\mathrm{G,pk}\approx V_\mathrm{P}/R_\mathrm{G1}$, decaying with $\tau=R_\mathrm{G1}C_\mathrm{SU}$.
+				\item On-state: $R_\mathrm{G2}$ supplies the holding current $I_\mathrm{G,ss}=(V_\mathrm{P}-V_\mathrm{GS,ss})/R_\mathrm{G2}$.
+				\item Turn-off: the charge on $C_\mathrm{SU}$ pulls the gate negative and speeds up the turn-off.
+			\end{itemize}
 		\end{column}
 	\end{columns}
-	\blfootnote{Source: Lidow et al., 2019, Sec.\ 3.2--3.4, Fig.\ 3.6 and 3.7.}
+	\blfootnote{Source: Lidow et al., 2019, Sec.\ 3.4, Fig.\ 3.6 and 3.7.}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -518,7 +525,7 @@
 			\small
 			\begin{itemize}
 				\item Turn-off is driven by the load current, which charges the MOSFET output capacitance.
-				\item Two loops with common inductance (common source, cascode). The MOSFET limits the turn-on, its body diode adds reverse recovery.
+				\item Two dies, two loops with common inductance (common source, and the connection between the dies). The Si MOSFET limits the turn-on speed; its body diode adds reverse recovery.
 			\end{itemize}
 		\end{column}
 		\begin{column}{0.49\textwidth}
@@ -557,25 +564,25 @@
 					\draw (QL.S) -- ++(0,-0.3) node[ground] {};
 					\draw (sw) node[circ]{} -- ++(1.0,0) node[right] {$v_\mathrm{sw}$};
 					% high-side driver
-					\node[draw, minimum width=1.3cm, minimum height=1.5cm, anchor=east, align=center, font=\small] (drv) at ($(QH.G)+(-1.9,0)$) {HS\\driver};
+					\node[draw, minimum width=1.3cm, minimum height=1.5cm, anchor=east, align=center, font=\footnotesize] (drv) at ($(QH.G)+(-1.9,0)$) {HS\\driver};
 					\draw (drv.east) to[R, l=$R_\mathrm{G}$] (QH.G);
 					\draw (drv.south) -- (drv.south |- sw) -- (sw);
 					% bootstrap capacitor and diode
 					\draw (drv.north) -- ++(0,0.5) coordinate (hb) -- ++(-1.6,0) coordinate (c1);
 					\draw (c1) to[C, l_=$C_\mathrm{boot}$] (c1 |- sw) -- (drv.south |- sw);
 					\draw ($(c1)+(-2.4,0)$) node[left] {$V_\mathrm{DD}$} to[D, l=$D_\mathrm{boot}$] (c1);
-					\draw (QL.G) -- ++(-0.4,0) node[left, font=\small] {LS driver};
+					\draw (QL.G) -- ++(-0.4,0) node[left, font=\footnotesize] {LS driver};
 					% reverse conduction in the dead time
-					\draw[-{Latex[length=1.6mm]}] ($(QL.S)+(0.75,0.1)$) -- ($(QL.D)+(0.75,-0.1)$) node[midway, right, font=\small] {$t_\mathrm{d}$};
+					\draw[-{Latex[length=1.6mm]}] ($(QL.S)+(0.75,0.1)$) -- ($(QL.D)+(0.75,-0.1)$) node[midway, right, font=\footnotesize] {$t_\mathrm{d}$};
 				\end{circuitikz}
 				\caption{$C_\mathrm{boot}$ charges while the low-side switch conducts. Arrow: reverse current in the dead time}
 			\end{figure}
 		\end{column}
 		\begin{column}{0.44\textwidth}
-			\small
+			\footnotesize
 			\begin{itemize}
-				\item $C_\mathrm{boot}\geq Q_\mathrm{tot}/\Delta V$, $Q_\mathrm{tot}$: gate and driver charge per cycle. 8\,nC, 0.1\,V: 80\,nF, use 100\,nF.
-				\item Over-charge: during reverse conduction of the low-side switch ($v_\mathrm{sw}=-V_\mathrm{SD}$) $C_\mathrm{boot}$ charges towards $5-0.5+2.5=7$\,V, and the diode cannot discharge it. The charge accumulates over many periods.
+				\item Size: $C_\mathrm{boot}\geq Q_\mathrm{tot}/\Delta V$, with $Q_\mathrm{tot}$ the gate and driver charge per cycle and $\Delta V$ the allowed droop. 8\,nC and 0.1\,V give 80\,nF: use 100\,nF.
+				\item Over-charge: while the low-side switch conducts in reverse, the switch node is at $-V_\mathrm{SD}$, and $C_\mathrm{boot}$ charges towards $V_\mathrm{DD}-V_\mathrm{F}+V_\mathrm{SD}=5-0.5+2.5=7$\,V. The diode cannot discharge it, so the charge accumulates over many periods.
 				\item Remedies: short dead time, Schottky diode across the low-side switch, clamp, synchronous GaN bootstrap switch (best regulation and efficiency).
 				\item $D_\mathrm{boot}$ adds capacitance and recovery charge to the switch node.
 			\end{itemize}
@@ -625,7 +632,8 @@
 					\node[font=\scriptsize, anchor=south] at (2.3,3.6) {isolation};
 					\draw (ctl.south) -- (0,0) coordinate (p0);
 					\draw (drv.south) -- (4.6,0) coordinate (s0);
-					\draw (s0) -- (3.7,0) to[C, l_=$C_\mathrm{iso}$, i=$i_\mathrm{CM}$] (0.9,0) -- (p0);
+					\draw (s0) -- (3.7,0) to[C, i=$i_\mathrm{CM}$] (0.9,0) -- (p0);
+					\node[anchor=south west] at (2.5,0.3) {$C_\mathrm{iso}$};
 					\draw (s0) node[circ]{} to[sqV, l=$v_\mathrm{sw}$] (4.6,-2.0) coordinate (s1);
 					\draw (p0) -- (0,-2.0) node[ground] {};
 					\draw (0,-2.0) -- (s1);
@@ -765,15 +773,15 @@
 			\end{figure}
 		\end{column}
 		\begin{column}{0.47\textwidth}
-			\small
+			\footnotesize
 			An inductor resonates with $C_\mathrm{iss}$: the gate energy oscillates instead of being dissipated, only $R_\mathrm{G}$ causes loss. For the same peak-to-peak voltage $V$:
 			\begin{equation*}
 				\frac{P_\mathrm{res}}{P_\mathrm{hard}}=\frac{\tfrac12\left(\omega C\tfrac{V}{2}\right)^2R_\mathrm{G}}{CV^2f}=\frac{\pi^2}{2}\,f\,R_\mathrm{G}\,C
 			\end{equation*}
 			30\,MHz, $C=Q_\mathrm{G}/V=1.4$\,nF, $R_\mathrm{G}=0.5\,\Omega$: 0.11\,W instead of 1.05\,W.
 			\begin{itemize}
-				\item Duty cycle set by the bias; slow edges.
-				\item Suited to ZVS stages (class E, $\Phi_2$). Self-oscillating versions take the drive from the power stage.
+				\item Limits: the duty cycle is set by the DC bias of the sinusoid, and the sinusoidal edges are slow.
+				\item Suited to ZVS stages (class E, $\Phi_2$), where slow gate edges cost little. Self-oscillating versions take the drive from the power stage.
 			\end{itemize}
 		\end{column}
 	\end{columns}
@@ -812,8 +820,8 @@
 			\small
 			\textbf{Limits}
 			\begin{itemize}
-				\item Drive strength, dead time and gate voltage partly fixed
-				\item Driver loss in the package of the transistors
+				\item Drive strength, dead time and gate voltage partly fixed by the manufacturer
+				\item Driver loss heats the transistor package
 				\item Fewer ratings to choose from
 			\end{itemize}
 		\end{column}
